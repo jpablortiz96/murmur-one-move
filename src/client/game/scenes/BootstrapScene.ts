@@ -63,6 +63,10 @@ export class BootstrapScene extends Phaser.Scene {
         throw new Error('Bootstrap response did not match the MURMUR contract');
       }
 
+      console.info('MURMUR bootstrap accepted', {
+        day: bootstrap.day,
+        sensors: bootstrap.availableSensors,
+      });
       this.scene.start('Murmur', bootstrap);
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'Unknown bootstrap failure';
@@ -99,4 +103,3 @@ export class BootstrapScene extends Phaser.Scene {
     this.retryButton?.setPosition(width / 2, height / 2 + 104);
   }
 }
-

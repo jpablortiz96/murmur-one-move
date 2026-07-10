@@ -22,8 +22,8 @@ api.get('/health', (c) =>
   })
 );
 
-api.get('/bootstrap', (c) =>
-  c.json<BootstrapResponse>({
+api.get('/bootstrap', (c) => {
+  const response: BootstrapResponse = {
     gameTitle: GAME_TITLE,
     tagline: GAME_TAGLINE,
     chapter: 'The First Hollow',
@@ -39,8 +39,13 @@ api.get('/bootstrap', (c) =>
       communityPersistenceEnabled: false,
       privateSensorsEnabled: false,
     },
-  })
-);
+  };
+  console.info('MURMUR bootstrap served', {
+    chapter: response.chapter,
+    day: response.day,
+  });
+  return c.json<BootstrapResponse>(response);
+});
 
 api.notFound((c) =>
   c.json<ApiErrorResponse>(
@@ -48,4 +53,3 @@ api.notFound((c) =>
     404
   )
 );
-

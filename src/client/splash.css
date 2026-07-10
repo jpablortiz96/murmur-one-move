@@ -33,6 +33,11 @@ button {
   background:
     radial-gradient(ellipse at 50% 54%, rgba(25, 128, 132, 0.2), transparent 23%),
     radial-gradient(ellipse at 50% 80%, #0d2730 0, #071216 43%, #03080a 100%);
+  padding:
+    env(safe-area-inset-top, 0px)
+    env(safe-area-inset-right, 0px)
+    env(safe-area-inset-bottom, 0px)
+    env(safe-area-inset-left, 0px);
 }
 
 .cavern::before,
@@ -196,7 +201,7 @@ button {
 
 .signal-gate {
   position: absolute;
-  bottom: clamp(22px, 8vh, 60px);
+  bottom: max(calc(env(safe-area-inset-bottom, 0px) + 24px), clamp(28px, 8vh, 60px));
   z-index: 3;
   min-width: 224px;
   min-height: 52px;
@@ -224,6 +229,24 @@ button {
   color: white;
   border-color: #b8fff0;
   background: rgba(15, 65, 68, 0.9);
+}
+
+.signal-gate:active {
+  transform: scale(0.975);
+}
+
+.cavern.awakening .creature {
+  animation: listen 180ms ease-out both;
+}
+
+.cavern.entering .creature {
+  animation: enter-signal 420ms ease-in both;
+}
+
+.cavern.entering .mist {
+  opacity: 0.34;
+  transform: scale(1.12);
+  transition: opacity 350ms ease, transform 350ms ease;
 }
 
 .signal-gate:disabled {
@@ -286,6 +309,18 @@ button {
 
 @keyframes float {
   to { transform: translate(8px, -18px); opacity: 0.8; }
+}
+
+@keyframes listen {
+  50% { transform: translate(-50%, -54%) scale(1.035, 0.97); }
+}
+
+@keyframes enter-signal {
+  to {
+    opacity: 0.24;
+    transform: translate(-50%, -50%) scale(2.25);
+    filter: blur(2px);
+  }
 }
 
 @media (max-height: 360px) {

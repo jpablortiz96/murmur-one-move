@@ -30,25 +30,51 @@ export const createWorldButton = (
 
   let selected = false;
   let enabled = true;
+  let hovered = false;
+  let pressed = false;
 
   const draw = (): void => {
+    const lineColor = selected ? 0xa8ffe8 : hovered ? 0x75d8c8 : 0x4b9e98;
     background.clear();
     background
-      .fillStyle(selected ? 0x164b4d : 0x071d22, enabled ? 0.88 : 0.48)
-      .fillRoundedRect(-width / 2, -height / 2, width, height, 18)
-      .lineStyle(selected ? 2 : 1, selected ? 0xa8ffe8 : 0x4b9e98, enabled ? 0.9 : 0.25)
-      .strokeRoundedRect(-width / 2, -height / 2, width, height, 18);
+      .fillStyle(selected ? 0x164b4d : 0x071d22, enabled ? (hovered ? 0.94 : 0.8) : 0.42)
+      .fillEllipse(0, 0, width - (pressed ? 4 : 0), height - 7)
+      .lineStyle(selected ? 2 : 1, lineColor, enabled ? 0.86 : 0.24)
+      .strokeEllipse(0, 0, width - (pressed ? 4 : 0), height - 7)
+      .beginPath()
+      .moveTo(-width / 2 + 13, -13)
+      .lineTo(-width / 2 + 7, 0)
+      .lineTo(-width / 2 + 13, 13)
+      .strokePath()
+      .beginPath()
+      .moveTo(width / 2 - 13, -13)
+      .lineTo(width / 2 - 7, 0)
+      .lineTo(width / 2 - 13, 13)
+      .strokePath();
     label.setAlpha(enabled ? 1 : 0.42);
     label.setText(`${selected ? '◆ ' : ''}${labelText}`);
   };
 
   container.on('pointerdown', () => {
-    if (enabled) onActivate();
+    if (!enabled) return;
+    pressed = true;
+    draw();
   });
   container.on('pointerover', () => {
-    if (enabled && !selected) background.setAlpha(0.78);
+    hovered = true;
+    draw();
   });
-  container.on('pointerout', () => background.setAlpha(1));
+  container.on('pointerout', () => {
+    hovered = false;
+    pressed = false;
+    draw();
+  });
+  container.on('pointerup', () => {
+    if (!enabled) return;
+    pressed = false;
+    draw();
+    onActivate();
+  });
   draw();
 
   return {
@@ -66,4 +92,3 @@ export const createWorldButton = (
     },
   };
 };
-

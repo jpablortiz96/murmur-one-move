@@ -137,12 +137,20 @@ export class Murmur extends Phaser.GameObjects.Container {
   calm(): void {
     if (this.reducedMotion) {
       this.glow.setAlpha(0.82);
+      this.core.setAlpha(0.82).setScale(1);
       return;
     }
+    this.scene.tweens.killTweensOf(this.core);
     this.scene.tweens.add({
-      targets: this.glow,
-      alpha: 0.76,
+      targets: [this.glow, this.core],
+      alpha: 0.8,
       duration: 480,
+      ease: 'Sine.Out',
+    });
+    this.scene.tweens.add({
+      targets: this.core,
+      scale: 1,
+      duration: 300,
       ease: 'Sine.Out',
     });
   }

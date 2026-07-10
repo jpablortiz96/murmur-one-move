@@ -2,6 +2,12 @@ import * as Phaser from 'phaser';
 import type { BootstrapResponse } from '../../../shared/contracts/bootstrap';
 import { AVAILABLE_DIRECTIONS, DEBUG_DEFAULT } from '../../../shared/constants/game';
 import type { Direction } from '../../../shared/types/game';
+import {
+  calculateLayout,
+  readSafeAreaInsets,
+  type Insets,
+  type LayoutMetrics,
+} from '../config/layout';
 import { CaveField } from '../effects/CaveField';
 import { emitEchoRing } from '../effects/EchoPulse';
 import { Murmur } from '../entities/Murmur';
@@ -19,12 +25,14 @@ import { createWorldButton, type WorldButton } from '../ui/worldButton';
 type SceneSettings = {
   reducedMotion: boolean;
   debug: boolean;
+  safeArea: Insets;
 };
 
 export class MurmurScene extends Phaser.Scene {
   private bootstrap: BootstrapResponse;
   private settings: SceneSettings;
   private state: DecisionState = createDecisionState();
+  private metrics: LayoutMetrics;
   private cave: CaveField;
   private murmur: Murmur;
   private titleText: Phaser.GameObjects.Text;
@@ -202,30 +210,32 @@ export class MurmurScene extends Phaser.Scene {
 
   private layout(): void {
     const { width, height } = this.scale;
-    const cx = width / 2;
-    const cy = Math.max(255, Math.min(height * 0.45, height - 300));
-    const reachX = Math.min(width * 0.37, 260);
-    const reachY = Math.min(height * 0.21, 165);
-    const resultY = height - 174;
-    const actionY = height - 78;
+    this.metrics = calculateLayout(width, height, this.settings.safeArea);
+    const { centerX, centerY, pathNodes } = this.metrics;
 
     this.cameras.resize(width, height);
     this.cave.layout(width, height);
-    this.murmur.setPosition(cx, cy);
-    this.titleText.setPosition(cx, 18);
-    this.chapterText.setPosition(cx, 51);
-    this.sensorText.setPosition(cx, 92);
-    this.instructionText.setPosition(cx, Math.min(height - 244, cy + reachY + 58));
-    this.pulseText.setPosition(cx, Math.min(height - 218, cy + reachY + 84));
-    this.resultText.setPosition(cx, resultY);
-    this.pendingText.setPosition(cx, resultY + 26);
+    this.murmur.setPosition(centerX, centerY);
+    this.titleText.setPosition(centerX, this.metrics.titleY);
+    this.chapterText.setPosition(centerX, this.metrics.chapterY);
+    this.sensorText.setPosition(centerX, this.metrics.sensorY);
+    this.instructionText.setPosition(centerX, this.metrics.instructionY);
+    this.pulseText.setPosition(centerX, this.metrics.pulseCounterY);
+    this.resultText.setPosition(centerX, this.metrics.decisionStatusY);
+    this.pendingText.setPosition(centerX, this.metrics.decisionDetailY);
 
-    this.directionButtons.north.container.setPosition(cx, cy - reachY);
-    this.directionButtons.east.container.setPosition(cx + reachX, cy);
-    this.directionButtons.south.container.setPosition(cx, cy + reachY);
-    this.directionButtons.west.container.setPosition(cx - reachX, cy);
-    this.replayButton.container.setPosition(cx - 73, actionY);
-    this.changeButton.container.setPosition(cx + 73, actionY);
+    this.directionButtons.north.container.setPosition(pathNodes.north.x, pathNodes.north.y);
+    this.directionButtons.east.container.setPosition(pathNodes.east.x, pathNodes.east.y);
+    this.directionButtons.south.container.setPosition(pathNodes.south.x, pathNodes.south.y);
+    this.directionButtons.west.container.setPosition(pathNodes.west.x, pathNodes.west.y);
+    this.replayButton.container.setPosition(
+      centerX - this.metrics.actionButtonOffset,
+      this.metrics.actionButtonsY
+    );
+    this.changeButton.container.setPosition(
+      centerX + this.metrics.actionButtonOffset,
+      this.metrics.actionButtonsY
+    );
 
     this.debugText?.setPosition(width - 7, 7);
     this.debugResetButton?.container.setPosition(width - 55, 104);
@@ -300,4 +310,5 @@ export const getSceneSettings = (): SceneSettings => ({
   reducedMotion: window.matchMedia('(prefers-reduced-motion: reduce)').matches,
   debug:
     DEBUG_DEFAULT || new URLSearchParams(window.location.search).get('debug') === '1',
+  safeArea: readSafeAreaInsets(),
 });

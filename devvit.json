@@ -1,6 +1,6 @@
 {
   "$schema": "https://developers.reddit.com/schema/config-file.v1.json",
-  "name": "murmur-path",
+  "name": "murmur-one-move",
   "post": {
     "dir": "dist/client",
     "entrypoints": {
@@ -34,5 +34,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch"
+  },
+  "dev": {
+    "subreddit": "murmur_one_move_dev"
   }
 }

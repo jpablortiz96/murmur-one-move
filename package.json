@@ -8,6 +8,7 @@
     "build": "vite build",
     "deploy": "npm run type-check && npm run lint && devvit upload",
     "dev": "devvit playtest",
+    "dev:local:client": "vite --config vite.local.config.ts",
     "launch": "npm run deploy && devvit publish",
     "lint": "eslint src",
     "login": "devvit login",

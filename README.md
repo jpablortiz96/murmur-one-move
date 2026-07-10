@@ -39,6 +39,14 @@ npm run dev
 
 Devvit uploads a development build, creates or reuses a private test subreddit, installs the app, streams logs, and prints the Reddit URL. The subreddit menu action **Create a MURMUR post** creates another Interactive Post when needed.
 
+For responsive client QA without a Reddit iframe, start the local client harness:
+
+```powershell
+npm run dev:local:client
+```
+
+Open `http://127.0.0.1:4173/game.html`. The harness mounts the real health/bootstrap Hono routes but has no Reddit context or persistence.
+
 ## Validate
 
 ```powershell
@@ -83,4 +91,3 @@ Supporting product and engineering documents live in `docs/`; concrete verificat
 ## Asset license
 
 All visible art is generated at runtime with Phaser Graphics and browser CSS. No third-party images, fonts, music, or sound files ship with this slice. Repository code is licensed under the BSD 3-Clause license in [LICENSE](LICENSE).
-

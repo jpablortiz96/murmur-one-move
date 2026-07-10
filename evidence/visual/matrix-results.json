@@ -1,0 +1,127 @@
+[
+  {
+    "size": "360x800",
+    "input": "touch + mouse",
+    "viewport": [
+      360,
+      800
+    ],
+    "document": [
+      360,
+      800
+    ],
+    "client": [
+      360,
+      800
+    ],
+    "canvas": [
+      0,
+      0,
+      360,
+      800
+    ],
+    "title": "MURMUR — Echo Signal",
+    "averageFrameMs": 16.66,
+    "estimatedFps": 60
+  },
+  {
+    "size": "390x844",
+    "input": "mouse",
+    "viewport": [
+      390,
+      844
+    ],
+    "document": [
+      390,
+      844
+    ],
+    "client": [
+      390,
+      844
+    ],
+    "canvas": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "title": "MURMUR — Echo Signal",
+    "averageFrameMs": 16.66,
+    "estimatedFps": 60
+  },
+  {
+    "size": "412x915",
+    "input": "mouse",
+    "viewport": [
+      412,
+      915
+    ],
+    "document": [
+      412,
+      915
+    ],
+    "client": [
+      412,
+      915
+    ],
+    "canvas": [
+      0,
+      0,
+      412,
+      915
+    ],
+    "title": "MURMUR — Echo Signal",
+    "averageFrameMs": 16.67,
+    "estimatedFps": 60
+  },
+  {
+    "size": "768x1024",
+    "input": "mouse",
+    "viewport": [
+      768,
+      1024
+    ],
+    "document": [
+      768,
+      1024
+    ],
+    "client": [
+      768,
+      1024
+    ],
+    "canvas": [
+      0,
+      0,
+      768,
+      1024
+    ],
+    "title": "MURMUR — Echo Signal",
+    "averageFrameMs": 16.66,
+    "estimatedFps": 60
+  },
+  {
+    "size": "1280x720",
+    "input": "mouse",
+    "viewport": [
+      1280,
+      720
+    ],
+    "document": [
+      1280,
+      720
+    ],
+    "client": [
+      1280,
+      720
+    ],
+    "canvas": [
+      0,
+      0,
+      1280,
+      720
+    ],
+    "title": "MURMUR — Echo Signal",
+    "averageFrameMs": 16.68,
+    "estimatedFps": 60
+  }
+]

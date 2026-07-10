@@ -37,6 +37,24 @@ describe('responsive game layout', () => {
     }
   });
 
+  it.each(viewports)('keeps decision hierarchy and both actions in bounds at %d×%d', (width, height) => {
+    const layout = calculateLayout(width, height);
+    const leftActionCenter = layout.centerX - layout.actionButtonOffset;
+    const rightActionCenter = layout.centerX + layout.actionButtonOffset;
+    const halfActionWidth = 68;
+    const halfActionHeight = 24;
+    const actionBottom = layout.actionBounds.y + layout.actionBounds.height;
+
+    expect(layout.decisionStatusY).toBeGreaterThan(layout.actionBounds.y);
+    expect(layout.decisionDetailY).toBeGreaterThan(layout.decisionStatusY);
+    expect(leftActionCenter - halfActionWidth).toBeGreaterThanOrEqual(layout.actionBounds.x);
+    expect(rightActionCenter + halfActionWidth).toBeLessThanOrEqual(
+      layout.actionBounds.x + layout.actionBounds.width
+    );
+    expect(layout.actionButtonsY - halfActionHeight).toBeGreaterThan(layout.decisionDetailY);
+    expect(layout.actionButtonsY + halfActionHeight).toBeLessThanOrEqual(actionBottom);
+  });
+
   it('accounts for safe areas without shrinking touch geometry', () => {
     const layout = calculateLayout(390, 844, { top: 24, right: 8, bottom: 20, left: 8 });
 
@@ -56,4 +74,3 @@ describe('responsive game layout', () => {
     expect(wide.pathNodes.east.y).not.toBe(wide.pathNodes.west.y);
   });
 });
-

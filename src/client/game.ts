@@ -1,32 +1,30 @@
-import { Boot } from './scenes/Boot';
-import { GameOver } from './scenes/GameOver';
-import { Game as MainGame } from './scenes/Game';
-import { MainMenu } from './scenes/MainMenu';
 import * as Phaser from 'phaser';
-import { AUTO, Game } from 'phaser';
-import { Preloader } from './scenes/Preloader';
+import { BootstrapScene } from './game/scenes/BootstrapScene';
+import { getSceneSettings, MurmurScene } from './game/scenes/MurmurScene';
 
-//  Find out more information about the Game Config at:
-//  https://docs.phaser.io/api-documentation/typedef/types-core#gameconfig
 const config: Phaser.Types.Core.GameConfig = {
-  type: AUTO,
+  type: Phaser.AUTO,
   parent: 'game-container',
-  backgroundColor: '#028af8',
+  backgroundColor: '#050b0e',
+  transparent: false,
+  render: {
+    antialias: true,
+    roundPixels: false,
+  },
   scale: {
-    // Keep a fixed game resolution but automatically scale it to fit within the available
-    // web-view / device while maintaining aspect ratio.
     mode: Phaser.Scale.RESIZE,
     autoCenter: Phaser.Scale.CENTER_BOTH,
-    width: 1024,
-    height: 768,
+    width: 360,
+    height: 800,
   },
-  scene: [Boot, Preloader, MainMenu, MainGame, GameOver],
-};
-
-const StartGame = (parent: string) => {
-  return new Game({ ...config, parent });
+  scene: [BootstrapScene, MurmurScene],
+  callbacks: {
+    preBoot: (game) => {
+      game.registry.set('settings', getSceneSettings());
+    },
+  },
 };
 
 document.addEventListener('DOMContentLoaded', () => {
-  StartGame('game-container');
+  new Phaser.Game(config);
 });

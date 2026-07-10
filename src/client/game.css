@@ -1,17 +1,50 @@
-body {
-  margin: 0;
-  padding: 0;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #0f0f0f;
+:root {
+  color-scheme: dark;
+  background: #050b0e;
 }
 
-#app {
-  width: 100%;
-  height: 100vh;
-  overflow: hidden;
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
+html,
+body,
+#app,
 #game-container {
   width: 100%;
   height: 100%;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  overscroll-behavior: none;
+  background: #050b0e;
+}
+
+body {
+  touch-action: manipulation;
+}
+
+canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  outline: none;
+}
+
+noscript {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  max-width: 280px;
+  color: #dffff7;
+  font: 14px/1.5 system-ui, sans-serif;
+  text-align: center;
+  transform: translate(-50%, -50%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  canvas {
+    scroll-behavior: auto;
+  }
 }

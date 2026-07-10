@@ -1,32 +1,47 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <link rel="stylesheet" type="text/css" href="splash.css" />
     <meta charset="UTF-8" />
     <meta
       name="viewport"
-      content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, width=device-width, height=device-height, user-scalable=0"
+      content="initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, user-scalable=no"
     />
-    <title>devvit</title>
+    <meta name="theme-color" content="#071014" />
+    <link rel="stylesheet" href="splash.css" />
+    <title>MURMUR: One Move a Day</title>
   </head>
-  <body class="app">
-    <img class="snoo" src="/snoo.png" alt="Snoo" />
-    <div class="content">
-      <h1 class="title" id="title"></h1>
-      <p class="description">
-        Edit <span class="code">src/client/splash.ts</span> to get started.
-      </p>
-    </div>
-    <div>
-      <button class="start-button" id="start-button">Start</button>
-    </div>
-    <footer class="footer">
-      <div class="docs-link" tabindex="0" id="docs-link">Docs</div>
-      <span class="divider">|</span>
-      <div class="docs-link" tabindex="0" id="playtest-link">r/Devvit</div>
-      <span class="divider">|</span>
-      <div class="docs-link" tabindex="0" id="discord-link">Discord</div>
-    </footer>
-    <script type="module" src="splash.ts" defer></script>
+  <body>
+    <main class="cavern" aria-labelledby="murmur-title">
+      <div class="mist mist-one" aria-hidden="true"></div>
+      <div class="mist mist-two" aria-hidden="true"></div>
+      <div class="spores" aria-hidden="true">
+        <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="opening opening-north" aria-hidden="true"></div>
+      <div class="opening opening-east" aria-hidden="true"></div>
+      <div class="opening opening-south" aria-hidden="true"></div>
+      <div class="opening opening-west" aria-hidden="true"></div>
+
+      <header class="signal-copy">
+        <p class="eyebrow">ONE MOVE · MANY TRUTHS</p>
+        <h1 id="murmur-title">MURMUR</h1>
+        <p>Everyone sees a different truth.</p>
+      </header>
+
+      <div class="creature" aria-label="Murmur, a small bioluminescent creature">
+        <span class="aura" aria-hidden="true"></span>
+        <span class="antenna antenna-left" aria-hidden="true"></span>
+        <span class="antenna antenna-right" aria-hidden="true"></span>
+        <span class="body" aria-hidden="true"><i class="core"></i></span>
+      </div>
+
+      <button id="start-button" class="signal-gate" type="button">
+        <span>ENTER THE SIGNAL</span>
+        <i aria-hidden="true"></i>
+      </button>
+      <p id="status" class="status" role="status" aria-live="polite"></p>
+    </main>
+    <script type="module" src="splash.ts"></script>
   </body>
 </html>
+

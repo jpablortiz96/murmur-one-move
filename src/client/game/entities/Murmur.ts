@@ -3,90 +3,192 @@ import type { Direction } from '../../../shared/types/game';
 
 export class Murmur extends Phaser.GameObjects.Container {
   private readonly reducedMotion: boolean;
+  private readonly form: Phaser.GameObjects.Container;
   private readonly glow: Phaser.GameObjects.Graphics;
   private readonly silhouette: Phaser.GameObjects.Graphics;
   private readonly core: Phaser.GameObjects.Graphics;
+  private readonly antennaLeft: Phaser.GameObjects.Graphics;
+  private readonly antennaRight: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, reducedMotion: boolean) {
     super(scene, 0, 0);
     this.reducedMotion = reducedMotion;
+    this.form = scene.add.container(0, 0);
     this.glow = scene.add.graphics();
     this.silhouette = scene.add.graphics();
     this.core = scene.add.graphics();
+    this.antennaLeft = scene.add.graphics().setPosition(-17, -16);
+    this.antennaRight = scene.add.graphics().setPosition(17, -16);
 
     this.drawCreature();
-    this.add([this.glow, this.silhouette, this.core]);
-    this.setSize(84, 94);
+    this.form.add([
+      this.glow,
+      this.silhouette,
+      this.antennaLeft,
+      this.antennaRight,
+      this.core,
+    ]);
+    this.add(this.form);
+    this.setSize(88, 98).setInteractive({ useHandCursor: true });
+    this.on('pointerdown', () => this.touchReact());
     scene.add.existing(this);
 
     if (!reducedMotion) {
-      scene.tweens.add({
-        targets: this,
-        scaleX: 1.035,
-        scaleY: 0.965,
-        duration: 1800,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
-      scene.tweens.add({
-        targets: this.core,
-        alpha: 0.72,
-        duration: 1150,
-        yoyo: true,
-        repeat: -1,
-        ease: 'Sine.InOut',
-      });
+      this.startIdleMotion();
+      this.startCoreIdle();
+      this.startAntennaIdle();
     }
   }
 
-  react(): void {
+  touchReact(): void {
     if (this.reducedMotion) {
-      this.setScale(1.03, 0.97);
-      this.scene.time.delayedCall(90, () => this.setScale(1));
+      this.form.setScale(1.025, 0.98);
+      this.scene.time.delayedCall(100, () => this.form.setScale(1));
+      return;
+    }
+    this.scene.tweens.add({
+      targets: this,
+      y: this.y - 6,
+      duration: 110,
+      yoyo: true,
+      ease: 'Quad.Out',
+    });
+  }
+
+  echo(pulseNumber: number): void {
+    this.scene.tweens.killTweensOf([this.core, this.antennaLeft, this.antennaRight]);
+    if (this.reducedMotion) {
+      this.core.setScale(1.15).setAlpha(1);
+      this.antennaLeft.setAngle(-5);
+      this.antennaRight.setAngle(5);
+      this.scene.time.delayedCall(130, () => {
+        this.core.setScale(1).setAlpha(0.86);
+        this.antennaLeft.setAngle(0);
+        this.antennaRight.setAngle(0);
+      });
       return;
     }
 
-    this.scene.tweens.killTweensOf(this);
+    this.scene.tweens.add({
+      targets: this.core,
+      scale: 1.22 + pulseNumber * 0.05,
+      alpha: 1,
+      duration: 140,
+      yoyo: true,
+      ease: 'Sine.Out',
+      onComplete: () => this.startCoreIdle(),
+    });
+    this.scene.tweens.add({
+      targets: this.antennaLeft,
+      angle: -7 - pulseNumber,
+      y: this.antennaLeft.y - 3,
+      duration: 130,
+      yoyo: true,
+      ease: 'Sine.Out',
+      onComplete: () => this.startAntennaIdle(),
+    });
+    this.scene.tweens.add({
+      targets: this.antennaRight,
+      angle: 7 + pulseNumber,
+      y: this.antennaRight.y - 3,
+      duration: 130,
+      yoyo: true,
+      ease: 'Sine.Out',
+    });
+  }
+
+  flinchDanger(): void {
+    if (this.reducedMotion) {
+      this.setScale(0.96, 1.04);
+      this.scene.time.delayedCall(120, () => this.setScale(1));
+      return;
+    }
     this.scene.tweens.add({
       targets: this,
-      y: this.y - 7,
-      angle: this.angle + 3,
-      duration: 105,
+      scaleX: 0.94,
+      scaleY: 1.055,
+      x: 3,
+      duration: 120,
       yoyo: true,
       ease: 'Quad.Out',
-      onComplete: () => {
-        this.setAngle(0);
-        this.scene.tweens.add({
-          targets: this,
-          scaleX: 1.035,
-          scaleY: 0.965,
-          duration: 1800,
-          yoyo: true,
-          repeat: -1,
-          ease: 'Sine.InOut',
-        });
-      },
     });
   }
 
   face(direction: Direction | null): void {
     const angleByDirection: Record<Direction, number> = {
-      north: 0,
-      east: 18,
-      south: 0,
-      west: -18,
+      north: -3,
+      east: 14,
+      south: 4,
+      west: -14,
     };
     const targetAngle = direction === null ? 0 : angleByDirection[direction];
     if (this.reducedMotion) {
-      this.setAngle(targetAngle);
+      this.form.setAngle(targetAngle);
       return;
     }
     this.scene.tweens.add({
-      targets: this,
+      targets: this.form,
       angle: targetAngle,
-      duration: 260,
+      duration: 280,
       ease: 'Sine.Out',
+    });
+  }
+
+  calm(): void {
+    if (this.reducedMotion) {
+      this.glow.setAlpha(0.82);
+      return;
+    }
+    this.scene.tweens.add({
+      targets: this.glow,
+      alpha: 0.76,
+      duration: 480,
+      ease: 'Sine.Out',
+    });
+  }
+
+  private startIdleMotion(): void {
+    this.scene.tweens.add({
+      targets: this.form,
+      scaleX: 1.026,
+      scaleY: 0.974,
+      duration: 1760,
+      hold: 160,
+      repeatDelay: 310,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+  }
+
+  private startCoreIdle(): void {
+    this.scene.tweens.add({
+      targets: this.core,
+      alpha: 0.7,
+      duration: 1080,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+  }
+
+  private startAntennaIdle(): void {
+    this.scene.tweens.add({
+      targets: this.antennaLeft,
+      angle: -2.2,
+      duration: 1380,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
+    });
+    this.scene.tweens.add({
+      targets: this.antennaRight,
+      angle: 1.7,
+      duration: 1640,
+      delay: 180,
+      yoyo: true,
+      repeat: -1,
+      ease: 'Sine.InOut',
     });
   }
 
@@ -96,7 +198,6 @@ export class Murmur extends Phaser.GameObjects.Container {
       .fillEllipse(0, 9, 108, 94)
       .fillStyle(0x70f6dd, 0.1)
       .fillEllipse(0, 8, 78, 70);
-
     this.silhouette
       .fillStyle(0x0a3038, 1)
       .fillEllipse(0, 11, 62, 70)
@@ -106,22 +207,25 @@ export class Murmur extends Phaser.GameObjects.Container {
       .fillEllipse(-29, 23, 18, 28)
       .fillEllipse(27, 21, 17, 30)
       .lineStyle(2, 0xa5f5e3, 0.68)
-      .strokeEllipse(0, 11, 62, 70)
+      .strokeEllipse(0, 11, 62, 70);
+    this.antennaLeft
       .lineStyle(2, 0x83ddcf, 0.9)
       .beginPath()
-      .moveTo(-17, -17)
-      .lineTo(-28, -36)
-      .lineTo(-38, -31)
-      .strokePath()
-      .beginPath()
-      .moveTo(17, -17)
-      .lineTo(29, -37)
-      .lineTo(38, -30)
+      .moveTo(0, 0)
+      .lineTo(-11, -20)
+      .lineTo(-21, -15)
       .strokePath()
       .fillStyle(0xc9fff0, 1)
-      .fillCircle(-38, -31, 3)
-      .fillCircle(38, -30, 3);
-
+      .fillCircle(-21, -15, 3);
+    this.antennaRight
+      .lineStyle(2, 0x83ddcf, 0.9)
+      .beginPath()
+      .moveTo(0, 0)
+      .lineTo(12, -21)
+      .lineTo(21, -14)
+      .strokePath()
+      .fillStyle(0xc9fff0, 1)
+      .fillCircle(21, -14, 3);
     this.core
       .fillStyle(0x8effdd, 0.18)
       .fillEllipse(0, 10, 32, 38)

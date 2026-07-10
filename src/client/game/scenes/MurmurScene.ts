@@ -9,7 +9,7 @@ import {
   type LayoutMetrics,
 } from '../config/layout';
 import { CaveField } from '../effects/CaveField';
-import { emitEchoRing } from '../effects/EchoPulse';
+import { emitEchoWave } from '../effects/EchoPulse';
 import { Murmur } from '../entities/Murmur';
 import {
   canEmitPulse,
@@ -21,6 +21,7 @@ import {
   type DecisionState,
 } from '../systems/decisionState';
 import { createWorldButton, type WorldButton } from '../ui/worldButton';
+import { createSignalNode, type SignalNode } from '../ui/signalNode';
 
 type SceneSettings = {
   reducedMotion: boolean;
@@ -43,7 +44,7 @@ export class MurmurScene extends Phaser.Scene {
   private resultText: Phaser.GameObjects.Text;
   private pendingText: Phaser.GameObjects.Text;
   private debugText: Phaser.GameObjects.Text | null = null;
-  private readonly directionButtons: Record<Direction, WorldButton> = {
+  private readonly directionNodes: Record<Direction, SignalNode> = {
     north: undefined!,
     east: undefined!,
     south: undefined!,
@@ -53,6 +54,7 @@ export class MurmurScene extends Phaser.Scene {
   private changeButton: WorldButton;
   private debugResetButton: WorldButton | null = null;
   private debugPulseButton: WorldButton | null = null;
+  private decisionFeedbackTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('Murmur');
@@ -73,7 +75,7 @@ export class MurmurScene extends Phaser.Scene {
     this.chapterText = this.add
       .text(0, 0, `DAY ${this.bootstrap.day}  ·  ${this.bootstrap.chapter.toUpperCase()}`, {
         fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-        fontSize: '10px',
+        fontSize: '11px',
         color: '#699e99',
         letterSpacing: 1.5,
       })
@@ -83,24 +85,28 @@ export class MurmurScene extends Phaser.Scene {
         fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
         fontSize: '20px',
         color: '#bfffee',
-        letterSpacing: 5,
+        letterSpacing: 4,
       })
       .setOrigin(0.5)
       .setAlpha(this.settings.reducedMotion ? 1 : 0);
     this.instructionText = this.add.text(0, 0, '', this.bodyStyle()).setOrigin(0.5);
     this.pulseText = this.add.text(0, 0, '', this.microStyle()).setOrigin(0.5);
     this.resultText = this.add
-      .text(0, 0, 'Signal recorded', {
+      .text(0, 0, '', {
         ...this.bodyStyle(),
         color: '#ddfff6',
         fontStyle: 'bold',
       })
       .setOrigin(0.5);
     this.pendingText = this.add
-      .text(0, 0, 'The community has not moved yet.', this.microStyle())
+      .text(0, 0, 'The community has not moved yet.', {
+        ...this.bodyStyle(),
+        fontSize: '12px',
+        color: '#82b8b0',
+      })
       .setOrigin(0.5);
 
-    this.createDirectionButtons();
+    this.createDirectionNodes();
     this.replayButton = createWorldButton(this, 'REPLAY SIGNAL', 136, () => this.replay());
     this.changeButton = createWorldButton(this, 'CHANGE CHOICE', 136, () => this.change());
 
@@ -133,19 +139,17 @@ export class MurmurScene extends Phaser.Scene {
     }
   }
 
-  override update(time: number): void {
-    this.cave.update(time);
-    this.updateDebugText();
-  }
-
   private tryPulse(force: boolean): void {
     if (!force && !canEmitPulse(this.state)) return;
     if (!force) this.state = emitPulse(this.state);
 
-    const radius = Math.min(Math.max(this.scale.width, this.scale.height) * 0.72, 570);
-    emitEchoRing(this, this.murmur.x, this.murmur.y, radius, this.settings.reducedMotion);
-    this.cave.flashEcho();
-    this.murmur.react();
+    const pulseNumber = force
+      ? (this.state.pulsesUsed % this.state.maxPulses) + 1
+      : this.state.pulsesUsed;
+    emitEchoWave(this, this.metrics, pulseNumber, this.settings.reducedMotion);
+    this.cave.revealPulse(pulseNumber);
+    this.murmur.echo(pulseNumber);
+    if (pulseNumber === 3) this.murmur.flinchDanger();
     this.renderState();
   }
 
@@ -153,11 +157,15 @@ export class MurmurScene extends Phaser.Scene {
     if (this.state.phase !== 'observing' || this.state.pulsesUsed < 1) return;
     this.state = selectDirection(this.state, direction);
     this.cave.setSelection(direction);
+    this.directionNodes[direction].resonate();
     this.murmur.face(direction);
+    this.murmur.calm();
     this.renderState();
+    this.showDecisionFeedback(direction);
   }
 
   private change(): void {
+    this.clearDecisionFeedback();
     this.state = changeChoice(this.state);
     this.cave.setSelection(null);
     this.murmur.face(null);
@@ -165,14 +173,17 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private replay(): void {
+    this.clearDecisionFeedback();
     this.state = replaySignal();
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.renderState();
-    this.tryPulse(false);
+    if (this.settings.reducedMotion) this.tryPulse(false);
+    else this.time.delayedCall(180, () => this.tryPulse(false));
   }
 
   private resetDemo(): void {
+    this.clearDecisionFeedback();
     this.state = createDecisionState();
     this.cave.setSelection(null);
     this.murmur.face(null);
@@ -186,26 +197,92 @@ export class MurmurScene extends Phaser.Scene {
 
     this.instructionText.setText(
       decided
-        ? `◆ ${this.state.selection?.toUpperCase()} PATH HELD`
+        ? ''
         : atLimit
-          ? 'The cavern is quiet. Choose what you trust.'
-          : 'Tap the cavern to listen.'
+          ? 'Choose what you trust.'
+          : hasPulse
+            ? 'Echo again, or hold a path.'
+            : 'Touch the dark to listen.'
     );
     this.pulseText.setText(
-      `${this.state.pulsesUsed} / ${this.state.maxPulses} ECHO PULSES${atLimit ? ' · SPENT' : ''}`
+      `ECHO ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  SPENT' : ''}`
     );
+    this.instructionText.setVisible(!decided);
+    this.pulseText.setVisible(!decided);
 
     for (const direction of AVAILABLE_DIRECTIONS) {
-      const button = this.directionButtons[direction];
-      button.container.setVisible(hasPulse);
-      button.setSelected(this.state.selection === direction);
-      button.setEnabled(!decided);
+      const node = this.directionNodes[direction];
+      const selected = this.state.selection === direction;
+      node.container.setVisible(hasPulse);
+      node.setSelected(selected);
+      node.setDimmed(decided && !selected);
+      node.setEnabled(!decided);
     }
 
-    this.resultText.setVisible(decided);
-    this.pendingText.setVisible(decided);
-    this.replayButton.container.setVisible(decided);
-    this.changeButton.container.setVisible(decided);
+    if (!decided) {
+      this.resultText.setVisible(false);
+      this.pendingText.setVisible(false);
+      this.replayButton.container.setVisible(false);
+      this.changeButton.container.setVisible(false);
+    } else if (this.decisionFeedbackTimer === null) {
+      this.showPersistentDecision();
+    }
+    this.updateDebugText();
+  }
+
+  private showDecisionFeedback(direction: Direction): void {
+    this.clearDecisionFeedback();
+    this.resultText.setText('Signal recorded').setVisible(true).setAlpha(1);
+    this.pendingText.setVisible(false);
+    this.replayButton.container.setVisible(false);
+    this.changeButton.container.setVisible(false);
+    this.decisionFeedbackTimer = this.time.delayedCall(900, () => {
+      this.decisionFeedbackTimer = null;
+      if (this.state.selection === direction) this.showPersistentDecision();
+    });
+  }
+
+  private showPersistentDecision(): void {
+    if (this.state.selection === null) return;
+    this.resultText
+      .setText(`${this.state.selection.toUpperCase()} SIGNAL HELD`)
+      .setVisible(true);
+    this.pendingText.setVisible(true);
+    this.replayButton.container.setVisible(true);
+    this.changeButton.container.setVisible(true);
+
+    if (this.settings.reducedMotion) {
+      this.resultText.setAlpha(1);
+      this.pendingText.setAlpha(1);
+      this.replayButton.container.setAlpha(1);
+      this.changeButton.container.setAlpha(1);
+      return;
+    }
+
+    const targets = [
+      this.resultText,
+      this.pendingText,
+      this.replayButton.container,
+      this.changeButton.container,
+    ];
+    targets.forEach((target) => target.setAlpha(0));
+    this.tweens.add({
+      targets,
+      alpha: 1,
+      duration: 280,
+      ease: 'Sine.Out',
+    });
+  }
+
+  private clearDecisionFeedback(): void {
+    this.decisionFeedbackTimer?.remove(false);
+    this.decisionFeedbackTimer = null;
+    this.tweens.killTweensOf([
+      this.resultText,
+      this.pendingText,
+      this.replayButton.container,
+      this.changeButton.container,
+    ]);
   }
 
   private layout(): void {
@@ -214,7 +291,7 @@ export class MurmurScene extends Phaser.Scene {
     const { centerX, centerY, pathNodes } = this.metrics;
 
     this.cameras.resize(width, height);
-    this.cave.layout(width, height);
+    this.cave.layout(this.metrics);
     this.murmur.setPosition(centerX, centerY);
     this.titleText.setPosition(centerX, this.metrics.titleY);
     this.chapterText.setPosition(centerX, this.metrics.chapterY);
@@ -224,10 +301,10 @@ export class MurmurScene extends Phaser.Scene {
     this.resultText.setPosition(centerX, this.metrics.decisionStatusY);
     this.pendingText.setPosition(centerX, this.metrics.decisionDetailY);
 
-    this.directionButtons.north.container.setPosition(pathNodes.north.x, pathNodes.north.y);
-    this.directionButtons.east.container.setPosition(pathNodes.east.x, pathNodes.east.y);
-    this.directionButtons.south.container.setPosition(pathNodes.south.x, pathNodes.south.y);
-    this.directionButtons.west.container.setPosition(pathNodes.west.x, pathNodes.west.y);
+    this.directionNodes.north.container.setPosition(pathNodes.north.x, pathNodes.north.y);
+    this.directionNodes.east.container.setPosition(pathNodes.east.x, pathNodes.east.y);
+    this.directionNodes.south.container.setPosition(pathNodes.south.x, pathNodes.south.y);
+    this.directionNodes.west.container.setPosition(pathNodes.west.x, pathNodes.west.y);
     this.replayButton.container.setPosition(
       centerX - this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
@@ -237,17 +314,37 @@ export class MurmurScene extends Phaser.Scene {
       this.metrics.actionButtonsY
     );
 
-    this.debugText?.setPosition(width - 7, 7);
-    this.debugResetButton?.container.setPosition(width - 55, 104);
-    this.debugPulseButton?.container.setPosition(width - 55, 156);
+    this.debugText?.setPosition(6, 6);
+    this.debugResetButton?.container.setPosition(width - 52, 31);
+    this.debugPulseButton?.container.setPosition(width - 52, 82);
     this.updateDebugText();
   }
 
-  private createDirectionButtons(): void {
-    this.directionButtons.north = createWorldButton(this, 'NORTH', 78, () => this.choose('north'));
-    this.directionButtons.east = createWorldButton(this, 'EAST', 78, () => this.choose('east'));
-    this.directionButtons.south = createWorldButton(this, 'SOUTH', 78, () => this.choose('south'));
-    this.directionButtons.west = createWorldButton(this, 'WEST', 78, () => this.choose('west'));
+  private createDirectionNodes(): void {
+    this.directionNodes.north = createSignalNode(
+      this,
+      'north',
+      this.settings.reducedMotion,
+      () => this.choose('north')
+    );
+    this.directionNodes.east = createSignalNode(
+      this,
+      'east',
+      this.settings.reducedMotion,
+      () => this.choose('east')
+    );
+    this.directionNodes.south = createSignalNode(
+      this,
+      'south',
+      this.settings.reducedMotion,
+      () => this.choose('south')
+    );
+    this.directionNodes.west = createSignalNode(
+      this,
+      'west',
+      this.settings.reducedMotion,
+      () => this.choose('west')
+    );
   }
 
   private createDebugLayer(): void {
@@ -260,7 +357,7 @@ export class MurmurScene extends Phaser.Scene {
         padding: { x: 6, y: 5 },
         align: 'right',
       })
-      .setOrigin(1, 0)
+      .setOrigin(0, 0)
       .setDepth(100);
     this.debugResetButton = createWorldButton(this, 'RESET', 96, () => this.resetDemo());
     this.debugPulseButton = createWorldButton(this, 'PULSE', 96, () => this.tryPulse(true));
@@ -281,7 +378,7 @@ export class MurmurScene extends Phaser.Scene {
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
       fontSize: '23px',
       color: '#eafff9',
-      letterSpacing: 7,
+      letterSpacing: 5.5,
     };
   }
 
@@ -298,7 +395,7 @@ export class MurmurScene extends Phaser.Scene {
   private microStyle(): Phaser.Types.GameObjects.Text.TextStyle {
     return {
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
-      fontSize: '10px',
+      fontSize: '11px',
       color: '#719f9a',
       letterSpacing: 1,
       align: 'center',

@@ -1,52 +1,41 @@
-You are writing a Devvit web application that will be executed on Reddit.com.
+# MURMUR engineering guardrails
 
-## Tech Stack
+## Product truth
 
-- **Frontend**: Phaser, Vite
-- **Backend**: Node.js v22 serverless environment (Devvit), Hono, TRPC
-- **Communication**: tRPC v11 for end-to-end type safety
+**MURMUR: One Move a Day** is a social, asynchronous Reddit game built around one thesis: **Everyone sees a different truth. The subreddit gets one move.** The intended daily loop is: Calibrate → Observe → Decide → Discuss → Return for the outcome.
 
-## Layout & Architecture
+The product is mobile-first. Design and validate at 360 × 800 before treating desktop as complete. Devvit must remain structural: the game runs in a Reddit Interactive Post, the Phaser client calls a Devvit Web server, and later community state will use installation-scoped Reddit capabilities.
 
-- `/src/server`: **Backend Code**. This runs in a secure, serverless environment.
-  - `trpc.ts`: Defines the API router and procedures.
-  - `index.ts`: Main server entry point (Hono app).
-  - Access `redis`, `reddit`, and `context` here via `@devvit/web/server`.
-- `/src/client`: **Frontend Code**. This is executed inside of an iFrame on reddit.com
-  - To add an entrypoint, create a HTML file and add to the mapping inside of `devvit.json`
-  - Entrypoints:
-    - `game.html`: The main React entry point (Expanded View).
-    - `splash.html`: The initial React entry point (Inline View). This will be shown in the reddit.com feed. Please keep it fast and keep heavy dependencies inside of `game.html`
-- `/src/shared`: **Shared Code**. Code to share between the client and server
+## Non-negotiable design constraints
 
-## Frontend
+- Preserve the bioluminescent alien-cavern identity and Murmur's original, organic silhouette.
+- Do not introduce dashboard, card-grid, sidebar, table, generic neon-arcade, or SaaS UI.
+- Use Phaser for game-world visuals and interactions; do not recreate them with React.
+- Do not add out-of-scope features without explicit authorization. In particular: no Redis, scheduler, daily resolution, comments, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or full Heat/Wind gameplay in this phase.
+- Do not present local demonstrations as persistence, privacy, or live community behavior.
+- Use only original programmatic visuals or assets with documented rights.
 
-### Rules
+## Working rules
 
-- Instead of `window.location` or `window.assign`, use `navigateTo` from `@devvit/web/client`
+1. Inspect the repository, relevant instructions, installed types, and current configuration before modifying code.
+2. Treat the installed Devvit Web packages and official current documentation as the API source of truth; never introduce legacy Blocks or `@devvit/public-api` code.
+3. Keep TypeScript strict. Prefer named exports and type aliases. Never silence a type error with an unsafe cast.
+4. Preserve the client/server/shared split and keep every client-facing server route under `/api`.
+5. Support pointer and touch, ≥44 × 44 targets, reduced motion, and layouts without internal scroll.
+6. Do not declare success without running the relevant validation commands and reporting their real output.
+7. Update README, architecture, decisions, testing, limitations, and evidence after material product or engineering changes.
 
-### Limitations
+## Validation commands
 
-- `window.alert`: Use `showToast` or `showForm` from `@devvit/web/client`
-- File downloads: Use clipboard API with `showToast` to confirm
-- Geolocation, camera, microphone, and notifications web APIs: No alternatives
-- Inline script tags inside of `html` files: Use a script tag and separate js/ts file
+Run from the repository root:
 
-## Commands
+```powershell
+npm install
+npm run type-check
+npm run lint
+npm test
+npm run build
+```
 
-- `npm run type-check`: Check typescript types
-- `npm run lint`: Check the linter
-- `npm run test -- my-file-name`: Run tests isolated to a file
+For real Reddit verification, authenticate with `npm run login` when necessary and use `npm run dev`. Do not run `npm run launch` or request App Review in this phase.
 
-## Code Style
-
-- Prefer type aliases over interfaces when writing typescript
-- Prefer named exports over default exports
-- Never cast typescript types
-
-## Global Rules
-
-- You may find code that references blocks or `@devvit/public-api` while building a feature. Do NOT use this code as this project is configured to use Devvit web only.
-- Whenever you add an endpoint for a new menu item action, ensure that you've added the corresponding mapping to `devvit.json` so that it is properly registered
-
-Docs: https://developers.reddit.com/docs/llms.txt.

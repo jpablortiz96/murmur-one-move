@@ -78,11 +78,15 @@ src/
 
 Supporting product and engineering documents live in `docs/`; concrete verification artifacts and instructions live in `evidence/`.
 
+The inspected five-viewport matrix, before/after comparison, and performance notes are in [docs/VISUAL_AUDIT.md](docs/VISUAL_AUDIT.md).
+
 ## Implemented scope
 
 - Original programmatic cave, fog, particles, Murmur creature, Echo wave, wall trace, hollow-route clue, and abstract danger clue
 - Mouse/touch interaction, maximum of three pulses, four directional choices, change/replay, and pending-state copy
-- Responsive layout and reduced-motion behavior
+- Centralized Header/World/Action layout with safe-area, density, and wide-orientation rules
+- Cave-integrated resonant direction nodes and distinct visual responses for Echo pulses 1–3
+- Reduced-motion equivalents for camera, ambience, creature, node, and Echo motion
 - Opt-in debug overlay through `?debug=1`
 - Real `GET /api/health` and typed `GET /api/bootstrap`
 - Loading, malformed-response, error, and retry states

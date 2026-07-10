@@ -24,6 +24,9 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 5. Support pointer and touch, ≥44 × 44 targets, reduced motion, and layouts without internal scroll.
 6. Do not declare success without running the relevant validation commands and reporting their real output.
 7. Update README, architecture, decisions, testing, limitations, and evidence after material product or engineering changes.
+8. Compute playable-scene positions through `calculateLayout`; do not scatter viewport constants across scenes, effects, or entities.
+9. Preserve the Header/World/Action zoning and keep South at least one touch-target plus readable clearance above contextual text.
+10. New visual effects must be bounded, destroy temporary objects, and retain a reduced-motion equivalent.
 
 ## Validation commands
 
@@ -38,4 +41,3 @@ npm run build
 ```
 
 For real Reddit verification, authenticate with `npm run login` when necessary and use `npm run dev`. Do not run `npm run launch` or request App Review in this phase.
-

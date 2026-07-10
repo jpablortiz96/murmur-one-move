@@ -12,6 +12,8 @@ npm run build
 
 The unit suite covers bootstrap validation, direction normalization, decision selection/change/reset, and feature-flag validation. The build verifies both configured HTML entrypoints and the CommonJS Devvit server bundle.
 
+`tests/layout.test.ts` deterministically covers all five required viewports, zone adjacency, safe-area offsets, target bounds, South/instruction clearance, and wide-layout divergence.
+
 ## Manual gameplay script
 
 1. Open the generated Reddit playtest URL and locate the MURMUR Interactive Post.
@@ -37,3 +39,12 @@ Validate 360 × 800, 390 × 844, 412 × 915, 768 × 1024, and 1280 × 720. For e
 
 Concrete run results belong in `evidence/README.md`; do not rewrite planned checks as completed evidence.
 
+## Automated visual harness
+
+```powershell
+npm run dev:local:client
+```
+
+The local Vite-only configuration mounts the real Hono health/bootstrap router without Devvit context. Chrome CDP can then set exact device metrics, dispatch touch/mouse input, and capture PNGs. This is for client layout QA only; final embedding still requires `npm run dev` and the Reddit playtest URL.
+
+The completed 2026-07-10 run captured intro, Echo, active pulse, selected, and changed states at 360 × 800, 390 × 844, 412 × 915, 768 × 1024, and 1280 × 720. See [VISUAL_AUDIT.md](VISUAL_AUDIT.md).

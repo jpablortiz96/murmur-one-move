@@ -13,3 +13,10 @@ Expected entries for this phase:
 
 Screenshots may be added only when they contain no credentials, private account data, or tokens. Generated bundles and local logs are not evidence artifacts and must remain untracked.
 
+## 2026-07-10 visual pass
+
+- `visual/before/` preserves the pre-polish baseline.
+- `visual/{width}x{height}-{intro|echo|pulse|selected|changed}.png` contains the inspected five-state matrix.
+- `visual/360x800-reduced-motion.png` records reduced-motion emulation with the opt-in diagnostic overlay.
+- `visual/matrix-results.json` records exact viewport/document/client/canvas dimensions, input mode, and sampled frame pacing.
+- The interpretation and per-viewport verdicts are in `docs/VISUAL_AUDIT.md`.

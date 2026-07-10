@@ -35,3 +35,23 @@
 - **Why:** Browser policies, accessibility, and the brief all favor a non-blocking visual baseline.
 - **Consequence:** Sound design remains future work and the game never stalls behind an audio permission.
 
+## 2026-07-10 — Centralize responsive composition into three invisible zones
+
+- **Decision:** Derive Header, World, Action, path nodes, text baselines, and action positions from a pure `calculateLayout` function using viewport, aspect ratio, safe insets, orientation, and density.
+- **Rejected:** Independent percentages inside the scene and cave; visible panels; one stretched mobile composition for landscape.
+- **Why:** The old values allowed South, instruction, pulse count, and decision feedback to compete and could not be tested without rendering.
+- **Consequence:** Five required viewports now have deterministic geometry tests; all future placement changes must flow through the layout contract.
+
+## 2026-07-10 — Make Echo informational by pulse rather than louder by repetition
+
+- **Decision:** Pulse 1 reveals structure, pulse 2 reinforces the eastern hollow, and pulse 3 reveals the western contradiction through separate bounded layers.
+- **Rejected:** A larger full-screen ring on every tap; shaders; more particles.
+- **Why:** Distinct information makes three taps meaningful while a segmented environmental wave avoids the appearance of a circle pasted over the UI.
+- **Consequence:** The demonstration remains local and shared by all players; it still does not claim real private perception.
+
+## 2026-07-10 — Reserve persistent decision UI for one hierarchy
+
+- **Decision:** Show `Signal recorded` for 900 ms, then retain only `{DIRECTION} SIGNAL HELD`, the pending-community sentence, and Replay/Change actions.
+- **Rejected:** Simultaneous path-held instruction, signal-recorded headline, pending copy, pulse counter, and actions.
+- **Why:** A single persistent state is faster to parse on 360 px screens.
+- **Consequence:** Direction controls dim but stay spatially present, while World instruction and pulse count leave the stage during the decision state.

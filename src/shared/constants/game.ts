@@ -2,6 +2,7 @@ export const APP_VERSION = '0.1.0';
 export const GAME_TITLE = 'MURMUR';
 export const GAME_TAGLINE = 'Everyone sees a different truth.';
 export const MAX_ECHO_PULSES = 3;
+export const MAX_SENSOR_ACTIVATIONS = 3;
 export const DEBUG_DEFAULT = false;
 
 export const AVAILABLE_DIRECTIONS = [
@@ -27,3 +28,7 @@ export const ROUND_SCHEMA_VERSION = 1;
 export const ROUND_RESOLUTION_VERSION = 1;
 export const CURRENT_CHAPTER_NUMBER = 1;
 export const CURRENT_DAY = 1;
+export const SESSION_SCHEMA_VERSION = 1;
+export const PERCEPTION_SCHEMA_VERSION = 1;
+export const SENSOR_ASSIGNMENT_VERSION = 1;
+export const WORLD_GENERATOR_VERSION = 1;

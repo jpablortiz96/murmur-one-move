@@ -53,6 +53,16 @@ describe('responsive game layout', () => {
     );
     expect(layout.actionButtonsY - halfActionHeight).toBeGreaterThan(layout.decisionDetailY);
     expect(layout.actionButtonsY + halfActionHeight).toBeLessThanOrEqual(actionBottom);
+    expect(layout.moderatorButtonY - halfActionHeight).toBeGreaterThan(
+      layout.isWide ? layout.actionBounds.y : layout.decisionDetailY
+    );
+    expect(layout.moderatorButtonY + halfActionHeight).toBeLessThanOrEqual(actionBottom);
+    expect(layout.moderatorButtonX - halfActionWidth).toBeGreaterThanOrEqual(
+      layout.actionBounds.x
+    );
+    expect(layout.moderatorButtonX + halfActionWidth).toBeLessThanOrEqual(
+      layout.actionBounds.x + layout.actionBounds.width
+    );
   });
 
   it('accounts for safe areas without shrinking touch geometry', () => {

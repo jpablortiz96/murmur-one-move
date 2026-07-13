@@ -21,6 +21,18 @@ const localApiPlugin: Plugin = {
         }
 
         const routeUrl = request.url.slice('/api'.length);
+        if (routeUrl.startsWith('/round')) {
+          response.statusCode = 503;
+          response.setHeader('Content-Type', 'application/json');
+          response.end(
+            JSON.stringify({
+              status: 'error',
+              code: 'round-unavailable',
+              message: 'Community Redis is available only inside a Reddit playtest',
+            })
+          );
+          return;
+        }
         const apiResponse = await api.fetch(
           new Request(`http://127.0.0.1:4173${routeUrl}`, {
             method: request.method ?? 'GET',

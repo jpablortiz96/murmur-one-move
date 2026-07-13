@@ -60,6 +60,7 @@ export class MurmurScene extends Phaser.Scene {
   };
   private replayButton: WorldButton;
   private changeButton: WorldButton;
+  private resolveButton: WorldButton;
   private debugResetButton: WorldButton | null = null;
   private debugPulseButton: WorldButton | null = null;
   private decisionFeedbackTimer: Phaser.Time.TimerEvent | null = null;
@@ -127,6 +128,10 @@ export class MurmurScene extends Phaser.Scene {
       this.handlePrimaryAction()
     );
     this.changeButton = createWorldButton(this, 'CHANGE CHOICE', 136, () => this.change());
+    this.resolveButton = createWorldButton(this, 'MOD · RESOLVE', 136, () =>
+      this.handleResolveAction()
+    );
+    this.resolveButton.container.setVisible(false);
 
     if (this.settings.debug) this.createDebugLayer();
 
@@ -180,6 +185,7 @@ export class MurmurScene extends Phaser.Scene {
     this.murmur.face(direction);
     this.murmur.calm();
     this.voteRequestId = null;
+    this.disarmResolution();
     this.renderState();
     this.showDecisionFeedback(direction);
   }
@@ -190,6 +196,7 @@ export class MurmurScene extends Phaser.Scene {
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.voteRequestId = null;
+    this.disarmResolution();
     this.renderState();
   }
 
@@ -199,6 +206,7 @@ export class MurmurScene extends Phaser.Scene {
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.voteRequestId = null;
+    this.disarmResolution();
     this.renderState();
     if (this.settings.reducedMotion) this.tryPulse(false);
     else this.time.delayedCall(180, () => this.tryPulse(false));
@@ -210,6 +218,7 @@ export class MurmurScene extends Phaser.Scene {
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.voteRequestId = null;
+    this.disarmResolution();
     this.renderState();
   }
 
@@ -249,6 +258,7 @@ export class MurmurScene extends Phaser.Scene {
       this.pendingText.setVisible(false);
       this.replayButton.container.setVisible(false);
       this.changeButton.container.setVisible(false);
+      this.resolveButton.container.setVisible(false);
     } else if (this.decisionFeedbackTimer === null) {
       this.showPersistentDecision();
     }
@@ -262,6 +272,7 @@ export class MurmurScene extends Phaser.Scene {
     this.pendingText.setVisible(false);
     this.replayButton.container.setVisible(false);
     this.changeButton.container.setVisible(false);
+    this.resolveButton.container.setVisible(false);
     this.decisionFeedbackTimer = this.time.delayedCall(900, () => {
       this.decisionFeedbackTimer = null;
       if (this.state.selection === direction) this.showPersistentDecision();
@@ -300,26 +311,30 @@ export class MurmurScene extends Phaser.Scene {
       .setVisible(true);
     this.replayButton.container.setVisible(true);
     this.changeButton.container.setVisible(true);
+    this.resolveButton.container.setVisible(
+      Boolean(this.roundState?.viewer.canResolve && isHeld)
+    );
     this.replayButton.setEnabled(!this.voteSubmitting);
     this.changeButton.setEnabled(!this.voteSubmitting);
     this.replayButton.setLabel(
       this.roundError
         ? 'RETRY COMMUNITY'
-        : this.roundState?.viewer.canResolve && isHeld
-          ? this.resolutionArmed
-            ? 'CONFIRM RESOLVE'
-            : 'RESOLVE DAY'
-          : isHeld
-            ? 'REPLAY SIGNAL'
-            : 'CONFIRM SIGNAL'
+        : isHeld
+          ? 'REPLAY SIGNAL'
+          : 'CONFIRM SIGNAL'
     );
     this.changeButton.setLabel(isHeld ? 'CHANGE VOTE' : 'CHANGE CHOICE');
+    this.resolveButton.setLabel(
+      this.resolutionArmed ? 'CONFIRM RESOLVE' : 'MOD · RESOLVE'
+    );
+    this.resolveButton.setEnabled(!this.voteSubmitting);
 
     if (this.settings.reducedMotion) {
       this.resultText.setAlpha(1);
       this.pendingText.setAlpha(1);
       this.replayButton.container.setAlpha(1);
       this.changeButton.container.setAlpha(1);
+      this.resolveButton.container.setAlpha(1);
       return;
     }
 
@@ -328,6 +343,7 @@ export class MurmurScene extends Phaser.Scene {
       this.pendingText,
       this.replayButton.container,
       this.changeButton.container,
+      this.resolveButton.container,
     ];
     targets.forEach((target) => target.setAlpha(0));
     this.tweens.add({
@@ -346,7 +362,14 @@ export class MurmurScene extends Phaser.Scene {
       this.pendingText,
       this.replayButton.container,
       this.changeButton.container,
+      this.resolveButton.container,
     ]);
+  }
+
+  private disarmResolution(): void {
+    this.resolutionArmed = false;
+    this.resolutionArmTimer?.remove(false);
+    this.resolutionArmTimer = null;
   }
 
   private async loadRoundState(): Promise<void> {
@@ -437,22 +460,26 @@ export class MurmurScene extends Phaser.Scene {
     const held =
       this.state.selection !== null &&
       this.roundState?.viewer.activeVote?.direction === this.state.selection;
-    if (held && this.roundState?.viewer.canResolve) {
-      if (!this.resolutionArmed) {
-        this.resolutionArmed = true;
-        this.resolutionArmTimer?.remove(false);
-        this.resolutionArmTimer = this.time.delayedCall(3500, () => {
-          this.resolutionArmed = false;
-          this.renderState();
-        });
-        this.renderState();
-      } else {
-        void this.resolveRound();
-      }
-      return;
-    }
     if (held) this.replay();
     else void this.confirmVote();
+  }
+
+  private handleResolveAction(): void {
+    const held =
+      this.state.selection !== null &&
+      this.roundState?.viewer.activeVote?.direction === this.state.selection;
+    if (!held || !this.roundState?.viewer.canResolve || this.voteSubmitting) return;
+    if (!this.resolutionArmed) {
+      this.resolutionArmed = true;
+      this.resolutionArmTimer?.remove(false);
+      this.resolutionArmTimer = this.time.delayedCall(3500, () => {
+        this.resolutionArmed = false;
+        this.renderState();
+      });
+      this.renderState();
+      return;
+    }
+    void this.resolveRound();
   }
 
   private async resolveRound(): Promise<void> {
@@ -525,6 +552,7 @@ export class MurmurScene extends Phaser.Scene {
     this.replayButton.setEnabled(true);
     this.replayButton.container.setVisible(true).setAlpha(1);
     this.changeButton.container.setVisible(false);
+    this.resolveButton.container.setVisible(false);
     this.positionActionButtons();
   }
 
@@ -536,7 +564,7 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private positionActionButtons(): void {
-    if (!this.metrics || !this.replayButton || !this.changeButton) return;
+    if (!this.metrics || !this.replayButton || !this.changeButton || !this.resolveButton) return;
     const singleAction = this.roundState?.status === 'resolved';
     this.replayButton.container.setPosition(
       singleAction ? this.metrics.centerX : this.metrics.centerX - this.metrics.actionButtonOffset,
@@ -545,6 +573,10 @@ export class MurmurScene extends Phaser.Scene {
     this.changeButton.container.setPosition(
       this.metrics.centerX + this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
+    );
+    this.resolveButton.container.setPosition(
+      this.metrics.moderatorButtonX,
+      this.metrics.moderatorButtonY
     );
   }
 
@@ -575,6 +607,10 @@ export class MurmurScene extends Phaser.Scene {
     this.changeButton.container.setPosition(
       centerX + this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
+    );
+    this.resolveButton.container.setPosition(
+      this.metrics.moderatorButtonX,
+      this.metrics.moderatorButtonY
     );
 
     if (this.outcomePlayed && this.roundState?.resolution) {

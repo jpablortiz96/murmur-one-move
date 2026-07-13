@@ -44,6 +44,8 @@ export type LayoutMetrics = {
   decisionStatusY: number;
   decisionDetailY: number;
   actionButtonsY: number;
+  moderatorButtonY: number;
+  moderatorButtonX: number;
   actionButtonOffset: number;
   pathNodes: Record<Direction, LayoutPoint>;
 };
@@ -135,6 +137,12 @@ export const calculateLayout = (
     decisionStatusY: actionBounds.y + (isWide ? 20 : 24),
     decisionDetailY: actionBounds.y + (isWide ? 46 : 53),
     actionButtonsY: actionBounds.y + actionBounds.height - 47,
+    moderatorButtonY: isWide
+      ? actionBounds.y + actionBounds.height - 47
+      : actionBounds.y + actionBounds.height - 94,
+    moderatorButtonX: isWide
+      ? actionBounds.x + actionBounds.width - 92
+      : centerX,
     actionButtonOffset: isCompact ? 72 : 76,
     pathNodes: {
       north: {
@@ -171,4 +179,3 @@ export const readSafeAreaInsets = (): Insets => {
     left: readCssPixels(styles, '--safe-area-left'),
   };
 };
-

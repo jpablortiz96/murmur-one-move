@@ -3,6 +3,12 @@ import type { PlayerPerception } from '../../../shared/contracts/session';
 import type { Sensor } from '../../../shared/types/game';
 import type { LayoutMetrics } from '../config/layout';
 import type { Murmur } from '../entities/Murmur';
+import {
+  activateSensorProgress,
+  createSensorProgressState,
+  resetSensorProgress,
+  type SensorProgressState,
+} from '../systems/sensorProgress';
 
 export type SensorInput = {
   x: number;
@@ -43,7 +49,7 @@ export interface SensorExperience {
 export abstract class BaseSensorExperience implements SensorExperience {
   abstract readonly id: Sensor;
   protected readonly context: SensorExperienceContext;
-  protected used = 0;
+  private progressState: SensorProgressState = createSensorProgressState();
   protected accessibleSignal = '';
 
   constructor(context: SensorExperienceContext) {
@@ -65,14 +71,18 @@ export abstract class BaseSensorExperience implements SensorExperience {
   }
 
   reset(): void {
-    this.used = 0;
+    this.progressState = resetSensorProgress();
     this.accessibleSignal = '';
     this.clearVisuals();
     this.context.onProgress(this.getProgress(), this.accessibleSignal);
   }
 
   getProgress(): SensorProgress {
-    return { used: this.used, maximum: 3, complete: this.used >= 3 };
+    return {
+      used: this.progressState.used,
+      maximum: this.progressState.maximum,
+      complete: this.progressState.used >= this.progressState.maximum,
+    };
   }
 
   getAccessibleSignal(): string {
@@ -80,10 +90,11 @@ export abstract class BaseSensorExperience implements SensorExperience {
   }
 
   protected completeActivation(input: SensorInput): void {
-    if (this.used >= 3) return;
-    this.used += 1;
-    this.accessibleSignal = this.context.perception.activationDescriptions[this.used - 1] ?? '';
-    this.drawActivation(this.used, input);
+    const next = activateSensorProgress(this.progressState);
+    if (next === this.progressState) return;
+    this.progressState = next;
+    this.accessibleSignal = this.context.perception.activationDescriptions[next.used - 1] ?? '';
+    this.drawActivation(next.used, input);
     this.context.onProgress(this.getProgress(), this.accessibleSignal);
   }
 

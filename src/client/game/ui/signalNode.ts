@@ -111,7 +111,11 @@ export const createSignalNode = (
     draw();
   });
   container.on('pointerup', () => {
-    if (!enabled) return;
+    if (!enabled || !pressed) {
+      pressed = false;
+      draw();
+      return;
+    }
     pressed = false;
     draw();
     onActivate();
@@ -136,4 +140,3 @@ export const createSignalNode = (
     },
   };
 };
-

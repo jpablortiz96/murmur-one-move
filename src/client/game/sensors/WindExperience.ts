@@ -8,6 +8,7 @@ export class WindExperience extends BaseSensorExperience {
   private readonly layer: Phaser.GameObjects.Graphics;
   private start: { x: number; y: number } | null = null;
   private readonly pointerDown: (pointer: Phaser.Input.Pointer, over: Phaser.GameObjects.GameObject[]) => void;
+  private readonly pointerMove: (pointer: Phaser.Input.Pointer) => void;
   private readonly pointerUp: (pointer: Phaser.Input.Pointer) => void;
   private readonly cancel: () => void;
 
@@ -17,7 +18,16 @@ export class WindExperience extends BaseSensorExperience {
     this.perception = context.perception;
     this.layer = context.scene.add.graphics().setDepth(-3);
     this.pointerDown = (pointer, over) => {
-      if (over.length === 0 && this.used < 3) this.start = { x: pointer.worldX, y: pointer.worldY };
+      if (over.length === 0 && !this.getProgress().complete) this.start = { x: pointer.worldX, y: pointer.worldY };
+    };
+    this.pointerMove = (pointer) => {
+      if (!this.start) return;
+      const deltaX = pointer.worldX - this.start.x;
+      const deltaY = pointer.worldY - this.start.y;
+      if (Math.hypot(deltaX, deltaY) >= 18) {
+        this.activate({ x: this.start.x, y: this.start.y, deltaX, deltaY });
+        this.start = null;
+      }
     };
     this.pointerUp = (pointer) => {
       if (!this.start) return;
@@ -33,6 +43,7 @@ export class WindExperience extends BaseSensorExperience {
 
   enter(): void {
     this.context.scene.input.on('pointerdown', this.pointerDown);
+    this.context.scene.input.on('pointermove', this.pointerMove);
     this.context.scene.input.on('pointerup', this.pointerUp);
     this.context.scene.input.on('pointerupoutside', this.pointerUp);
     this.context.scene.input.on('gameout', this.cancel);
@@ -43,7 +54,7 @@ export class WindExperience extends BaseSensorExperience {
   }
 
   getInstruction(): string {
-    return this.used >= 3 ? 'Choose what the cavern carries.' : 'Drag briefly to release wind tracers.';
+    return this.getProgress().complete ? 'Choose what the cavern carries.' : 'Drag briefly to release wind tracers.';
   }
 
   protected drawActivation(stage: number, input: SensorInput): void {
@@ -86,6 +97,7 @@ export class WindExperience extends BaseSensorExperience {
 
   destroy(): void {
     this.context.scene.input.off('pointerdown', this.pointerDown);
+    this.context.scene.input.off('pointermove', this.pointerMove);
     this.context.scene.input.off('pointerup', this.pointerUp);
     this.context.scene.input.off('pointerupoutside', this.pointerUp);
     this.context.scene.input.off('gameout', this.cancel);

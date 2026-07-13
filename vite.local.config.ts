@@ -12,6 +12,17 @@ const localSensor = (): Sensor => {
   return value === 'heat' || value === 'wind' ? value : 'echo';
 };
 
+let localVote: { direction: 'north' | 'east' | 'south' | 'west'; revision: number } | null = null;
+
+const localCounts = () => {
+  const counts = createEmptyCounts();
+  if (localVote) {
+    counts[localVote.direction] = 1;
+    counts.total = 1;
+  }
+  return counts;
+};
+
 const localSession = (): PlayerSession => {
   const sensor = localSensor();
   const truth = generateScenario({ postId: 'local-visual-harness', chapter: 1, day: 1, generatorVersion: 1 });
@@ -23,9 +34,9 @@ const localSession = (): PlayerSession => {
     round: {
       canVote: true,
       canResolve: false,
-      currentVote: null,
-      revision: 0,
-      counts: createEmptyCounts(),
+      currentVote: localVote?.direction ?? null,
+      revision: localVote?.revision ?? 0,
+      counts: localCounts(),
       aggregateVisible: true,
       resolution: null,
     },
@@ -53,10 +64,49 @@ const localApiPlugin: Plugin = {
         }
 
         const routeUrl = request.url.slice('/api'.length);
+        if (routeUrl === '/local-reset' && request.method === 'POST') {
+          localVote = null;
+          response.statusCode = 204;
+          response.end();
+          return;
+        }
         if (routeUrl.startsWith('/session')) {
           response.statusCode = 200;
           response.setHeader('Content-Type', 'application/json');
           response.end(JSON.stringify(localSession()));
+          return;
+        }
+        if (routeUrl === '/round/vote' && request.method === 'POST') {
+          const chunks: Buffer[] = [];
+          for await (const chunk of request) chunks.push(Buffer.from(chunk));
+          const payload: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          if (
+            typeof payload !== 'object' || payload === null ||
+            !('direction' in payload) ||
+            (payload.direction !== 'north' && payload.direction !== 'east' && payload.direction !== 'south' && payload.direction !== 'west')
+          ) {
+            response.statusCode = 400;
+            response.end(JSON.stringify({ status: 'error', message: 'Invalid local vote fixture' }));
+            return;
+          }
+          const direction = payload.direction;
+          const changed = localVote?.direction !== direction;
+          localVote = { direction, revision: changed ? (localVote?.revision ?? 0) + 1 : (localVote?.revision ?? 1) };
+          response.statusCode = 200;
+          response.setHeader('Content-Type', 'application/json');
+          response.end(JSON.stringify({
+            status: changed ? 'recorded' : 'unchanged',
+            activeVote: {
+              direction,
+              sensor: localSensor(),
+              signalQuality: 1,
+              revision: localVote.revision,
+              createdAt: '2026-07-13T15:00:00.000Z',
+              updatedAt: '2026-07-13T15:00:00.000Z',
+            },
+            counts: localCounts(),
+            roundStatus: 'open',
+          }));
           return;
         }
         if (routeUrl.startsWith('/round')) {

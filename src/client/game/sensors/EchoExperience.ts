@@ -28,7 +28,7 @@ export class EchoExperience extends BaseSensorExperience {
   }
 
   getInstruction(): string {
-    return this.used >= 3 ? 'Choose what the echoes imply.' : 'Touch the dark to send an echo.';
+    return this.getProgress().complete ? 'Choose what the echoes imply.' : 'Touch the dark to send an echo.';
   }
 
   protected drawActivation(stage: number): void {

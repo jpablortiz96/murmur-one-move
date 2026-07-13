@@ -194,6 +194,8 @@ export const parsePlayerSession = (value: unknown): PlayerSession | null => {
     (value.round.currentVote !== null && !isAllowed(value.round.currentVote, AVAILABLE_DIRECTIONS)) ||
     typeof value.round.revision !== 'number' || !Number.isSafeInteger(value.round.revision) || value.round.revision < 0 ||
     counts === null || typeof value.round.aggregateVisible !== 'boolean' ||
+    (value.player.authentication === 'guest' && (value.player.stableAssignment || value.round.canVote)) ||
+    (value.player.authentication === 'authenticated' && !value.player.stableAssignment) ||
     (value.expedition.status === 'resolved') !== (resolution !== null) || flags === null
   ) return null;
   return {

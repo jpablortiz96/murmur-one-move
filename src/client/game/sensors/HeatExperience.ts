@@ -28,7 +28,7 @@ export class HeatExperience extends BaseSensorExperience {
     this.perception = context.perception;
     this.layer = context.scene.add.graphics().setDepth(-3);
     this.pointerDown = (pointer, over) => {
-      if (over.length > 0 || this.used >= 3) return;
+      if (over.length > 0 || this.getProgress().complete) return;
       this.cancelHold();
       this.holdStarted = performance.now();
       this.holdPointer = pointer;
@@ -65,7 +65,7 @@ export class HeatExperience extends BaseSensorExperience {
   }
 
   getInstruction(): string {
-    return this.used >= 3 ? 'Choose what the warmth cannot explain.' : 'Press and hold to focus a thermal region.';
+    return this.getProgress().complete ? 'Choose what the warmth cannot explain.' : 'Press and hold to focus a thermal region.';
   }
 
   protected drawActivation(stage: number, input: SensorInput): void {

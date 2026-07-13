@@ -16,9 +16,16 @@ describe('round contracts', () => {
       parseSubmitVoteRequest({
         direction: 'north',
         requestId: 'request_123',
+        sensor: 'heat',
+      })
+    ).toBeNull();
+    expect(
+      parseSubmitVoteRequest({
+        direction: 'north',
+        requestId: 'request_123',
         userId: 't2_spoofed',
       })
-    ).toEqual({ direction: 'north', requestId: 'request_123' });
+    ).toBeNull();
     expect(parseSubmitVoteRequest({ direction: 'up', requestId: 'request_123' })).toBeNull();
     expect(parseSubmitVoteRequest({ direction: 'north', requestId: 'bad id' })).toBeNull();
   });

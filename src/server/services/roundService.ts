@@ -91,7 +91,7 @@ type RoundServiceOptions = {
   redis: RoundRedis;
   identity: RoundIdentity;
   now?: () => Date;
-  sensorForUser?: (userId: string) => Sensor;
+  sensorForUser: (userId: string) => Sensor;
   maxTransactionAttempts?: number;
 };
 
@@ -302,7 +302,7 @@ export class RoundService {
     this.redis = options.redis;
     this.identity = options.identity;
     this.now = options.now ?? (() => new Date());
-    this.sensorForUser = options.sensorForUser ?? (() => 'echo');
+    this.sensorForUser = options.sensorForUser;
     this.maxTransactionAttempts = options.maxTransactionAttempts ?? 6;
   }
 

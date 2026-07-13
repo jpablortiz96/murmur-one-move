@@ -119,6 +119,7 @@ const isTimestamp = (value: unknown): value is string =>
 
 export const parseSubmitVoteRequest = (value: unknown): SubmitVoteRequest | null => {
   if (!isRecord(value)) return null;
+  if (Object.keys(value).some((key) => key !== 'direction' && key !== 'requestId')) return null;
   if (!isAllowed(value.direction, AVAILABLE_DIRECTIONS)) return null;
   if (
     typeof value.requestId !== 'string' ||

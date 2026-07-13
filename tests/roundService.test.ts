@@ -70,6 +70,26 @@ test('changes a vote without changing total or producing negative counters', asy
   expect(changed.counts).toEqual({ north: 0, east: 0, south: 0, west: 1, total: 1 });
 });
 
+test('stores only the server resolver sensor across change and idempotent retry', async () => {
+  const service = createService(() => 'wind');
+  const first = await service.submitVote('t2_alice', {
+    direction: 'north',
+    requestId: 'trusted_sensor_01',
+  });
+  const changed = await service.submitVote('t2_alice', {
+    direction: 'south',
+    requestId: 'trusted_sensor_02',
+  });
+  const repeated = await service.submitVote('t2_alice', {
+    direction: 'south',
+    requestId: 'trusted_sensor_02',
+  });
+  expect(first.activeVote.sensor).toBe('wind');
+  expect(changed.activeVote.sensor).toBe('wind');
+  expect(repeated.activeVote.sensor).toBe('wind');
+  expect(repeated.counts.total).toBe(1);
+});
+
 test('serializes concurrent first votes and preserves aggregate invariants', async () => {
   const service = createService();
   const directions = ['north', 'east', 'south', 'west'] as const;

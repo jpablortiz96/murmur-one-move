@@ -1,47 +1,15 @@
-import { context, reddit, redis } from '@devvit/web/server';
+import { context } from '@devvit/web/server';
 import { Hono } from 'hono';
 import {
   parseSubmitVoteRequest,
   type ResolveRoundResponse,
   type RoundApiError,
-  type RoundStateResponse,
   type SubmitVoteResponse,
 } from '../../shared/contracts/round';
-import {
-  createRoundIdentity,
-  RoundService,
-  RoundServiceError,
-} from '../services/roundService';
+import { getContextRoundService, isCurrentUserModerator } from '../services/redditContext';
+import { RoundServiceError } from '../services/roundService';
 
 export const roundApi = new Hono();
-
-const getService = (): RoundService => {
-  if (!context.postId || !context.subredditId) {
-    throw new RoundServiceError(
-      'round-unavailable',
-      'Round context is unavailable outside a Reddit post'
-    );
-  }
-  return new RoundService({
-    redis,
-    identity: createRoundIdentity(context.subredditId, context.postId),
-  });
-};
-
-const isCurrentUserModerator = async (): Promise<boolean> => {
-  if (!context.userId || !context.subredditName) return false;
-  const username = context.username ?? (await reddit.getCurrentUser())?.username;
-  if (!username) return false;
-  const moderators = await reddit
-    .getModerators({
-      subredditName: context.subredditName,
-      username,
-      limit: 1,
-      pageSize: 1,
-    })
-    .get(1);
-  return moderators.length === 1;
-};
 
 const errorStatus = (
   error: RoundServiceError
@@ -59,23 +27,6 @@ const serviceError = (error: RoundServiceError) => ({
     message: error.message,
   } satisfies RoundApiError,
   status: errorStatus(error),
-});
-
-roundApi.get('/', async (c) => {
-  try {
-    const [canResolve, state] = await Promise.all([
-      isCurrentUserModerator(),
-      getService().getState(context.userId, false),
-    ]);
-    state.viewer.canResolve = canResolve && state.status === 'open';
-    return c.json<RoundStateResponse>(state);
-  } catch (error) {
-    if (error instanceof RoundServiceError) {
-      const response = serviceError(error);
-      return c.json<RoundApiError>(response.body, response.status);
-    }
-    throw error;
-  }
 });
 
 roundApi.post('/vote', async (c) => {
@@ -114,7 +65,7 @@ roundApi.post('/vote', async (c) => {
     );
   }
   try {
-    const response = await getService().submitVote(context.userId, request);
+    const response = await getContextRoundService().submitVote(context.userId, request);
     console.info('MURMUR vote committed', {
       postId: context.postId,
       direction: response.activeVote.direction,
@@ -154,7 +105,7 @@ roundApi.post('/resolve', async (c) => {
     );
   }
   try {
-    const response = await getService().resolve();
+    const response = await getContextRoundService().resolve();
     console.info('MURMUR round resolved', {
       postId: context.postId,
       direction: response.resolution.winningDirection,

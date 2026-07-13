@@ -12,10 +12,13 @@ import type {
   HealthResponse,
 } from '../../shared/contracts/bootstrap';
 import { roundApi } from './round';
+import { sessionApi } from './session';
+import { CURRENT_FEATURE_FLAGS } from '../game/gameConfig';
 
 export const api = new Hono();
 
 api.route('/round', roundApi);
+api.route('/session', sessionApi);
 
 api.get('/health', (c) =>
   c.json<HealthResponse>({
@@ -34,15 +37,7 @@ api.get('/bootstrap', (c) => {
     serverTime: new Date().toISOString(),
     availableSensors: [...AVAILABLE_SENSORS],
     availableDirections: [...AVAILABLE_DIRECTIONS],
-    featureFlags: {
-      echoEnabled: true,
-      heatEnabled: false,
-      windEnabled: false,
-      dailyResolutionEnabled: false,
-      manualResolutionEnabled: true,
-      communityPersistenceEnabled: true,
-      privateSensorsEnabled: false,
-    },
+    featureFlags: { ...CURRENT_FEATURE_FLAGS },
   };
   console.info('MURMUR bootstrap served', {
     chapter: response.chapter,

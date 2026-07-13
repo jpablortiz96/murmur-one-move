@@ -26,8 +26,8 @@
   "menu": {
     "items": [
       {
-        "label": "Create a MURMUR post",
-        "description": "Create a persistent community signal round",
+        "label": "Open MURMUR test expedition",
+        "description": "Create or reopen the active seven-day expedition",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/post-create"
@@ -36,6 +36,20 @@
   },
   "triggers": {
     "onAppInstall": "/internal/triggers/on-app-install"
+  },
+  "scheduler": {
+    "tasks": {
+      "resolve-round": {
+        "endpoint": "/internal/scheduler/resolve-round"
+      },
+      "publish-next-chapter": {
+        "endpoint": "/internal/scheduler/publish-next-chapter"
+      },
+      "reconcile-expedition": {
+        "endpoint": "/internal/scheduler/reconcile-expedition",
+        "cron": "*/5 * * * *"
+      }
+    }
   },
   "scripts": {
     "build": "vite build",

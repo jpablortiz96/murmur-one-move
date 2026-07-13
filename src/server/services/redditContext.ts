@@ -1,5 +1,6 @@
 import { context, reddit, redis } from '@devvit/web/server';
 import { SENSOR_ASSIGNMENT_VERSION } from '../../shared/constants/game';
+import { parsePostReferenceV2 } from '../../shared/contracts/expedition';
 import { assignSensor } from '../game/sensors/assignSensor';
 import {
   createRoundIdentity,
@@ -14,7 +15,9 @@ export const getContextRoundService = (): RoundService => {
       'Round context is unavailable outside a Reddit post'
     );
   }
-  const identity = createRoundIdentity(context.subredditId, context.postId);
+  const reference = parsePostReferenceV2(context.postData);
+  const day = reference?.murmur.day;
+  const identity = createRoundIdentity(context.subredditId, context.postId, day, day);
   return new RoundService({
     redis,
     identity,

@@ -8,19 +8,22 @@ import type { Sensor } from '../src/shared/types/game';
 
 const truth = generateScenario({ postId: 't3_session_contract', chapter: 1, day: 1, generatorVersion: 1 });
 const fixture = (sensor: Sensor): PlayerSession => ({
-  schemaVersion: 1,
+  schemaVersion: 2,
   expedition: { chapter: 1, day: 1, title: 'The First Hollow', status: 'open' },
   player: { authentication: 'authenticated', sensor, stableAssignment: true, assignmentVersion: 1 },
   perception: projectPerception(sensor, truth),
   round: {
     canVote: true,
     canResolve: false,
+    canManage: false,
     currentVote: null,
     revision: 0,
     counts: createEmptyCounts(),
     aggregateVisible: true,
     resolution: null,
   },
+  journey: null,
+  combinedTruth: null,
   featureFlags: { ...CURRENT_FEATURE_FLAGS },
 });
 

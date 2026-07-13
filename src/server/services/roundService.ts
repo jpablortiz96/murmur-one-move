@@ -282,12 +282,14 @@ const chooseWinner = (
 
 export const createRoundIdentity = (
   subredditId: string,
-  postId: string
+  postId: string,
+  chapter = CURRENT_CHAPTER_NUMBER,
+  day = CURRENT_DAY
 ): RoundIdentity => ({
   installationKey: subredditId,
   postId,
-  chapter: CURRENT_CHAPTER_NUMBER,
-  day: CURRENT_DAY,
+  chapter,
+  day,
   schemaVersion: ROUND_SCHEMA_VERSION,
 });
 

@@ -83,6 +83,19 @@ export type ExpeditionRoundView = {
   combinedTruth: CombinedTruth | null;
 };
 
+export const parseCombinedTruth = (value: unknown): CombinedTruth | null => {
+  if (!isRecord(value) || typeof value.echo !== 'string' || typeof value.heat !== 'string' ||
+    typeof value.wind !== 'string' || typeof value.consequence !== 'string' ||
+    !isConsequenceSeverity(value.severity)) return null;
+  return {
+    echo: value.echo,
+    heat: value.heat,
+    wind: value.wind,
+    consequence: value.consequence,
+    severity: value.severity,
+  };
+};
+
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -191,4 +204,22 @@ export const hasOnlySmallPostReference = (value: unknown): boolean => {
     value.murmur.v === 2 && typeof value.murmur.seasonId === 'string' &&
     Number.isInteger(value.murmur.day) && Number.isInteger(value.murmur.generatorVersion) &&
     JSON.stringify(value).length <= 256 && !isStringArray(value.murmur.history);
+};
+
+export type PublicPostReferenceV2 = {
+  murmur: { v: 2; seasonId: string; day: number; generatorVersion: number };
+};
+
+export const parsePostReferenceV2 = (value: unknown): PublicPostReferenceV2 | null => {
+  if (!hasOnlySmallPostReference(value) || !isRecord(value) || !isRecord(value.murmur)) return null;
+  if (typeof value.murmur.seasonId !== 'string' || typeof value.murmur.day !== 'number' ||
+    typeof value.murmur.generatorVersion !== 'number') return null;
+  return {
+    murmur: {
+      v: 2,
+      seasonId: value.murmur.seasonId,
+      day: value.murmur.day,
+      generatorVersion: value.murmur.generatorVersion,
+    },
+  };
 };

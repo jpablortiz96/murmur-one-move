@@ -1,5 +1,6 @@
 import { context } from '@devvit/web/server';
 import { Hono } from 'hono';
+import { parsePostReferenceV2 } from '../../shared/contracts/expedition';
 import {
   parseSubmitVoteRequest,
   type ResolveRoundResponse,
@@ -8,6 +9,7 @@ import {
 } from '../../shared/contracts/round';
 import { getContextRoundService, isCurrentUserModerator } from '../services/redditContext';
 import { RoundServiceError } from '../services/roundService';
+import { getExpeditionRepository } from '../services/expeditionRuntime';
 
 export const roundApi = new Hono();
 
@@ -39,6 +41,18 @@ roundApi.post('/vote', async (c) => {
       },
       401
     );
+  }
+  const expeditionReference = parsePostReferenceV2(context.postData);
+  if (expeditionReference && context.subredditId && context.postId) {
+    const expedition = await getExpeditionRepository().get(context.subredditId, expeditionReference.murmur.seasonId);
+    const acceptsVote = expedition && expedition.status === 'open' &&
+      expedition.currentDay === expeditionReference.murmur.day && expedition.currentPostId === context.postId &&
+      Date.now() < Date.parse(expedition.window.closesAt);
+    if (!acceptsVote) {
+      return c.json<RoundApiError>({
+        status: 'error', code: 'round-resolved', message: 'This hollow has closed; the consequence is being prepared',
+      }, 409);
+    }
   }
   let payload: unknown;
   try {
@@ -103,6 +117,11 @@ roundApi.post('/resolve', async (c) => {
       },
       403
     );
+  }
+  if (parsePostReferenceV2(context.postData)) {
+    return c.json<RoundApiError>({
+      status: 'error', code: 'invalid-request', message: 'Expedition rounds require the confirmed moderator resolution control',
+    }, 409);
   }
   try {
     const response = await getContextRoundService().resolve();

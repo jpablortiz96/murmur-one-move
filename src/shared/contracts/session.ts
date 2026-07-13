@@ -9,6 +9,14 @@ import type { CommunityCounts, RoundResolution } from './round';
 import { parseCommunityCounts, parseRoundResolution } from './round';
 import type { Direction, FeatureFlags, Sensor } from '../types/game';
 import { parseFeatureFlags } from './bootstrap';
+import {
+  isExpeditionStatus,
+  parseCombinedTruth,
+  parseExpeditionPublicView,
+  type CombinedTruth,
+  type ExpeditionPublicView,
+  type ExpeditionStatus,
+} from './expedition';
 
 export type EchoSignal = {
   direction: Direction;
@@ -62,7 +70,7 @@ export type PlayerSession = {
     chapter: number;
     day: number;
     title: string;
-    status: 'open' | 'resolved';
+    status: ExpeditionStatus;
   };
   player: {
     authentication: 'authenticated' | 'guest';
@@ -74,12 +82,15 @@ export type PlayerSession = {
   round: {
     canVote: boolean;
     canResolve: boolean;
+    canManage: boolean;
     currentVote: Direction | null;
     revision: number;
     counts: CommunityCounts;
     aggregateVisible: boolean;
     resolution: RoundResolution | null;
   };
+  journey: ExpeditionPublicView | null;
+  combinedTruth: CombinedTruth | null;
   featureFlags: FeatureFlags;
 };
 
@@ -179,24 +190,29 @@ export const parsePlayerSession = (value: unknown): PlayerSession | null => {
   const counts = parseCommunityCounts(value.round.counts);
   const resolution = value.round.resolution === null ? null : parseRoundResolution(value.round.resolution);
   const flags = parseFeatureFlags(value.featureFlags);
+  const journey = value.journey === null ? null : parseExpeditionPublicView(value.journey);
+  const combinedTruth = value.combinedTruth === null ? null : parseCombinedTruth(value.combinedTruth);
   if (
     value.schemaVersion !== SESSION_SCHEMA_VERSION ||
     typeof value.expedition.chapter !== 'number' || !Number.isSafeInteger(value.expedition.chapter) || value.expedition.chapter < 1 ||
     typeof value.expedition.day !== 'number' || !Number.isSafeInteger(value.expedition.day) || value.expedition.day < 1 ||
     typeof value.expedition.title !== 'string' ||
-    (value.expedition.status !== 'open' && value.expedition.status !== 'resolved') ||
+    !isExpeditionStatus(value.expedition.status) ||
     (value.player.authentication !== 'authenticated' && value.player.authentication !== 'guest') ||
     !isAllowed(value.player.sensor, AVAILABLE_SENSORS) ||
     typeof value.player.stableAssignment !== 'boolean' ||
     value.player.assignmentVersion !== SENSOR_ASSIGNMENT_VERSION ||
     perception === null || perception.sensor !== value.player.sensor ||
-    typeof value.round.canVote !== 'boolean' || typeof value.round.canResolve !== 'boolean' ||
+    typeof value.round.canVote !== 'boolean' || typeof value.round.canResolve !== 'boolean' || typeof value.round.canManage !== 'boolean' ||
     (value.round.currentVote !== null && !isAllowed(value.round.currentVote, AVAILABLE_DIRECTIONS)) ||
     typeof value.round.revision !== 'number' || !Number.isSafeInteger(value.round.revision) || value.round.revision < 0 ||
     counts === null || typeof value.round.aggregateVisible !== 'boolean' ||
     (value.player.authentication === 'guest' && (value.player.stableAssignment || value.round.canVote)) ||
     (value.player.authentication === 'authenticated' && !value.player.stableAssignment) ||
-    (value.expedition.status === 'resolved') !== (resolution !== null) || flags === null
+    (value.expedition.status === 'resolved' && resolution === null) ||
+    (combinedTruth !== null && resolution === null) ||
+    (value.journey !== null && journey === null) ||
+    (value.combinedTruth !== null && combinedTruth === null) || flags === null
   ) return null;
   return {
     schemaVersion: value.schemaVersion,
@@ -216,12 +232,15 @@ export const parsePlayerSession = (value: unknown): PlayerSession | null => {
     round: {
       canVote: value.round.canVote,
       canResolve: value.round.canResolve,
+      canManage: value.round.canManage,
       currentVote: value.round.currentVote,
       revision: value.round.revision,
       counts,
       aggregateVisible: value.round.aggregateVisible,
       resolution,
     },
+    journey,
+    combinedTruth,
     featureFlags: flags,
   };
 };

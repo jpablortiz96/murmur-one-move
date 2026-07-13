@@ -4,7 +4,7 @@ export const CURRENT_FEATURE_FLAGS: FeatureFlags = {
   echoEnabled: true,
   heatEnabled: true,
   windEnabled: true,
-  dailyResolutionEnabled: false,
+  dailyResolutionEnabled: true,
   manualResolutionEnabled: true,
   communityPersistenceEnabled: true,
   privateSensorsEnabled: true,

@@ -1,14 +1,14 @@
 # Current limitations
 
-- Only an Echo vertical slice exists.
+- Echo, Heat, and Wind are functional procedural vertical slices; their visual assets remain provisional.
 - A moderator can resolve a round manually; there is no scheduler or automatic daily resolution yet.
 - Votes and immutable resolutions persist in installation-scoped Redis, but no automatic next-day/next-post lifecycle exists.
-- There is no real private information per user yet; Echo is a local demonstration shared by every player.
+- Private assignments and domain projections are real, but deterministic generation is not a cryptographic secret: a developer with source access could study the algorithm.
 - The original programmatic visuals are intentional but provisional.
 - There are no human retention, return-rate, or discussion-quality metrics yet.
 - Authenticated players submit one active vote and can change it only while the round is open; guests can explore but cannot vote.
 - Murmur performs a short consequence movement after resolution, not a definitive map transition.
-- Heat and Wind are advertised only as future sensor identifiers in bootstrap; they are feature-flagged off and have no gameplay.
+- A persistent secret scenario seed is not yet stored in Redis; generator and assignment versions are fixed in code.
 - There are no comments, flair, reputation, leaderboard, streaks, economy, inventory, combat, clans, notifications, cross-subreddit systems, or map editor.
 - There is no music or sound design in this slice; Echo uses a complete visual alternative and does not require audio.
 - The cave is a handcrafted procedural composition, not a definitive expedition map system.
@@ -20,3 +20,4 @@
 - Headless Chrome sustained 60 fps in the audit, but modest physical-phone GPU/thermal performance is not yet measured.
 - The opt-in debug overlay prioritizes diagnostic density and may overlap header art on a 360 px viewport; normal mode is unaffected.
 - `npm audit --omit=dev` reports five transitive findings in the Devvit CLI chain; the suggested fix installs a breaking Devvit 1.0.0. The full audit adds five development/test findings in `@devvit/test`/Vitest. No forced or major dependency update was applied in this phase.
+- Real multi-account sensor diversity has not been human-tested; automated tests/harnesses cover all three senses, while the Reddit playtest uses the available authenticated account.

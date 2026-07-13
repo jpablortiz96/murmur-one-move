@@ -90,3 +90,38 @@
 - **Rejected:** Replacing the primary Replay action with Resolve as soon as a moderator votes.
 - **Why:** The first real playtest showed that a moderator could unintentionally end the round while trying to change a vote.
 - **Consequence:** Replay and Change Vote stay stable; resolution is visibly privileged and deliberate.
+
+## 2026-07-13 — Keep complete cavern truth in server modules only
+
+- **Decision:** Define path structure, thermal state, airflow, survivability, consequence IDs, and the optimal direction only under `src/server/game/world`.
+- **Rejected:** A shared scenario interface with hidden fields removed at serialization time.
+- **Why:** A shared type or client import would make accidental leakage easier and weaken reviewability.
+- **Consequence:** Projectors must construct fresh shared contracts and server tests own complementarity rules.
+
+## 2026-07-13 — Assign senses by versioned context hash
+
+- **Decision:** SHA-256 the server-derived user, post, chapter, day, and assignment version, then map uniformly to three senses.
+- **Rejected:** Client choice, query override, usernames, mutable random assignment, or a stored assignment record.
+- **Why:** The result is stable, balanced, stateless, and cannot be forced through request input.
+- **Consequence:** The algorithm is deterministic rather than cryptographically secret; future secret seeding may be warranted.
+
+## 2026-07-13 — Make `/api/session` the sole player read model
+
+- **Decision:** Keep bootstrap static, move assignment/perception/community reads into one validated session payload, and retain round routes only for writes.
+- **Rejected:** Independently fetching bootstrap, assignment, perception, and community state from overlapping endpoints.
+- **Why:** One server-validated response prevents drift between sense, vote, and round status.
+- **Consequence:** Reload restores both the stable sense and current vote through the same request.
+
+## 2026-07-13 — Separate sensor controllers behind one small interface
+
+- **Decision:** Share layout/selection/voting while isolating Echo tap, Heat hold, and Wind drag listeners and renderers.
+- **Rejected:** A growing chain of sensor conditionals inside `MurmurScene`.
+- **Why:** Distinct gestures require distinct lifecycle cleanup and reduced-motion behavior.
+- **Consequence:** Every controller owns and destroys its listeners/graphics; new senses require a factory entry and contract.
+
+## 2026-07-13 — Require node press origin before selection
+
+- **Decision:** A direction node activates only when its own pointerdown preceded pointerup.
+- **Rejected:** Accepting any pointerup over a node.
+- **Why:** Visual QA showed Wind drags could otherwise select a path accidentally when a tracer ended over a node.
+- **Consequence:** Observation gestures and deliberate decisions remain separate.

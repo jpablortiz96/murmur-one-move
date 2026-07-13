@@ -11,8 +11,8 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 - Preserve the bioluminescent alien-cavern identity and Murmur's original, organic silhouette.
 - Do not introduce dashboard, card-grid, sidebar, table, generic neon-arcade, or SaaS UI.
 - Use Phaser for game-world visuals and interactions; do not recreate them with React.
-- Do not add out-of-scope features without explicit authorization. In particular: no scheduler, automatic daily resolution, automatic next-post creation, comments, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or full Heat/Wind gameplay in this phase.
-- Community voting and moderator-triggered resolution are real Redis-backed behavior. Echo perception remains a shared demonstration; do not present it as private information.
+- Do not add out-of-scope features without explicit authorization. In particular: no scheduler, automatic daily resolution, automatic next-post creation, comments, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, or generative AI.
+- Community voting, private sensor assignment, server-only World Truth, Echo, Heat, Wind, and moderator-triggered resolution are real. Never move hidden scenario types or cross-sensor data into client/shared code.
 - Use only original programmatic visuals or assets with documented rights.
 
 ## Working rules
@@ -29,6 +29,8 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 10. New visual effects must be bounded, destroy temporary objects, and retain a reduced-motion equivalent.
 11. Never accept a client-supplied user ID. Derive user, post, and subreddit identity from Devvit context; never store usernames.
 12. Preserve round invariants: one active vote per voter, derived non-negative counts, immutable resolution, and idempotent request handling.
+13. Production sensor assignment comes only from Devvit context. Sensor overrides belong only in tests and `vite.local.config.ts`, never query parameters or Interactive Post code.
+14. Every projector constructs a fresh domain-specific payload. Run the leakage and complementarity evidence generators after perception changes.
 
 ## Validation commands
 

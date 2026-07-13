@@ -11,9 +11,13 @@ Reddit Interactive Post
                          ↓ fetch /api/*
                   Devvit Web server
                     (Hono + Node)
+                    ↓
+      server-only scenario + assignment + projector
+                    ↓
+          safe `PlayerSession` projection
                     ↙           ↘
        installation Redis       Reddit API
-       votes + resolution       moderator check
+       votes + resolution       identity/moderator context
 ```
 
 The client owns presentation and an optimistic-free selection draft. The server owns identity, round state, active votes, aggregate derivation, authorization, resolution, and audit data. Shared TypeScript contracts validate every JSON boundary.
@@ -22,13 +26,17 @@ The client owns presentation and an optimistic-free selection draft. The server 
 
 - `src/client/splash.*`: lightweight inline invitation and expanded-mode request
 - `src/client/game.ts`: Phaser configuration and reduced-motion/debug discovery
-- `src/client/game/scenes`: bootstrap, observation, vote lifecycle, resolution playback
+- `src/client/game/scenes`: bootstrap/session lifecycle, shared vote lifecycle, resolution playback
+- `src/client/game/sensors`: isolated Echo, Heat, and Wind input/render controllers
 - `src/client/game/entities`: original Murmur drawing, orientation, and movement
 - `src/client/game/effects`: cave ambience and Echo reveal
 - `src/client/game/ui`: scene-integrated accessible-sized controls
 - `src/client/game/systems`: local selection state and typed round client
 - `src/server/routes/api.ts`: `/api/health` and `/api/bootstrap`
 - `src/server/routes/round.ts`: context-derived round/vote/resolve HTTP boundary
+- `src/server/routes/session.ts`: authoritative player assignment, safe projection, and round view
+- `src/server/game/world`: hidden model, deterministic generator, validation, and internal consequence projection
+- `src/server/game/sensors`: stable assignment and three independent safe projectors
 - `src/server/services/roundService.ts`: Redis transactions, invariants, and resolution
 - `src/server/services/roundKeys.ts`: versioned installation-scoped keys and hashes
 - `src/shared`: serializable contracts, runtime validation, constants, and pure types
@@ -57,6 +65,12 @@ Phaser consequence playback
 
 No username or client-supplied identity enters the model. A one-way SHA-256 field key prevents raw Reddit user IDs from being stored in the vote hash. See [TRANSACTIONAL_VOTING.md](TRANSACTIONAL_VOTING.md).
 
+## Session boundary
+
+`GET /api/bootstrap` contains static product metadata and honest capability flags. `GET /api/session` is the only read model for player assignment, perception, active vote, aggregates, and public resolution. `/api/round/*` contains write commands only.
+
+World generation and assignment accept post/user identifiers from Devvit context, never HTTP input. `WorldTruth`, the optimal direction, survivability, and consequence IDs remain under `src/server`; only the assigned discriminated perception is serialized.
+
 ## Future architecture (not implemented)
 
 ```text
@@ -71,7 +85,7 @@ installation-scoped Redis
 Reddit API + Scheduler
 ```
 
-The next architecture block is server-authoritative World Truth and private sensor projections. Scheduler will later close a day and create the next post, but neither is present now.
+The next architecture block is a scheduler-backed window state machine that closes a day, resolves it idempotently, projects the public consequence, and creates the next post. None of that cadence automation is present now.
 
 ## Data boundary
 

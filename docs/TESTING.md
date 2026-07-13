@@ -10,7 +10,7 @@ npm test
 npm run build
 ```
 
-The unit suite covers bootstrap/round validation, direction normalization, decision selection/change/reset, feature flags, Redis key privacy, idempotent votes, request conflicts, atomic changes, simultaneous first votes, same-user concurrent changes, vote-resolution races, deterministic tie-breaking, immutable repeated resolution, post-resolution rejection, and corrupt stored data. The build verifies both configured HTML entrypoints and the CommonJS Devvit server bundle.
+The unit suite additionally covers deterministic scenarios, invalid-scenario rejection, 1,000-scenario complementarity, 30,000 balanced assignments, domain-isolated projectors, session unions/guest constraints, trusted Redis sensors, and three-activation progress caps.
 
 `tests/layout.test.ts` deterministically covers all five required viewports, zone adjacency, safe-area offsets, target bounds, South/instruction clearance, and wide-layout divergence.
 
@@ -55,3 +55,13 @@ npm run dev:local:client
 The local Vite-only configuration mounts the health/bootstrap router without Devvit context. Chrome CDP can then set exact device metrics, dispatch touch/mouse input, and capture PNGs. Community APIs deliberately fail with 503 in this harness. This is for client layout and failure-path QA only; final persistence verification requires `npm run dev` and the Reddit playtest URL.
 
 The completed 2026-07-10 run captured intro, Echo, active pulse, selected, and changed states at 360 × 800, 390 × 844, 412 × 915, 768 × 1024, and 1280 × 720. See [VISUAL_AUDIT.md](VISUAL_AUDIT.md).
+
+For private-sense evidence:
+
+```powershell
+npm run evidence:private
+node tools/capture-private-senses.mjs
+node tools/capture-private-senses.mjs --reduced
+```
+
+The first command regenerates audits and plots from real deterministic runs. The capture script starts the isolated Vite harness once per sense, uses touch below 768 px and mouse otherwise, attempts four activations to prove the cap remains three, confirms an EAST fixture vote, and records exact canvas/document dimensions. It never changes production assignment behavior.

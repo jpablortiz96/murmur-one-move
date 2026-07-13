@@ -16,7 +16,7 @@ You are one imperfect sensory organ in a larger communal creature. You cannot sa
 4. **Discuss** — compare incompatible truths in the Reddit thread.
 5. **Return** — witness the single community move and its consequence.
 
-The current vertical slice implements Echo observation, one persistent active vote per authenticated player, aggregate community results, manual moderator resolution, and consequence playback.
+The current vertical slice implements stable private Echo/Heat/Wind perception over one hidden server-only truth, one persistent active vote per authenticated player, aggregate community results, manual moderator resolution, and consequence playback.
 
 ## Community role and Reddit fit
 
@@ -42,6 +42,8 @@ Reddit supplies persistent posts, threaded debate, subreddit identity, moderatio
 
 - Immersive inline entry, expanded Phaser cavern, original Murmur silhouette
 - Echo reveal with three-pulse cap
+- Distinct Heat hold-focus and Wind drag-tracer interactions with three-use caps
+- Server-only scenario generation, safe partial projections, and balanced stable assignment
 - Four-way selection, explicit confirmation, persistent vote change, replay, aggregate counts, and pending outcome
 - Installation-scoped Redis state, idempotent requests, concurrent-write protection, moderator-only manual resolution, immutable snapshot, and audit hash
 - Typed server bootstrap, health endpoint, failure/retry states, debug mode

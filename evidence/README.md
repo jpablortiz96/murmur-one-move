@@ -28,3 +28,11 @@ Screenshots may be added only when they contain no credentials, private account 
 - `phase3/360x800-local-safe-failure.png` records the same state with the opt-in diagnostic overlay.
 - The final Reddit gameplay run on `v0.0.2.37` committed EAST revision 1, changed the same active vote to WEST revision 2 while total remained 1, then resolved WEST manually with audit hash `sha256:0fa061884a0193e1f4ff89af1f6307a6ae13ed2b19770401e3c5ef3cb9cc5ae4`. The documentation/menu-copy rebuild installed as `v0.0.2.39` without changing gameplay code.
 - The player visibly confirmed the resolved consequence (`MURMUR FOLLOWS WEST`). No server errors were found in the final stdout/stderr review.
+
+## 2026-07-13 private-sense pass
+
+- `private-senses/raw/` contains generated assignment, scenario, complementarity, leakage, Redis integration, endpoint, normal visual matrix, and reduced-motion results.
+- `private-senses/plots/` contains four PNG plots rendered from those JSON files.
+- `private-senses/screenshots/` contains Echo, Heat, and Wind at 360×800, 390×844, and 1280×720, plus reduced-motion 360×800 captures.
+- `private-senses/TEST_PROTOCOL.md` is the reproduction procedure; `private-senses/RESULTS.md` records concrete verdicts and known scope.
+- `phase3/` and the previously resolved WEST post remain untouched.

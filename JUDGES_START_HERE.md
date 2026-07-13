@@ -5,15 +5,16 @@ MURMUR turns Reddit's most native behavior—many people comparing partial inter
 ## What is playable now
 
 1. Open the Interactive Post and select **ENTER THE SIGNAL**.
-2. In the expanded cavern, tap/click empty space up to three times.
-3. Watch Echo briefly reveal cave edges, a hollow-looking route, and an abstract danger in conflicting directions.
-4. Choose North, East, South, or West and explicitly confirm the signal.
-5. See real Redis-backed aggregate counts and your active vote.
-6. Change the active vote while the round is open or replay the sensory signal.
-7. As a moderator, use the separate two-step resolve control to freeze the round.
-8. Watch Murmur follow the immutable winning direction and inspect the final community result.
+2. Receive one stable private sense: Echo, Heat, or Wind.
+3. Use its distinct gesture up to three times: tap for Echo, hold for Heat, or drag for Wind.
+4. Read only structural, thermal, or airflow evidence—the server never sends the other two domains.
+5. Choose North, East, South, or West and explicitly confirm the signal.
+6. See real Redis-backed aggregate counts and your active vote.
+7. Change the active vote while the round is open or replay the sensory signal.
+8. As a moderator, use the separate two-step resolve control to freeze the round.
+9. Watch Murmur follow the immutable winning direction and inspect the final community result.
 
-This slice proves the feel, readability, interaction model, Devvit client/server/Redis boundary, concurrent community voting, and manual outcome playback. It does not pretend that automatic daily cadence or private sensor assignment exists; those boundaries are explicit in [LIMITATIONS.md](LIMITATIONS.md).
+This slice proves private partial truth, distinct sensory play, the Devvit client/server/Redis boundary, concurrent voting, and manual outcome playback. Automatic daily cadence remains explicitly outside this phase.
 
 ## Technical map
 

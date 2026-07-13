@@ -6,7 +6,7 @@ MURMUR is a mobile-first asynchronous social game for Reddit. A small biolumines
 
 ## Current state
 
-This repository contains an **Echo vertical slice with persistent community voting** for a Reddit Interactive Post. A player can reveal the cave with up to three Echo pulses, choose a direction, explicitly commit one active signal, change it while the round is open, inspect aggregate counts, and watch Murmur follow an immutable moderator-resolved result.
+This repository contains a **private-perception community round** for a Reddit Interactive Post. The server creates one hidden cavern truth, assigns each authenticated player a stable Echo, Heat, or Wind sense, returns only that sense's projection, and binds the trusted assignment to persistent Redis voting.
 
 This is a real multiplayer round foundation, but not the automated daily expedition yet. See [LIMITATIONS.md](LIMITATIONS.md).
 
@@ -45,7 +45,7 @@ For responsive client QA without a Reddit iframe, start the local client harness
 npm run dev:local:client
 ```
 
-Open `http://127.0.0.1:4173/game.html`. The harness mounts health/bootstrap and intentionally returns an explicit unavailable response for community-round routes because it has no Reddit identity or Redis context.
+Open `http://127.0.0.1:4173/game.html`. The harness uses isolated local session/vote fixtures for visual QA only. Select a local sense before startup with `$env:MURMUR_LOCAL_SENSOR='heat'`; production code has no sensor override.
 
 ## Validate
 
@@ -84,7 +84,11 @@ The inspected five-viewport matrix, before/after comparison, and performance not
 ## Implemented scope
 
 - Original programmatic cave, fog, particles, Murmur creature, Echo wave, wall trace, hollow-route clue, and abstract danger clue
-- Mouse/touch interaction, maximum of three pulses, four directional choices, explicit confirmation, change/replay, and resolved consequence
+- Deterministic server-only World Truth with validated structural, thermal, airflow, and internal consequence domains
+- Stable, versioned, balanced sensor assignment derived only from Devvit user/post context
+- Fresh Echo/Heat/Wind projections that never cross domain boundaries
+- Echo touch pulses, Heat press-and-hold focus, and Wind drag tracers, each capped at three activations
+- Mouse/touch interaction, four directional choices, explicit confirmation, change/replay, and resolved consequence
 - Centralized Header/World/Action layout with safe-area, density, and wide-orientation rules
 - Cave-integrated resonant direction nodes and distinct visual responses for Echo pulses 1–3
 - Reduced-motion equivalents for camera, ambience, creature, node, and Echo motion
@@ -95,8 +99,9 @@ The inspected five-viewport matrix, before/after comparison, and performance not
 - Guest exploration without fake voting and server-derived user/post/subreddit identity
 - Loading, malformed-response, error, and retry states
 - Contract, decision-state, Redis transaction/concurrency, resolution, and layout tests
+- 30,000-assignment balance audit, 1,000-scenario complementarity audit, client-bundle leakage scan, five-viewport matrix, and reduced-motion captures
 
-The round model and invariants are documented in [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md).
+The round model is documented in [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md); the hidden model and safe boundary are in [docs/WORLD_MODEL.md](docs/WORLD_MODEL.md) and [docs/PRIVATE_PERCEPTION_CONTRACT.md](docs/PRIVATE_PERCEPTION_CONTRACT.md).
 
 ## Asset license
 

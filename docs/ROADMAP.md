@@ -8,9 +8,13 @@ Prove Murmur's identity, three-pulse observation, local decision tension, mobile
 
 Persist one active vote per authenticated player, allow atomic changes, expose aggregates, freeze an auditable immutable result through a moderator action, and play the consequence in Phaser. Scheduler automation remains excluded.
 
-## Phase 3 — Server-authoritative perception (next)
+## Phase 3 — Server-authoritative perception (complete)
 
-Implement real per-user Echo/Heat/Wind assignment and server-side World Truth with leak-tested partial projections. The repository received for the transactional phase did not contain those assumed systems, so they must be built and audited before automatic cadence.
+Real per-user Echo/Heat/Wind assignment, server-side World Truth, leak-tested partial projections, distinct gestures, and trusted sensor-bound voting are implemented and audited.
+
+## Phase 4 — Daily cadence and recovery (next)
+
+Add explicit voting windows, idempotent scheduler closure/resolution, sanitized consequence transition, next-post/chapter creation, and recovery after partial scheduler failure.
 
 ## Later phases (not authorized yet)
 

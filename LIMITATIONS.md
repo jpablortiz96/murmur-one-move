@@ -3,7 +3,7 @@
 - This is a seven-day technical expedition slice in one development community, not a measured public live season.
 - Field Notes, native comments, User Actions, flair, streaks, XP, leaderboards and notifications are not implemented.
 - No human seven-day retention, return-rate, decision-quality or discussion-quality metrics exist yet.
-- The real accelerated scheduler and Day 1 -> Day 2 transition require final human verification in Reddit; automated tests and local evidence cannot prove Reddit delivery.
+- The real moderator-driven Day 1 -> Day 2 transition and reconciliation were human-verified in Reddit; timed one-off Scheduler delivery without moderator controls has not yet been observed end-to-end.
 - Concurrency and duplicate delivery are simulated against Devvit's Redis test runtime; they are not a production traffic load test.
 - The deterministic generator is server-only but not a cryptographic secret. A developer with source access can study its behavior.
 - Procedural Phaser visuals are original and intentional but provisional; there are no external final assets, music or sound design.
@@ -14,5 +14,6 @@
 - A post creation response lost after Reddit creates the post is recovered by scanning recent posts for the small season/day reference; an extended Reddit outage delays recovery.
 - Only the exact development subreddit receives two-minute windows; production uses the approximate 22-hour cadence.
 - Earlier Phase 3 and Phase 4 posts remain on schema V1 and are intentionally not migrated or rewritten.
+- The final CLI watcher ended after installation and did not retain the individual Day 1/Day 2 URLs or season ID; the human-visible transition is recorded, but those identifiers are unavailable in the evidence pack.
 - There is no second complete expedition/chapter set or authoring tool.
 - `npm audit` transitive findings in the Devvit CLI/test chain are documented rather than force-fixed with an incompatible major update.

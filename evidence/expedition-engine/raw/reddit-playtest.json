@@ -1,0 +1,24 @@
+{
+  "verifiedAt": "2026-07-13",
+  "app": "murmur-one-move",
+  "subreddit": "murmur_one_move_dev",
+  "version": "v0.0.2.49",
+  "playtestRoot": "https://www.reddit.com/r/murmur_one_move_dev/?playtest=murmur-one-move",
+  "day1Url": null,
+  "day2Url": null,
+  "seasonId": null,
+  "humanVerified": {
+    "assignedSenseCompleted": true,
+    "voteConfirmed": true,
+    "manualResolutionCompleted": true,
+    "combinedTruthObserved": true,
+    "consequenceObserved": true,
+    "day2PublishedAndOpened": true,
+    "conditionRetained": true,
+    "historyRetained": true,
+    "reconcileExecuted": true,
+    "duplicateDay2Observed": false
+  },
+  "confirmation": "Día 2 abierto sin duplicados. La condición de Murmur y el historial se conservaron.",
+  "evidenceBoundary": "The CLI watcher retained installation/version output but not the individual post URLs, season ID, or post-transition runtime events. Null values are intentional and are not inferred."
+}

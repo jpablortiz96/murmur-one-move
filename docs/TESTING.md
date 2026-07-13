@@ -77,4 +77,4 @@ node tools/capture-expedition.mjs
 
 The first command builds, runs 10,000 seeded seven-day expeditions and writes raw transition/scheduler/post/recovery/distribution JSON plus five plots. The second opens the isolated production Phaser client in headless Chrome at 360×800, 390×844, 412×915, 768×1024 and 1280×720, including reduced motion. It records viewport/document/canvas dimensions and scroll position. See [../evidence/expedition-engine/TEST_PROTOCOL.md](../evidence/expedition-engine/TEST_PROTOCOL.md).
 
-Final Reddit verification must still execute Day 1 sense -> vote -> moderator resolve -> combined reveal -> publish Day 2 -> reconcile and confirm exactly one Day 2 post.
+The final Reddit verification executed Day 1 sense -> vote -> moderator resolve -> combined reveal -> publish Day 2 -> reconcile. The authenticated moderator confirmed exactly one Day 2 post with condition and history retained on `v0.0.2.49`.

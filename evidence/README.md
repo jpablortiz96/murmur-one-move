@@ -45,3 +45,4 @@ Screenshots may be added only when they contain no credentials, private account 
 - `expedition-engine/raw/visual-matrix.json` records exact viewport/document/canvas sizes, zero scroll and reduced-motion coverage.
 - Reproduction and concrete results are in `expedition-engine/TEST_PROTOCOL.md` and `expedition-engine/RESULTS.md`.
 - All earlier `phase3/` and `private-senses/` evidence remains preserved.
+- Real Reddit gate: `murmur-one-move v0.0.2.49` reached Day 2 in `r/murmur_one_move_dev`; the moderator confirmed retained condition/history and no duplicate after reconciliation. See `expedition-engine/raw/reddit-playtest.json` for the exact evidence boundary.

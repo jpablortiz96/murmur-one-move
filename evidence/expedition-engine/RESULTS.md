@@ -29,6 +29,11 @@ Date: 2026-07-13.
 - Reduced motion renders the same information without relying on staged tween timing.
 - A header collision found during inspection was corrected by moving condition copy beside the organic node line; captures were regenerated afterward.
 
-## Pending real gate
+## Real Reddit gate
 
-The automated evidence does not prove live Scheduler delivery or Reddit post creation. The current phase remains PARTIAL until the authenticated Day 1 -> Day 2 playtest and duplicate-post check are recorded here.
+- App `murmur-one-move` installed in `r/murmur_one_move_dev` as `v0.0.2.49`.
+- Playtest root: `https://www.reddit.com/r/murmur_one_move_dev/?playtest=murmur-one-move`.
+- The authenticated moderator completed the assigned sense, vote, two-step resolution, combined three-truth reveal, consequence and `PUBLISH NEXT DAY` flow.
+- The moderator opened Day 2, ran reconciliation and reported: “Día 2 abierto sin duplicados. La condición de Murmur y el historial se conservaron.”
+- The individual Day 1/Day 2 URLs and season ID were not retained by the CLI watcher after installation, so they are recorded as unavailable rather than reconstructed.
+- This proves the manual recovery path and real Reddit post transition. Delivery solely by the timed one-off Scheduler, without moderator controls, remains a separate operational observation.

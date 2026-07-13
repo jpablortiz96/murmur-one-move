@@ -1,0 +1,69 @@
+{
+  "capturedAt": "2026-07-13",
+  "app": "murmur-one-move",
+  "appVersion": "0.0.2.39",
+  "gameplayVerifiedVersion": "0.0.2.37",
+  "subreddit": "r/murmur_one_move_dev",
+  "playtestUrl": "https://www.reddit.com/r/murmur_one_move_dev/?playtest=murmur-one-move",
+  "finalPost": {
+    "postId": "t3_1uvdgy0",
+    "events": [
+      {
+        "kind": "vote",
+        "direction": "east",
+        "revision": 1,
+        "total": 1,
+        "status": "recorded"
+      },
+      {
+        "kind": "vote-change",
+        "direction": "west",
+        "revision": 2,
+        "total": 1,
+        "status": "recorded"
+      },
+      {
+        "kind": "manual-resolution",
+        "direction": "west",
+        "total": 1,
+        "alreadyResolved": false,
+        "auditHash": "sha256:0fa061884a0193e1f4ff89af1f6307a6ae13ed2b19770401e3c5ef3cb9cc5ae4"
+      }
+    ],
+    "visibleOutcomeConfirmed": "MURMUR FOLLOWS WEST"
+  },
+  "uxFindingAndCorrection": {
+    "postId": "t3_1uswilc",
+    "finding": "The first moderator layout promoted resolution into the primary action and allowed an accidental early resolution.",
+    "frozenDirection": "east",
+    "auditHash": "sha256:a76f74bbf169cf8f55d6e8883c57efacf49f9ff4a2cef638a9740c738675b0d0",
+    "correction": "Resolution moved to a distinct moderator-only control with a timed second confirmation; Replay and Change Vote remain stable player actions."
+  },
+  "localResponsiveCheck": {
+    "viewport": "360x800",
+    "document": "360x800",
+    "canvas": "360x800",
+    "internalScroll": false,
+    "communityApiWithoutDevvitContext": "explicit 503 with safe retry UI"
+  },
+  "logReview": {
+    "voteAndResolutionEventsPresent": true,
+    "runtimeErrorsFound": 0,
+    "stderrErrorsFound": 0,
+    "voterIdentifiersCaptured": false
+  },
+  "automatedValidation": {
+    "npmInstall": "up to date; 667 packages audited",
+    "typeCheck": "passed",
+    "lint": "passed",
+    "tests": "7 files passed; 46 tests passed",
+    "build": "passed in 766ms",
+    "secretPatternScan": "no matches",
+    "starterAndPlaceholderScan": "no matches in product source or documentation"
+  },
+  "dependencyAudit": {
+    "production": "5 transitive findings in the Devvit CLI chain; suggested fix is a breaking Devvit 1.0.0 update",
+    "all": "10 findings including @devvit/test/redis-memory-server and Vitest development tooling",
+    "forcedFixApplied": false
+  }
+}

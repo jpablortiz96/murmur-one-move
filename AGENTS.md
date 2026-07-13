@@ -4,15 +4,15 @@
 
 **MURMUR: One Move a Day** is a social, asynchronous Reddit game built around one thesis: **Everyone sees a different truth. The subreddit gets one move.** The intended daily loop is: Calibrate → Observe → Decide → Discuss → Return for the outcome.
 
-The product is mobile-first. Design and validate at 360 × 800 before treating desktop as complete. Devvit must remain structural: the game runs in a Reddit Interactive Post, the Phaser client calls a Devvit Web server, and later community state will use installation-scoped Reddit capabilities.
+The product is mobile-first. Design and validate at 360 × 800 before treating desktop as complete. Devvit must remain structural: the game runs in a Reddit Interactive Post, the Phaser client calls a Devvit Web server, and community round state uses installation-scoped Devvit Redis.
 
 ## Non-negotiable design constraints
 
 - Preserve the bioluminescent alien-cavern identity and Murmur's original, organic silhouette.
 - Do not introduce dashboard, card-grid, sidebar, table, generic neon-arcade, or SaaS UI.
 - Use Phaser for game-world visuals and interactions; do not recreate them with React.
-- Do not add out-of-scope features without explicit authorization. In particular: no Redis, scheduler, daily resolution, comments, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or full Heat/Wind gameplay in this phase.
-- Do not present local demonstrations as persistence, privacy, or live community behavior.
+- Do not add out-of-scope features without explicit authorization. In particular: no scheduler, automatic daily resolution, automatic next-post creation, comments, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or full Heat/Wind gameplay in this phase.
+- Community voting and moderator-triggered resolution are real Redis-backed behavior. Echo perception remains a shared demonstration; do not present it as private information.
 - Use only original programmatic visuals or assets with documented rights.
 
 ## Working rules
@@ -27,6 +27,8 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 8. Compute playable-scene positions through `calculateLayout`; do not scatter viewport constants across scenes, effects, or entities.
 9. Preserve the Header/World/Action zoning and keep South at least one touch-target plus readable clearance above contextual text.
 10. New visual effects must be bounded, destroy temporary objects, and retain a reduced-motion equivalent.
+11. Never accept a client-supplied user ID. Derive user, post, and subreddit identity from Devvit context; never store usernames.
+12. Preserve round invariants: one active vote per voter, derived non-negative counts, immutable resolution, and idempotent request handling.
 
 ## Validation commands
 

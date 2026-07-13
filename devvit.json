@@ -27,7 +27,7 @@
     "items": [
       {
         "label": "Create a MURMUR post",
-        "description": "Create the Echo vertical slice post",
+        "description": "Create a persistent community signal round",
         "location": "subreddit",
         "forUserType": "moderator",
         "endpoint": "/internal/menu/post-create"

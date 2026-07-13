@@ -55,3 +55,38 @@
 - **Rejected:** Simultaneous path-held instruction, signal-recorded headline, pending copy, pulse counter, and actions.
 - **Why:** A single persistent state is faster to parse on 360 px screens.
 - **Consequence:** Direction controls dim but stay spatially present, while World instruction and pulse count leave the stage during the decision state.
+
+## 2026-07-13 — Make active votes the only aggregate source of truth
+
+- **Decision:** Store one hashed voter field per round and derive all directional counts from those active votes.
+- **Rejected:** Independently incrementing/decrementing four counters; trusting totals sent by the client.
+- **Why:** Derived counts structurally prevent negative values and count/cardinality drift during changes and retries.
+- **Consequence:** Reads are linear in the active-vote set for this slice; future scale work must preserve the same invariant if counts are materialized.
+
+## 2026-07-13 — Combine optimistic Redis transactions with a round write lease
+
+- **Decision:** Use a short `SET NX` lease plus WATCH/MULTI/EXEC and bounded retry for every vote or resolution write.
+- **Rejected:** Process-local locks; unbounded retry; Redis syntax from legacy Devvit Blocks.
+- **Why:** Devvit instances may run concurrently, and resolution must serialize against vote changes across processes.
+- **Consequence:** Brief contention becomes an explicit retryable response; stale leases expire automatically.
+
+## 2026-07-13 — Hash voter fields and keep authorization server-side
+
+- **Decision:** Derive identity from Devvit context, store a post-scoped SHA-256 voter field, and authorize resolution using the live Reddit moderator list.
+- **Rejected:** Client-provided user IDs; usernames; a client boolean claiming moderator status.
+- **Why:** The client is untrusted and aggregate gameplay does not require public identity.
+- **Consequence:** Guests may observe but cannot vote, and local harnesses cannot simulate authenticated moderation.
+
+## 2026-07-13 — Resolve with a deterministic, immutable snapshot
+
+- **Decision:** Freeze counts, sensor diversity, tie-break evidence, timestamp, version, and canonical SHA-256 audit hash in one resolution object.
+- **Rejected:** Recalculating a winner on every read; random tie-breaks; reopening a resolved round.
+- **Why:** A shared daily consequence must be repeatable and auditable under retries.
+- **Consequence:** Repeated resolve calls return the same object and all later vote attempts fail closed.
+
+## 2026-07-13 — Separate moderator resolution from player actions
+
+- **Decision:** Give resolution its own `MOD · RESOLVE` control with a timed second confirmation.
+- **Rejected:** Replacing the primary Replay action with Resolve as soon as a moderator votes.
+- **Why:** The first real playtest showed that a moderator could unintentionally end the round while trying to change a vote.
+- **Consequence:** Replay and Change Vote stay stable; resolution is visibly privileged and deliberate.

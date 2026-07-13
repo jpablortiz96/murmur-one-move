@@ -1,19 +1,22 @@
 # Current limitations
 
 - Only an Echo vertical slice exists.
-- There is no daily resolution or scheduler yet.
-- There is no community persistence yet.
+- A moderator can resolve a round manually; there is no scheduler or automatic daily resolution yet.
+- Votes and immutable resolutions persist in installation-scoped Redis, but no automatic next-day/next-post lifecycle exists.
 - There is no real private information per user yet; Echo is a local demonstration shared by every player.
 - The original programmatic visuals are intentional but provisional.
 - There are no human retention, return-rate, or discussion-quality metrics yet.
-- Direction selection is local to the current webview session and does not submit a vote.
-- Murmur intentionally does not move to a final destination.
+- Authenticated players submit one active vote and can change it only while the round is open; guests can explore but cannot vote.
+- Murmur performs a short consequence movement after resolution, not a definitive map transition.
 - Heat and Wind are advertised only as future sensor identifiers in bootstrap; they are feature-flagged off and have no gameplay.
 - There are no comments, flair, reputation, leaderboard, streaks, economy, inventory, combat, clans, notifications, cross-subreddit systems, or map editor.
 - There is no music or sound design in this slice; Echo uses a complete visual alternative and does not require audio.
 - The cave is a handcrafted procedural composition, not a definitive expedition map system.
 - Playtest availability and embedding behavior depend on Reddit and the authenticated Devvit development environment.
+- Moderator authorization depends on a live Reddit moderator lookup; the local harness cannot emulate it.
+- The write lease is intentionally short and bounded; Redis availability failures surface as retryable errors instead of accepting uncertain writes.
 - Phaser canvas controls currently lack individual screen-reader semantics and full keyboard navigation.
 - CSS safe-area insets are implemented but still need verification on physical notched iOS/Android devices inside Reddit.
 - Headless Chrome sustained 60 fps in the audit, but modest physical-phone GPU/thermal performance is not yet measured.
 - The opt-in debug overlay prioritizes diagnostic density and may overlap header art on a 360 px viewport; normal mode is unaffected.
+- `npm audit --omit=dev` reports five transitive findings in the Devvit CLI chain; the suggested fix installs a breaking Devvit 1.0.0. The full audit adds five development/test findings in `@devvit/test`/Vitest. No forced or major dependency update was applied in this phase.

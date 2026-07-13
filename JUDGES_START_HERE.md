@@ -7,11 +7,13 @@ MURMUR turns Reddit's most native behavior—many people comparing partial inter
 1. Open the Interactive Post and select **ENTER THE SIGNAL**.
 2. In the expanded cavern, tap/click empty space up to three times.
 3. Watch Echo briefly reveal cave edges, a hollow-looking route, and an abstract danger in conflicting directions.
-4. Choose North, East, South, or West.
-5. See that the signal is recorded locally while the community has not moved.
-6. Change the choice or replay the signal.
+4. Choose North, East, South, or West and explicitly confirm the signal.
+5. See real Redis-backed aggregate counts and your active vote.
+6. Change the active vote while the round is open or replay the sensory signal.
+7. As a moderator, use the separate two-step resolve control to freeze the round.
+8. Watch Murmur follow the immutable winning direction and inspect the final community result.
 
-This slice proves the feel, readability, interaction model, Devvit client/server boundary, and central information-design fantasy. It does not pretend that the future daily or private-information systems exist; those boundaries are explicit in [LIMITATIONS.md](LIMITATIONS.md).
+This slice proves the feel, readability, interaction model, Devvit client/server/Redis boundary, concurrent community voting, and manual outcome playback. It does not pretend that automatic daily cadence or private sensor assignment exists; those boundaries are explicit in [LIMITATIONS.md](LIMITATIONS.md).
 
 ## Technical map
 
@@ -19,5 +21,5 @@ This slice proves the feel, readability, interaction model, Devvit client/server
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — current and target systems
 - [docs/DECISIONS.md](docs/DECISIONS.md) — consequential tradeoffs
 - [docs/TESTING.md](docs/TESTING.md) — reproducible validation
+- [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md) — state model and invariants
 - [evidence/README.md](evidence/README.md) — captured evidence index
-

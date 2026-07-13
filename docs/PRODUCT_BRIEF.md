@@ -16,7 +16,7 @@ You are one imperfect sensory organ in a larger communal creature. You cannot sa
 4. **Discuss** — compare incompatible truths in the Reddit thread.
 5. **Return** — witness the single community move and its consequence.
 
-The current vertical slice implements a local Echo observation and pending direction only.
+The current vertical slice implements Echo observation, one persistent active vote per authenticated player, aggregate community results, manual moderator resolution, and consequence playback.
 
 ## Community role and Reddit fit
 
@@ -38,15 +38,15 @@ Reddit supplies persistent posts, threaded debate, subreddit identity, moderatio
 - Honest boundaries between demonstration and live systems
 - Mobile touch as the baseline interaction
 
-## Included in this phase
+## Included now
 
 - Immersive inline entry, expanded Phaser cavern, original Murmur silhouette
 - Echo reveal with three-pulse cap
-- Four-way local direction selection, change, replay, and pending outcome
+- Four-way selection, explicit confirmation, persistent vote change, replay, aggregate counts, and pending outcome
+- Installation-scoped Redis state, idempotent requests, concurrent-write protection, moderator-only manual resolution, immutable snapshot, and audit hash
 - Typed server bootstrap, health endpoint, failure/retry states, debug mode
 - Responsive and reduced-motion foundations
 
 ## Explicitly excluded
 
-Redis, scheduler, automatic daily resolution, real per-user sensor assignment, comments automation, flair, reputation, leaderboards, streaks, currencies, store, crafting, combat, clans, inventory, generative AI, definitive maps, cross-subreddit play, notifications, full Heat/Wind senses, App Review, and Devpost submission.
-
+Scheduler, automatic daily resolution, automatic next-post creation, real per-user sensor assignment, comments automation, User Actions, flair, reputation, leaderboards, streaks, currencies, store, crafting, combat, clans, inventory, generative AI, definitive maps, cross-subreddit play, notifications, full Heat/Wind senses, App Review, and Devpost submission.

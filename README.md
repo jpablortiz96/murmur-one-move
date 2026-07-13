@@ -6,9 +6,9 @@ MURMUR is a mobile-first asynchronous social game for Reddit. A small biolumines
 
 ## Current state
 
-This repository contains the first playable **Echo vertical slice** for a Reddit Interactive Post. The inline world invites a player to enter the signal; the expanded Phaser experience loads typed bootstrap data from the Devvit Web server, lets the player reveal the cave with up to three Echo pulses, and records a local pending direction without moving Murmur.
+This repository contains an **Echo vertical slice with persistent community voting** for a Reddit Interactive Post. A player can reveal the cave with up to three Echo pulses, choose a direction, explicitly commit one active signal, change it while the round is open, inspect aggregate counts, and watch Murmur follow an immutable moderator-resolved result.
 
-This is intentionally not the daily multiplayer expedition yet. See [LIMITATIONS.md](LIMITATIONS.md).
+This is a real multiplayer round foundation, but not the automated daily expedition yet. See [LIMITATIONS.md](LIMITATIONS.md).
 
 ## Requirements
 
@@ -45,7 +45,7 @@ For responsive client QA without a Reddit iframe, start the local client harness
 npm run dev:local:client
 ```
 
-Open `http://127.0.0.1:4173/game.html`. The harness mounts the real health/bootstrap Hono routes but has no Reddit context or persistence.
+Open `http://127.0.0.1:4173/game.html`. The harness mounts health/bootstrap and intentionally returns an explicit unavailable response for community-round routes because it has no Reddit identity or Redis context.
 
 ## Validate
 
@@ -69,7 +69,8 @@ src/
 │   └── *.html/*.css
 ├── server/
 │   ├── core/          # Interactive Post creation
-│   └── routes/        # Health/bootstrap and Devvit handlers
+│   ├── routes/        # Health/bootstrap, round API, Devvit handlers
+│   └── services/      # Round keys and transactional state service
 └── shared/
     ├── constants/
     ├── contracts/
@@ -83,14 +84,19 @@ The inspected five-viewport matrix, before/after comparison, and performance not
 ## Implemented scope
 
 - Original programmatic cave, fog, particles, Murmur creature, Echo wave, wall trace, hollow-route clue, and abstract danger clue
-- Mouse/touch interaction, maximum of three pulses, four directional choices, change/replay, and pending-state copy
+- Mouse/touch interaction, maximum of three pulses, four directional choices, explicit confirmation, change/replay, and resolved consequence
 - Centralized Header/World/Action layout with safe-area, density, and wide-orientation rules
 - Cave-integrated resonant direction nodes and distinct visual responses for Echo pulses 1–3
 - Reduced-motion equivalents for camera, ambience, creature, node, and Echo motion
 - Opt-in debug overlay through `?debug=1`
 - Real `GET /api/health` and typed `GET /api/bootstrap`
+- Redis-backed `GET /api/round`, `POST /api/round/vote`, and moderator-only `POST /api/round/resolve`
+- Exactly one active vote per authenticated user/round, idempotency keys, atomic vote changes, aggregate counts, deterministic tie-breaking, and immutable audit hashes
+- Guest exploration without fake voting and server-derived user/post/subreddit identity
 - Loading, malformed-response, error, and retry states
-- Local decision-state and contract unit tests
+- Contract, decision-state, Redis transaction/concurrency, resolution, and layout tests
+
+The round model and invariants are documented in [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md).
 
 ## Asset license
 

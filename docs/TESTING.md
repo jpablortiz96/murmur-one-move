@@ -10,7 +10,7 @@ npm test
 npm run build
 ```
 
-The unit suite covers bootstrap validation, direction normalization, decision selection/change/reset, and feature-flag validation. The build verifies both configured HTML entrypoints and the CommonJS Devvit server bundle.
+The unit suite covers bootstrap/round validation, direction normalization, decision selection/change/reset, feature flags, Redis key privacy, idempotent votes, request conflicts, atomic changes, simultaneous first votes, same-user concurrent changes, vote-resolution races, deterministic tie-breaking, immutable repeated resolution, post-resolution rejection, and corrupt stored data. The build verifies both configured HTML entrypoints and the CommonJS Devvit server bundle.
 
 `tests/layout.test.ts` deterministically covers all five required viewports, zone adjacency, safe-area offsets, target bounds, South/instruction clearance, and wide-layout divergence.
 
@@ -22,10 +22,13 @@ The unit suite covers bootstrap validation, direction normalization, decision se
 4. Observe a visible loading state while `/api/bootstrap` resolves.
 5. Tap/click empty cavern space three times; confirm exactly three waves and no fourth pulse.
 6. Confirm Echo briefly exposes wall edges, a hollow cue, and a warm abstract danger cue.
-7. Select each direction in turn using **CHANGE CHOICE**; confirm highlight and Murmur orientation are not color-only.
-8. Select **REPLAY SIGNAL**; confirm the observation and pulse budget reset.
-9. Append `?debug=1` to a supported game URL; confirm viewport/state information and reset/pulse controls appear only there.
-10. Review playtest client/server logs for errors after the full sequence.
+7. Choose a direction and press **CONFIRM SIGNAL**; confirm the server returns one active vote and aggregate total 1.
+8. Use **CHANGE VOTE**, choose another direction, and confirm the revision increases while aggregate total remains 1.
+9. Select **REPLAY SIGNAL**; confirm observation resets without deleting the active community vote.
+10. As a moderator, press **MOD · RESOLVE** and then **CONFIRM RESOLVE**; confirm the separate control prevents accidental resolution.
+11. Confirm Murmur follows the winner, frozen counts remain visible, and further votes are unavailable.
+12. Append `?debug=1` to a supported game URL; confirm viewport/state information and reset/pulse controls appear only there.
+13. Review playtest client/server logs for errors after the full sequence.
 
 ## Responsive matrix
 
@@ -36,6 +39,10 @@ Validate 360 × 800, 390 × 844, 412 × 915, 768 × 1024, and 1280 × 720. For e
 - Force `/api/bootstrap` to fail or intercept it in a local harness: error copy and **RETRY SIGNAL** must appear.
 - Return malformed JSON: the same explicit invalid-response path must appear.
 - Retry against a healthy server: only one playable scene should start.
+- Open the local harness without Devvit context: community-round calls must return explicit 503 responses and the client must show safe retry copy.
+- Submit a vote without `context.userId`: the API must return 401 and must not mutate Redis.
+- Reuse a request ID with another direction: the API must return a conflict instead of silently replacing history.
+- Vote after resolution: the API must return the existing resolved state and refuse mutation.
 
 Concrete run results belong in `evidence/README.md`; do not rewrite planned checks as completed evidence.
 
@@ -45,6 +52,6 @@ Concrete run results belong in `evidence/README.md`; do not rewrite planned chec
 npm run dev:local:client
 ```
 
-The local Vite-only configuration mounts the real Hono health/bootstrap router without Devvit context. Chrome CDP can then set exact device metrics, dispatch touch/mouse input, and capture PNGs. This is for client layout QA only; final embedding still requires `npm run dev` and the Reddit playtest URL.
+The local Vite-only configuration mounts the health/bootstrap router without Devvit context. Chrome CDP can then set exact device metrics, dispatch touch/mouse input, and capture PNGs. Community APIs deliberately fail with 503 in this harness. This is for client layout and failure-path QA only; final persistence verification requires `npm run dev` and the Reddit playtest URL.
 
 The completed 2026-07-10 run captured intro, Echo, active pulse, selected, and changed states at 360 × 800, 390 × 844, 412 × 915, 768 × 1024, and 1280 × 720. See [VISUAL_AUDIT.md](VISUAL_AUDIT.md).

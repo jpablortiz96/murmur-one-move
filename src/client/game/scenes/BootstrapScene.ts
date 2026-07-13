@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { parseBootstrap } from '../../../shared/contracts/bootstrap';
+import { fetchPlayerSession } from '../systems/communityClient';
 
 export class BootstrapScene extends Phaser.Scene {
   private statusText: Phaser.GameObjects.Text;
@@ -63,11 +64,13 @@ export class BootstrapScene extends Phaser.Scene {
         throw new Error('Bootstrap response did not match the MURMUR contract');
       }
 
-      console.info('MURMUR bootstrap accepted', {
+      const session = await fetchPlayerSession();
+      console.info('MURMUR session accepted', {
         day: bootstrap.day,
-        sensors: bootstrap.availableSensors,
+        authenticated: session.player.authentication === 'authenticated',
+        stableAssignment: session.player.stableAssignment,
       });
-      this.scene.start('Murmur', bootstrap);
+      this.scene.start('Murmur', { bootstrap, session });
     } catch (error) {
       const detail = error instanceof Error ? error.message : 'Unknown bootstrap failure';
       console.error('Unable to enter MURMUR:', detail);

@@ -1,11 +1,10 @@
 import {
   parseResolveRoundResponse,
-  parseRoundStateResponse,
   parseSubmitVoteResponse,
   type ResolveRoundResponse,
-  type RoundStateResponse,
   type SubmitVoteResponse,
 } from '../../../shared/contracts/round';
+import { parsePlayerSession, type PlayerSession } from '../../../shared/contracts/session';
 import type { Direction } from '../../../shared/types/game';
 
 export class CommunityApiError extends Error {
@@ -41,13 +40,13 @@ const requireOk = async (response: Response): Promise<void> => {
   }
 };
 
-export const fetchRoundState = async (): Promise<RoundStateResponse> => {
-  const response = await fetch('/api/round', { headers: { Accept: 'application/json' } });
+export const fetchPlayerSession = async (): Promise<PlayerSession> => {
+  const response = await fetch('/api/session', { headers: { Accept: 'application/json' } });
   await requireOk(response);
   const value: unknown = await response.json();
-  const state = parseRoundStateResponse(value);
-  if (state === null) throw new CommunityApiError('Invalid community state response', 502);
-  return state;
+  const session = parsePlayerSession(value);
+  if (session === null) throw new CommunityApiError('Invalid private session response', 502);
+  return session;
 };
 
 export const submitCommunityVote = async (

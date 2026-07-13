@@ -1,6 +1,6 @@
 import * as Phaser from 'phaser';
 import type { BootstrapResponse } from '../../../shared/contracts/bootstrap';
-import type { RoundStateResponse } from '../../../shared/contracts/round';
+import type { PlayerSession } from '../../../shared/contracts/session';
 import { AVAILABLE_DIRECTIONS, DEBUG_DEFAULT } from '../../../shared/constants/game';
 import type { Direction } from '../../../shared/types/game';
 import {
@@ -10,13 +10,10 @@ import {
   type LayoutMetrics,
 } from '../config/layout';
 import { CaveField } from '../effects/CaveField';
-import { emitEchoWave } from '../effects/EchoPulse';
 import { Murmur } from '../entities/Murmur';
 import {
-  canEmitPulse,
   changeChoice,
   createDecisionState,
-  emitPulse,
   replaySignal,
   selectDirection,
   type DecisionState,
@@ -24,12 +21,14 @@ import {
 import {
   CommunityApiError,
   createVoteRequestId,
-  fetchRoundState,
+  fetchPlayerSession,
   resolveCommunityRound,
   submitCommunityVote,
 } from '../systems/communityClient';
 import { createWorldButton, type WorldButton } from '../ui/worldButton';
 import { createSignalNode, type SignalNode } from '../ui/signalNode';
+import { createSensorExperience } from '../sensors/createSensorExperience';
+import type { SensorExperience } from '../sensors/SensorExperience';
 
 type SceneSettings = {
   reducedMotion: boolean;
@@ -37,8 +36,14 @@ type SceneSettings = {
   safeArea: Insets;
 };
 
+type MurmurSceneData = {
+  bootstrap: BootstrapResponse;
+  session: PlayerSession;
+};
+
 export class MurmurScene extends Phaser.Scene {
   private bootstrap: BootstrapResponse;
+  private session: PlayerSession;
   private settings: SceneSettings;
   private state: DecisionState = createDecisionState();
   private metrics: LayoutMetrics;
@@ -47,6 +52,7 @@ export class MurmurScene extends Phaser.Scene {
   private titleText: Phaser.GameObjects.Text;
   private chapterText: Phaser.GameObjects.Text;
   private sensorText: Phaser.GameObjects.Text;
+  private senseIntroText: Phaser.GameObjects.Text;
   private instructionText: Phaser.GameObjects.Text;
   private pulseText: Phaser.GameObjects.Text;
   private resultText: Phaser.GameObjects.Text;
@@ -64,8 +70,8 @@ export class MurmurScene extends Phaser.Scene {
   private debugResetButton: WorldButton | null = null;
   private debugPulseButton: WorldButton | null = null;
   private decisionFeedbackTimer: Phaser.Time.TimerEvent | null = null;
-  private roundState: RoundStateResponse | null = null;
-  private roundLoading = true;
+  private sensorExperience: SensorExperience;
+  private sessionLoading = false;
   private roundError: string | null = null;
   private voteSubmitting = false;
   private voteRequestId: string | null = null;
@@ -77,8 +83,9 @@ export class MurmurScene extends Phaser.Scene {
     super('Murmur');
   }
 
-  init(data: BootstrapResponse): void {
-    this.bootstrap = data;
+  init(data: MurmurSceneData): void {
+    this.bootstrap = data.bootstrap;
+    this.session = data.session;
     this.state = createDecisionState();
     this.settings = this.registry.get('settings');
   }
@@ -98,7 +105,7 @@ export class MurmurScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
     this.sensorText = this.add
-      .text(0, 0, 'E C H O', {
+      .text(0, 0, this.session.player.sensor.toUpperCase().split('').join(' '), {
         fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
         fontSize: '20px',
         color: '#bfffee',
@@ -106,6 +113,16 @@ export class MurmurScene extends Phaser.Scene {
       })
       .setOrigin(0.5)
       .setAlpha(this.settings.reducedMotion ? 1 : 0);
+    this.senseIntroText = this.add
+      .text(0, 0, this.senseIntroduction(), {
+        ...this.bodyStyle(),
+        fontSize: '13px',
+        color: '#d9fff5',
+        align: 'center',
+        lineSpacing: 8,
+      })
+      .setOrigin(0.5)
+      .setDepth(60);
     this.instructionText = this.add.text(0, 0, '', this.bodyStyle()).setOrigin(0.5);
     this.pulseText = this.add.text(0, 0, '', this.microStyle()).setOrigin(0.5);
     this.resultText = this.add
@@ -124,6 +141,18 @@ export class MurmurScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.createDirectionNodes();
+    this.sensorExperience = createSensorExperience(this.session.player.sensor, {
+      scene: this,
+      perception: this.session.perception,
+      murmur: this.murmur,
+      reducedMotion: this.settings.reducedMotion,
+      metrics: () => this.metrics,
+      onProgress: (progress) => {
+        this.state = { ...this.state, pulsesUsed: progress.used };
+        this.renderState();
+      },
+    });
+    this.sensorExperience.enter();
     this.replayButton = createWorldButton(this, 'CONFIRM SIGNAL', 136, () =>
       this.handlePrimaryAction()
     );
@@ -136,15 +165,15 @@ export class MurmurScene extends Phaser.Scene {
     if (this.settings.debug) this.createDebugLayer();
 
     this.layout();
+    const restoredDirection = this.session.round.resolution?.winningDirection ?? this.session.round.currentVote;
+    if (restoredDirection) {
+      this.state = { ...this.state, phase: 'decided', pulsesUsed: 1, selection: restoredDirection };
+      this.cave.setSelection(restoredDirection);
+      this.murmur.face(restoredDirection);
+    }
     this.renderState();
-    void this.loadRoundState();
     this.scale.on('resize', () => this.layout());
-    this.input.on(
-      'pointerdown',
-      (_pointer: Phaser.Input.Pointer, currentlyOver: Phaser.GameObjects.GameObject[]) => {
-        if (currentlyOver.length === 0) this.tryPulse(false);
-      }
-    );
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.sensorExperience.destroy());
 
     if (!this.settings.reducedMotion) {
       this.cameras.main.setZoom(0.92);
@@ -161,20 +190,16 @@ export class MurmurScene extends Phaser.Scene {
         delay: 260,
       });
     }
+    const introDuration = this.settings.reducedMotion ? 1100 : 1800;
+    this.time.delayedCall(introDuration, () => {
+      if (this.settings.reducedMotion) this.senseIntroText.setVisible(false);
+      else this.tweens.add({ targets: this.senseIntroText, alpha: 0, duration: 360, onComplete: () => this.senseIntroText.setVisible(false) });
+    });
+    if (this.session.expedition.status === 'resolved') this.playOutcome();
   }
 
-  private tryPulse(force: boolean): void {
-    if (!force && !canEmitPulse(this.state)) return;
-    if (!force) this.state = emitPulse(this.state);
-
-    const pulseNumber = force
-      ? (this.state.pulsesUsed % this.state.maxPulses) + 1
-      : this.state.pulsesUsed;
-    emitEchoWave(this, this.metrics, pulseNumber, this.settings.reducedMotion);
-    this.cave.revealPulse(pulseNumber);
-    this.murmur.echo(pulseNumber);
-    if (pulseNumber === 3) this.murmur.flinchDanger();
-    this.renderState();
+  private tryActivation(): void {
+    this.sensorExperience.forceActivate();
   }
 
   private choose(direction: Direction): void {
@@ -203,18 +228,18 @@ export class MurmurScene extends Phaser.Scene {
   private replay(): void {
     this.clearDecisionFeedback();
     this.state = replaySignal();
+    this.sensorExperience.replay();
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.voteRequestId = null;
     this.disarmResolution();
     this.renderState();
-    if (this.settings.reducedMotion) this.tryPulse(false);
-    else this.time.delayedCall(180, () => this.tryPulse(false));
   }
 
   private resetDemo(): void {
     this.clearDecisionFeedback();
     this.state = createDecisionState();
+    this.sensorExperience.reset();
     this.cave.setSelection(null);
     this.murmur.face(null);
     this.voteRequestId = null;
@@ -227,18 +252,14 @@ export class MurmurScene extends Phaser.Scene {
     const decided = this.state.phase === 'decided';
     const atLimit = this.state.pulsesUsed >= this.state.maxPulses;
 
+    const accessibleSignal = this.sensorExperience.getAccessibleSignal();
+    const gestureInstruction = this.sensorExperience.getInstruction();
     this.instructionText.setText(
-      decided
-        ? ''
-        : atLimit
-          ? 'Choose what you trust.'
-          : hasPulse
-            ? 'Echo again, or hold a path.'
-            : 'Touch the dark to listen.'
+      decided ? '' : accessibleSignal ? `${accessibleSignal}\n${gestureInstruction}` : gestureInstruction
     );
     const communityLine = this.communityLine();
     this.pulseText.setText(
-      `ECHO ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  SPENT' : ''}` +
+      `${this.session.player.sensor.toUpperCase()} ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  COMPLETE' : ''}` +
         `\n${communityLine}`
     );
     this.instructionText.setVisible(!decided);
@@ -281,12 +302,11 @@ export class MurmurScene extends Phaser.Scene {
 
   private showPersistentDecision(): void {
     if (this.state.selection === null) return;
-    if (this.roundState?.status === 'resolved' && this.roundState.resolution) {
+    if (this.session.expedition.status === 'resolved' && this.session.round.resolution) {
       this.showResolvedDecision();
       return;
     }
-    const heldVote = this.roundState?.viewer.activeVote;
-    const isHeld = heldVote?.direction === this.state.selection;
+    const isHeld = this.session.round.currentVote === this.state.selection;
     this.resultText
       .setText(
         this.voteSubmitting
@@ -300,19 +320,19 @@ export class MurmurScene extends Phaser.Scene {
       .setText(
         this.roundError
           ? this.roundError
-          : this.roundLoading
+          : this.sessionLoading
             ? 'Tuning the community signal…'
             : isHeld
               ? this.communityLine()
-              : this.roundState?.viewer.authenticated
-                ? `Confirm to join ${this.roundState.counts.total} active signals.`
-                : 'Sign in to Reddit to confirm this signal.'
+              : this.session.player.authentication === 'authenticated'
+                ? `Confirm to join ${this.session.round.counts.total} active signals.`
+                : 'Sign in to receive a stable sense and join the signal.'
       )
       .setVisible(true);
     this.replayButton.container.setVisible(true);
     this.changeButton.container.setVisible(true);
     this.resolveButton.container.setVisible(
-      Boolean(this.roundState?.viewer.canResolve && isHeld)
+      Boolean(this.session.round.canResolve && isHeld)
     );
     this.replayButton.setEnabled(!this.voteSubmitting);
     this.changeButton.setEnabled(!this.voteSubmitting);
@@ -372,15 +392,18 @@ export class MurmurScene extends Phaser.Scene {
     this.resolutionArmTimer = null;
   }
 
-  private async loadRoundState(): Promise<void> {
-    if (this.roundLoading && this.roundState !== null) return;
-    this.roundLoading = true;
+  private async refreshSession(): Promise<void> {
+    if (this.sessionLoading) return;
+    this.sessionLoading = true;
     this.roundError = null;
     this.renderState();
     try {
-      const state = await fetchRoundState();
-      this.roundState = state;
-      const direction = state.resolution?.winningDirection ?? state.viewer.activeVote?.direction;
+      const session = await fetchPlayerSession();
+      if (session.player.sensor !== this.session.player.sensor) {
+        throw new Error('Stable sense changed during the same round');
+      }
+      this.session = session;
+      const direction = session.round.resolution?.winningDirection ?? session.round.currentVote;
       if (direction) {
         this.state = {
           ...this.state,
@@ -391,13 +414,13 @@ export class MurmurScene extends Phaser.Scene {
         this.cave.setSelection(direction);
         this.murmur.face(direction);
       }
-      if (state.status === 'resolved') this.playOutcome();
+      if (session.expedition.status === 'resolved') this.playOutcome();
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Community signal unavailable';
-      console.error('Unable to load community state:', message);
+      const message = error instanceof Error ? error.message : 'Private session unavailable';
+      console.error('Unable to refresh private session:', message);
       this.roundError = 'Community signal unavailable. Retry safely.';
     } finally {
-      this.roundLoading = false;
+      this.sessionLoading = false;
       this.renderState();
     }
   }
@@ -405,16 +428,16 @@ export class MurmurScene extends Phaser.Scene {
   private async confirmVote(): Promise<void> {
     const direction = this.state.selection;
     if (!direction || this.voteSubmitting) return;
-    if (!this.roundState || this.roundError) {
-      await this.loadRoundState();
-      if (!this.roundState || this.roundError) return;
+    if (this.roundError) {
+      await this.refreshSession();
+      if (this.roundError) return;
     }
-    if (!this.roundState.viewer.authenticated) {
+    if (this.session.player.authentication !== 'authenticated') {
       this.roundError = 'Sign in to Reddit, then retry this signal.';
       this.renderState();
       return;
     }
-    if (this.roundState.status !== 'open') {
+    if (this.session.expedition.status !== 'open') {
       this.playOutcome();
       return;
     }
@@ -424,10 +447,14 @@ export class MurmurScene extends Phaser.Scene {
     this.renderState();
     try {
       const result = await submitCommunityVote(direction, this.voteRequestId);
-      this.roundState = {
-        ...this.roundState,
-        counts: result.counts,
-        viewer: { ...this.roundState.viewer, activeVote: result.activeVote },
+      this.session = {
+        ...this.session,
+        round: {
+          ...this.session.round,
+          counts: result.counts,
+          currentVote: result.activeVote.direction,
+          revision: result.activeVote.revision,
+        },
       };
       this.voteRequestId = null;
       this.murmur.calm();
@@ -439,8 +466,7 @@ export class MurmurScene extends Phaser.Scene {
           ? 'The round changed. Refreshing the frozen signal…'
           : 'Signal not recorded. Retry is safe.';
       if (error instanceof CommunityApiError && error.status === 409) {
-        this.roundState = null;
-        await this.loadRoundState();
+        await this.refreshSession();
       }
     } finally {
       this.voteSubmitting = false;
@@ -450,16 +476,16 @@ export class MurmurScene extends Phaser.Scene {
 
   private handlePrimaryAction(): void {
     if (this.roundError) {
-      void this.loadRoundState();
+      void this.refreshSession();
       return;
     }
-    if (this.roundState?.status === 'resolved') {
+    if (this.session.expedition.status === 'resolved') {
       this.playOutcome(true);
       return;
     }
     const held =
       this.state.selection !== null &&
-      this.roundState?.viewer.activeVote?.direction === this.state.selection;
+      this.session.round.currentVote === this.state.selection;
     if (held) this.replay();
     else void this.confirmVote();
   }
@@ -467,8 +493,8 @@ export class MurmurScene extends Phaser.Scene {
   private handleResolveAction(): void {
     const held =
       this.state.selection !== null &&
-      this.roundState?.viewer.activeVote?.direction === this.state.selection;
-    if (!held || !this.roundState?.viewer.canResolve || this.voteSubmitting) return;
+      this.session.round.currentVote === this.state.selection;
+    if (!held || !this.session.round.canResolve || this.voteSubmitting) return;
     if (!this.resolutionArmed) {
       this.resolutionArmed = true;
       this.resolutionArmTimer?.remove(false);
@@ -490,14 +516,13 @@ export class MurmurScene extends Phaser.Scene {
     this.renderState();
     try {
       const result = await resolveCommunityRound();
-      if (!this.roundState) throw new Error('Round state disappeared during resolution');
-      this.roundState = {
-        ...this.roundState,
-        status: 'resolved',
-        counts: result.resolution.countsSnapshot,
-        resolution: result.resolution,
-        viewer: {
-          ...this.roundState.viewer,
+      this.session = {
+        ...this.session,
+        expedition: { ...this.session.expedition, status: 'resolved' },
+        round: {
+          ...this.session.round,
+          counts: result.resolution.countsSnapshot,
+          resolution: result.resolution,
           canVote: false,
           canResolve: false,
         },
@@ -514,7 +539,7 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private playOutcome(replay = false): void {
-    const direction = this.roundState?.resolution?.winningDirection;
+    const direction = this.session.round.resolution?.winningDirection;
     if (!direction || (this.outcomePlayed && !replay)) return;
     this.outcomePlayed = true;
     this.state = {
@@ -538,7 +563,7 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private showResolvedDecision(): void {
-    const resolution = this.roundState?.resolution;
+    const resolution = this.session.round.resolution;
     if (!resolution) return;
     this.resultText
       .setText(`MURMUR FOLLOWS ${resolution.winningDirection.toUpperCase()}`)
@@ -557,15 +582,14 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private communityLine(): string {
-    if (this.roundLoading && this.roundState === null) return 'COMMUNITY · TUNING';
-    if (!this.roundState) return 'COMMUNITY · UNAVAILABLE';
-    const { counts } = this.roundState;
+    if (this.sessionLoading) return 'COMMUNITY · TUNING';
+    const { counts } = this.session.round;
     return `N ${counts.north} · E ${counts.east} · S ${counts.south} · W ${counts.west} · ${counts.total} SIGNALS`;
   }
 
   private positionActionButtons(): void {
     if (!this.metrics || !this.replayButton || !this.changeButton || !this.resolveButton) return;
-    const singleAction = this.roundState?.status === 'resolved';
+    const singleAction = this.session.expedition.status === 'resolved';
     this.replayButton.container.setPosition(
       singleAction ? this.metrics.centerX : this.metrics.centerX - this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
@@ -591,6 +615,7 @@ export class MurmurScene extends Phaser.Scene {
     this.titleText.setPosition(centerX, this.metrics.titleY);
     this.chapterText.setPosition(centerX, this.metrics.chapterY);
     this.sensorText.setPosition(centerX, this.metrics.sensorY);
+    this.senseIntroText.setPosition(centerX, centerY - 8);
     this.instructionText.setPosition(centerX, this.metrics.instructionY);
     this.pulseText.setPosition(centerX, this.metrics.pulseCounterY);
     this.resultText.setPosition(centerX, this.metrics.decisionStatusY);
@@ -613,8 +638,8 @@ export class MurmurScene extends Phaser.Scene {
       this.metrics.moderatorButtonY
     );
 
-    if (this.outcomePlayed && this.roundState?.resolution) {
-      const target = pathNodes[this.roundState.resolution.winningDirection];
+    if (this.outcomePlayed && this.session.round.resolution) {
+      const target = pathNodes[this.session.round.resolution.winningDirection];
       this.murmur.setPosition(
         centerX + (target.x - centerX) * 0.34,
         centerY + (target.y - centerY) * 0.34
@@ -668,7 +693,7 @@ export class MurmurScene extends Phaser.Scene {
       .setOrigin(0, 0)
       .setDepth(100);
     this.debugResetButton = createWorldButton(this, 'RESET', 96, () => this.resetDemo());
-    this.debugPulseButton = createWorldButton(this, 'PULSE', 96, () => this.tryPulse(true));
+    this.debugPulseButton = createWorldButton(this, 'ACTIVATE', 96, () => this.tryActivation());
     this.debugResetButton.container.setDepth(100);
     this.debugPulseButton.container.setDepth(100);
   }
@@ -676,10 +701,23 @@ export class MurmurScene extends Phaser.Scene {
   private updateDebugText(): void {
     this.debugText?.setText(
       `DEBUG · ${this.scale.width}×${this.scale.height}\n` +
-        `${this.state.phase} · pulses ${this.state.pulsesUsed}/${this.state.maxPulses}\n` +
-        `choice ${this.state.selection ?? 'none'} · round ${this.roundState?.status ?? 'loading'}\n` +
-        `total ${this.roundState?.counts.total ?? 0} · reduced ${this.settings.reducedMotion}`
+        `${this.session.player.sensor} · activations ${this.state.pulsesUsed}/${this.state.maxPulses}\n` +
+        `choice ${this.state.selection ?? 'none'} · round ${this.session.expedition.status}\n` +
+        `total ${this.session.round.counts.total} · reduced ${this.settings.reducedMotion}`
     );
+  }
+
+  private senseIntroduction(): string {
+    const copy = {
+      echo: ['ECHO', 'You hear what the stone refuses to show.', 'Touch to send up to three pulses.'],
+      heat: ['HEAT', 'You feel what is waiting in the dark.', 'Press and hold to focus up to three regions.'],
+      wind: ['WIND', 'You follow what the cavern carries.', 'Drag briefly to release up to three tracers.'],
+    } as const;
+    const [name, line, gesture] = copy[this.session.player.sensor];
+    const guest = this.session.player.stableAssignment
+      ? ''
+      : '\nDEMO SENSE · Sign in for a stable assignment.';
+    return `YOUR SENSE\n${name}\n${line}\n\nYour signal is only part of the truth.\n${gesture}${guest}`;
   }
 
   private titleStyle(): Phaser.Types.GameObjects.Text.TextStyle {

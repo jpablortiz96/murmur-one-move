@@ -5,6 +5,8 @@ import { projectPerception } from './src/server/game/sensors/projectPerception';
 import { generateScenario } from './src/server/game/world/generateScenario';
 import { createEmptyCounts } from './src/shared/contracts/round';
 import type { PlayerSession } from './src/shared/contracts/session';
+import type { ExpeditionPublicView, ExpeditionStatus } from './src/shared/contracts/expedition';
+import type { RoundResolution } from './src/shared/contracts/round';
 import type { Sensor } from './src/shared/types/game';
 
 const localSensor = (): Sensor => {
@@ -13,6 +15,64 @@ const localSensor = (): Sensor => {
 };
 
 let localVote: { direction: 'north' | 'east' | 'south' | 'west'; revision: number } | null = null;
+
+const localExpeditionStatus = (): ExpeditionStatus => {
+  const value = process.env.MURMUR_LOCAL_EXPEDITION_STATE;
+  return value === 'resolving' || value === 'resolved' || value === 'next-chapter-pending' || value === 'completed'
+    ? value
+    : 'open';
+};
+
+const localJourney = (): ExpeditionPublicView => {
+  const status = localExpeditionStatus();
+  const completed = status === 'completed';
+  const historyLength = completed ? 7 : status === 'open' || status === 'resolving' ? 2 : 3;
+  return {
+    schemaVersion: 2,
+    seasonId: 'season-local-evidence',
+    status,
+    currentDay: completed ? 7 : 3,
+    totalDays: 7,
+    chapter: {
+      day: completed ? 7 : 3,
+      name: completed ? 'The Last Resonance' : 'The Sleeping Heat',
+      phrase: 'Warmth moves where nothing should be alive.',
+      cavernType: 'thermal nursery',
+      cliffhanger: 'A choir begins without voices.',
+    },
+    window: {
+      opensAt: '2026-07-13T15:00:00.000Z',
+      closesAt: '2026-07-14T13:00:00.000Z',
+      revealAt: '2026-07-14T13:02:00.000Z',
+      nextChapterAt: '2026-07-14T13:12:00.000Z',
+    },
+    murmur: {
+      vitality: completed ? 1 : 2,
+      condition: completed ? 'strained' : 'stable',
+      memoryFragments: completed ? 3 : 2,
+      scars: completed ? ['fractured-shell', 'spore-mark'] : ['spore-mark'],
+    },
+    history: Array.from({ length: historyLength }, (_, index) => ({
+      day: index + 1,
+      direction: (['north', 'east', 'south', 'west'] as const)[index % 4] ?? 'north',
+      severity: (['safe', 'costly', 'dangerous'] as const)[index % 3] ?? 'safe',
+      consequence: 'The hollow changed Murmur without ending the signal.',
+      resolvedAt: `2026-07-${String(13 + index).padStart(2, '0')}T18:00:00.000Z`,
+    })),
+    ending: completed ? 'the-survivor' : null,
+    schedulerDelayed: false,
+    nextChapterPostId: status === 'open' ? 't3_local_day_3' : null,
+  };
+};
+
+const localResolution = (): RoundResolution => ({
+  status: 'resolved', winningDirection: 'east',
+  countsSnapshot: { north: 2, east: 5, south: 1, west: 2, total: 10 },
+  sensorDiversityByDirection: { north: 1, east: 3, south: 1, west: 2 },
+  tieBreak: 'vote-count', tiedDirections: ['east'],
+  resolvedAt: '2026-07-15T18:00:00.000Z', resolutionVersion: 1,
+  auditHash: `sha256:${'a'.repeat(64)}`,
+});
 
 const localCounts = () => {
   const counts = createEmptyCounts();
@@ -25,21 +85,33 @@ const localCounts = () => {
 
 const localSession = (): PlayerSession => {
   const sensor = localSensor();
+  const journey = localJourney();
+  const resolved = journey.status === 'resolved' || journey.status === 'next-chapter-pending' || journey.status === 'completed';
+  const resolution = resolved ? localResolution() : null;
   const truth = generateScenario({ postId: 'local-visual-harness', chapter: 1, day: 1, generatorVersion: 1 });
   return {
-    schemaVersion: 1,
-    expedition: { chapter: 1, day: 1, title: 'The First Hollow', status: 'open' },
+    schemaVersion: 2,
+    expedition: { chapter: journey.currentDay, day: journey.currentDay, title: journey.chapter.name, status: journey.status },
     player: { authentication: 'authenticated', sensor, stableAssignment: true, assignmentVersion: 1 },
     perception: projectPerception(sensor, truth),
     round: {
-      canVote: true,
-      canResolve: false,
-      currentVote: localVote?.direction ?? null,
+      canVote: journey.status === 'open',
+      canResolve: journey.status === 'open',
+      canManage: true,
+      currentVote: resolution?.winningDirection ?? localVote?.direction ?? null,
       revision: localVote?.revision ?? 0,
-      counts: localCounts(),
+      counts: resolution?.countsSnapshot ?? localCounts(),
       aggregateVisible: true,
-      resolution: null,
+      resolution,
     },
+    journey,
+    combinedTruth: resolved ? {
+      echo: 'East was open, hollow, and stable.',
+      heat: 'East held burning air with a moving signature.',
+      wind: 'East carried clear air in an inward current.',
+      consequence: 'Murmur crossed, but the living heat marked its shell.',
+      severity: 'dangerous',
+    } : null,
     featureFlags: { ...CURRENT_FEATURE_FLAGS },
   };
 };

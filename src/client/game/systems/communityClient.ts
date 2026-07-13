@@ -6,6 +6,10 @@ import {
 } from '../../../shared/contracts/round';
 import { parsePlayerSession, type PlayerSession } from '../../../shared/contracts/session';
 import type { Direction } from '../../../shared/types/game';
+import {
+  parseExpeditionApiResponse,
+  type ExpeditionApiResponse,
+} from '../../../shared/contracts/expeditionApi';
 
 export class CommunityApiError extends Error {
   readonly status: number;
@@ -78,3 +82,19 @@ export const resolveCommunityRound = async (): Promise<ResolveRoundResponse> => 
 };
 
 export const createVoteRequestId = (): string => crypto.randomUUID();
+
+export const runModeratorExpeditionAction = async (
+  path: 'round/close' | 'round/resolve' | 'chapter/publish' | 'expedition/reconcile',
+  confirmation: 'CLOSE ROUND NOW' | 'RESOLVE NOW' | 'PUBLISH NEXT DAY' | 'RECONCILE'
+): Promise<ExpeditionApiResponse> => {
+  const response = await fetch(`/api/mod/${path}`, {
+    method: 'POST',
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({ requestId: crypto.randomUUID(), confirmation }),
+  });
+  await requireOk(response);
+  const value: unknown = await response.json();
+  const result = parseExpeditionApiResponse(value);
+  if (!result) throw new CommunityApiError('Invalid moderator expedition response', 502);
+  return result;
+};

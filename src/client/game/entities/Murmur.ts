@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import type { Direction } from '../../../shared/types/game';
+import type { PublicMurmurState } from '../../../shared/contracts/expedition';
 
 export class Murmur extends Phaser.GameObjects.Container {
   private readonly reducedMotion: boolean;
@@ -9,6 +10,7 @@ export class Murmur extends Phaser.GameObjects.Container {
   private readonly core: Phaser.GameObjects.Graphics;
   private readonly antennaLeft: Phaser.GameObjects.Graphics;
   private readonly antennaRight: Phaser.GameObjects.Graphics;
+  private readonly conditionMarks: Phaser.GameObjects.Graphics;
 
   constructor(scene: Phaser.Scene, reducedMotion: boolean) {
     super(scene, 0, 0);
@@ -19,6 +21,7 @@ export class Murmur extends Phaser.GameObjects.Container {
     this.core = scene.add.graphics();
     this.antennaLeft = scene.add.graphics().setPosition(-17, -16);
     this.antennaRight = scene.add.graphics().setPosition(17, -16);
+    this.conditionMarks = scene.add.graphics();
 
     this.drawCreature();
     this.form.add([
@@ -27,6 +30,7 @@ export class Murmur extends Phaser.GameObjects.Container {
       this.antennaLeft,
       this.antennaRight,
       this.core,
+      this.conditionMarks,
     ]);
     this.add(this.form);
     this.setSize(88, 98).setInteractive({ useHandCursor: true });
@@ -37,6 +41,36 @@ export class Murmur extends Phaser.GameObjects.Container {
       this.startIdleMotion();
       this.startCoreIdle();
       this.startAntennaIdle();
+    }
+  }
+
+  applyExpeditionState(state: PublicMurmurState): void {
+    this.conditionMarks.clear();
+    const vitalityAlpha = 0.48 + state.vitality * 0.14;
+    this.core.setAlpha(vitalityAlpha);
+    this.glow.setAlpha(0.035 + state.vitality * 0.018);
+    if (state.scars.includes('fractured-shell')) {
+      this.conditionMarks.lineStyle(2, 0xc5eae2, 0.72).beginPath()
+        .moveTo(-22, -1).lineTo(-11, 7).lineTo(-18, 16).lineTo(-7, 25).strokePath();
+    }
+    if (state.scars.includes('thermal-burn')) {
+      this.conditionMarks.lineStyle(2, 0xffb06f, 0.74)
+        .strokeEllipse(16, 14, 17, 28)
+        .fillStyle(0xffa56b, 0.42).fillCircle(22, 3, 2).fillCircle(25, 11, 1.6);
+    }
+    if (state.scars.includes('spore-mark')) {
+      this.conditionMarks.fillStyle(0xb9db87, 0.76)
+        .fillCircle(-25, 20, 2.3).fillCircle(-20, 28, 1.5).fillCircle(-28, 31, 1.2);
+    }
+    const fragments = Math.min(4, state.memoryFragments);
+    for (let index = 0; index < fragments; index += 1) {
+      const angle = -2.4 + index * 1.18;
+      this.conditionMarks.fillStyle(0xd9fff5, 0.82)
+        .fillTriangle(
+          Math.cos(angle) * 43, Math.sin(angle) * 36 + 10,
+          Math.cos(angle) * 43 - 3, Math.sin(angle) * 36 + 15,
+          Math.cos(angle) * 43 + 3, Math.sin(angle) * 36 + 15
+        );
     }
   }
 

@@ -22,6 +22,7 @@ import {
   CommunityApiError,
   createVoteRequestId,
   fetchPlayerSession,
+  runModeratorExpeditionAction,
   resolveCommunityRound,
   submitCommunityVote,
 } from '../systems/communityClient';
@@ -29,6 +30,7 @@ import { createWorldButton, type WorldButton } from '../ui/worldButton';
 import { createSignalNode, type SignalNode } from '../ui/signalNode';
 import { createSensorExperience } from '../sensors/createSensorExperience';
 import type { SensorExperience } from '../sensors/SensorExperience';
+import { ExpeditionDisplay } from '../ui/ExpeditionDisplay';
 
 type SceneSettings = {
   reducedMotion: boolean;
@@ -67,6 +69,8 @@ export class MurmurScene extends Phaser.Scene {
   private replayButton: WorldButton;
   private changeButton: WorldButton;
   private resolveButton: WorldButton;
+  private modAuxButton: WorldButton;
+  private expeditionDisplay: ExpeditionDisplay;
   private debugResetButton: WorldButton | null = null;
   private debugPulseButton: WorldButton | null = null;
   private decisionFeedbackTimer: Phaser.Time.TimerEvent | null = null;
@@ -77,6 +81,7 @@ export class MurmurScene extends Phaser.Scene {
   private voteRequestId: string | null = null;
   private resolutionArmed = false;
   private resolutionArmTimer: Phaser.Time.TimerEvent | null = null;
+  private auxArmed = false;
   private outcomePlayed = false;
 
   constructor() {
@@ -94,10 +99,21 @@ export class MurmurScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x050b0e);
     this.cave = new CaveField(this, this.settings.reducedMotion);
     this.murmur = new Murmur(this, this.settings.reducedMotion).setDepth(15);
+    this.murmur.applyExpeditionState(this.session.journey?.murmur ?? {
+      vitality: 3,
+      condition: 'stable',
+      memoryFragments: 0,
+      scars: [],
+    });
+    this.expeditionDisplay = new ExpeditionDisplay(
+      this,
+      this.settings.reducedMotion,
+      this.session.journey
+    );
 
     this.titleText = this.add.text(0, 0, this.bootstrap.gameTitle, this.titleStyle()).setOrigin(0.5, 0);
     this.chapterText = this.add
-      .text(0, 0, `DAY ${this.bootstrap.day}  ·  ${this.bootstrap.chapter.toUpperCase()}`, {
+      .text(0, 0, `DAY ${this.session.expedition.day}  ·  ${this.session.expedition.title.toUpperCase()}`, {
         fontFamily: 'Trebuchet MS, Segoe UI, sans-serif',
         fontSize: '11px',
         color: '#699e99',
@@ -160,7 +176,11 @@ export class MurmurScene extends Phaser.Scene {
     this.resolveButton = createWorldButton(this, 'MOD · RESOLVE', 136, () =>
       this.handleResolveAction()
     );
+    this.modAuxButton = createWorldButton(this, 'MOD · CLOSE', 136, () =>
+      this.handleAuxAction()
+    );
     this.resolveButton.container.setVisible(false);
+    this.modAuxButton.container.setVisible(false);
 
     if (this.settings.debug) this.createDebugLayer();
 
@@ -173,7 +193,10 @@ export class MurmurScene extends Phaser.Scene {
     }
     this.renderState();
     this.scale.on('resize', () => this.layout());
-    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.sensorExperience.destroy());
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.sensorExperience.destroy();
+      this.expeditionDisplay.destroy();
+    });
 
     if (!this.settings.reducedMotion) {
       this.cameras.main.setZoom(0.92);
@@ -195,7 +218,7 @@ export class MurmurScene extends Phaser.Scene {
       if (this.settings.reducedMotion) this.senseIntroText.setVisible(false);
       else this.tweens.add({ targets: this.senseIntroText, alpha: 0, duration: 360, onComplete: () => this.senseIntroText.setVisible(false) });
     });
-    if (this.session.expedition.status === 'resolved') this.playOutcome();
+    if (this.session.round.resolution) this.playOutcome();
   }
 
   private tryActivation(): void {
@@ -280,6 +303,7 @@ export class MurmurScene extends Phaser.Scene {
       this.replayButton.container.setVisible(false);
       this.changeButton.container.setVisible(false);
       this.resolveButton.container.setVisible(false);
+      this.modAuxButton.container.setVisible(false);
     } else if (this.decisionFeedbackTimer === null) {
       this.showPersistentDecision();
     }
@@ -294,6 +318,7 @@ export class MurmurScene extends Phaser.Scene {
     this.replayButton.container.setVisible(false);
     this.changeButton.container.setVisible(false);
     this.resolveButton.container.setVisible(false);
+    this.modAuxButton.container.setVisible(false);
     this.decisionFeedbackTimer = this.time.delayedCall(900, () => {
       this.decisionFeedbackTimer = null;
       if (this.state.selection === direction) this.showPersistentDecision();
@@ -302,7 +327,7 @@ export class MurmurScene extends Phaser.Scene {
 
   private showPersistentDecision(): void {
     if (this.state.selection === null) return;
-    if (this.session.expedition.status === 'resolved' && this.session.round.resolution) {
+    if (this.session.round.resolution) {
       this.showResolvedDecision();
       return;
     }
@@ -334,6 +359,9 @@ export class MurmurScene extends Phaser.Scene {
     this.resolveButton.container.setVisible(
       Boolean(this.session.round.canResolve && isHeld)
     );
+    this.modAuxButton.container.setVisible(
+      Boolean(this.session.round.canManage && isHeld && this.session.journey)
+    );
     this.replayButton.setEnabled(!this.voteSubmitting);
     this.changeButton.setEnabled(!this.voteSubmitting);
     this.replayButton.setLabel(
@@ -347,7 +375,9 @@ export class MurmurScene extends Phaser.Scene {
     this.resolveButton.setLabel(
       this.resolutionArmed ? 'CONFIRM RESOLVE' : 'MOD · RESOLVE'
     );
+    this.modAuxButton.setLabel(this.auxArmed ? 'CONFIRM CLOSE' : 'MOD · CLOSE');
     this.resolveButton.setEnabled(!this.voteSubmitting);
+    this.modAuxButton.setEnabled(!this.voteSubmitting);
 
     if (this.settings.reducedMotion) {
       this.resultText.setAlpha(1);
@@ -355,6 +385,7 @@ export class MurmurScene extends Phaser.Scene {
       this.replayButton.container.setAlpha(1);
       this.changeButton.container.setAlpha(1);
       this.resolveButton.container.setAlpha(1);
+      this.modAuxButton.container.setAlpha(1);
       return;
     }
 
@@ -364,6 +395,7 @@ export class MurmurScene extends Phaser.Scene {
       this.replayButton.container,
       this.changeButton.container,
       this.resolveButton.container,
+      this.modAuxButton.container,
     ];
     targets.forEach((target) => target.setAlpha(0));
     this.tweens.add({
@@ -383,6 +415,7 @@ export class MurmurScene extends Phaser.Scene {
       this.replayButton.container,
       this.changeButton.container,
       this.resolveButton.container,
+      this.modAuxButton.container,
     ]);
   }
 
@@ -403,6 +436,8 @@ export class MurmurScene extends Phaser.Scene {
         throw new Error('Stable sense changed during the same round');
       }
       this.session = session;
+      this.expeditionDisplay.update(session.journey);
+      if (session.journey) this.murmur.applyExpeditionState(session.journey.murmur);
       const direction = session.round.resolution?.winningDirection ?? session.round.currentVote;
       if (direction) {
         this.state = {
@@ -414,7 +449,7 @@ export class MurmurScene extends Phaser.Scene {
         this.cave.setSelection(direction);
         this.murmur.face(direction);
       }
-      if (session.expedition.status === 'resolved') this.playOutcome();
+      if (session.round.resolution) this.playOutcome();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Private session unavailable';
       console.error('Unable to refresh private session:', message);
@@ -479,7 +514,7 @@ export class MurmurScene extends Phaser.Scene {
       void this.refreshSession();
       return;
     }
-    if (this.session.expedition.status === 'resolved') {
+    if (this.session.round.resolution) {
       this.playOutcome(true);
       return;
     }
@@ -491,18 +526,24 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private handleResolveAction(): void {
+    if (this.session.round.resolution) {
+      if (this.session.journey?.status === 'next-chapter-pending' && this.session.round.canManage) {
+        if (!this.resolutionArmed) {
+          this.armResolution();
+          return;
+        }
+        void this.publishNextDay();
+      } else {
+        this.expeditionDisplay.showMapState();
+      }
+      return;
+    }
     const held =
       this.state.selection !== null &&
       this.session.round.currentVote === this.state.selection;
     if (!held || !this.session.round.canResolve || this.voteSubmitting) return;
     if (!this.resolutionArmed) {
-      this.resolutionArmed = true;
-      this.resolutionArmTimer?.remove(false);
-      this.resolutionArmTimer = this.time.delayedCall(3500, () => {
-        this.resolutionArmed = false;
-        this.renderState();
-      });
-      this.renderState();
+      this.armResolution();
       return;
     }
     void this.resolveRound();
@@ -515,23 +556,126 @@ export class MurmurScene extends Phaser.Scene {
     this.resolutionArmTimer?.remove(false);
     this.renderState();
     try {
-      const result = await resolveCommunityRound();
-      this.session = {
-        ...this.session,
-        expedition: { ...this.session.expedition, status: 'resolved' },
-        round: {
-          ...this.session.round,
-          counts: result.resolution.countsSnapshot,
-          resolution: result.resolution,
-          canVote: false,
-          canResolve: false,
-        },
-      };
+      if (this.session.journey) {
+        await runModeratorExpeditionAction('round/resolve', 'RESOLVE NOW');
+        await this.refreshSession();
+      } else {
+        const result = await resolveCommunityRound();
+        this.session = {
+          ...this.session,
+          expedition: { ...this.session.expedition, status: 'resolved' },
+          round: {
+            ...this.session.round,
+            counts: result.resolution.countsSnapshot,
+            resolution: result.resolution,
+            canVote: false,
+            canResolve: false,
+          },
+        };
+      }
       this.playOutcome();
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Resolution failed';
       console.error('Unable to resolve MURMUR round:', message);
       this.roundError = 'Resolution failed without changing the round.';
+    } finally {
+      this.voteSubmitting = false;
+      this.renderState();
+    }
+  }
+
+  private armResolution(): void {
+    this.resolutionArmed = true;
+    this.resolutionArmTimer?.remove(false);
+    this.resolutionArmTimer = this.time.delayedCall(3500, () => {
+      this.resolutionArmed = false;
+      this.renderState();
+    });
+    this.renderState();
+  }
+
+  private handleAuxAction(): void {
+    if (!this.session.round.canManage || this.voteSubmitting) return;
+    if (this.session.round.resolution) {
+      const movedForward = Boolean(
+        this.session.journey && this.session.journey.currentDay > this.session.expedition.day
+      );
+      if (!movedForward) {
+        this.expeditionDisplay.showMapState();
+        return;
+      }
+      if (!this.auxArmed) {
+        this.armAux();
+        return;
+      }
+      void this.reconcileExpedition();
+      return;
+    }
+    const held = this.state.selection !== null && this.session.round.currentVote === this.state.selection;
+    if (!held || !this.session.journey) return;
+    if (!this.auxArmed) {
+      this.armAux();
+      return;
+    }
+    void this.closeRoundNow();
+  }
+
+  private armAux(): void {
+    this.auxArmed = true;
+    this.time.delayedCall(3500, () => {
+      this.auxArmed = false;
+      this.renderState();
+    });
+    this.renderState();
+  }
+
+  private async closeRoundNow(): Promise<void> {
+    this.voteSubmitting = true;
+    this.auxArmed = false;
+    this.renderState();
+    try {
+      await runModeratorExpeditionAction('round/close', 'CLOSE ROUND NOW');
+      await this.refreshSession();
+      this.roundError = 'Hollow closed. Resolve when the community is ready.';
+    } catch (error) {
+      console.error('Unable to close MURMUR round:', error instanceof Error ? error.message : 'Unknown close error');
+      this.roundError = 'The hollow stayed open. Retry is safe.';
+    } finally {
+      this.voteSubmitting = false;
+      this.renderState();
+    }
+  }
+
+  private async publishNextDay(): Promise<void> {
+    this.voteSubmitting = true;
+    this.resolutionArmed = false;
+    this.renderState();
+    try {
+      const result = await runModeratorExpeditionAction('chapter/publish', 'PUBLISH NEXT DAY');
+      this.session = { ...this.session, journey: result.expedition };
+      this.expeditionDisplay.update(result.expedition);
+      this.roundError = `DAY ${result.expedition.currentDay} OPEN · Return to the subreddit.`;
+    } catch (error) {
+      console.error('Unable to publish next MURMUR day:', error instanceof Error ? error.message : 'Unknown publish error');
+      this.roundError = 'Next chapter is still pending. Retry is safe.';
+    } finally {
+      this.voteSubmitting = false;
+      this.renderState();
+    }
+  }
+
+  private async reconcileExpedition(): Promise<void> {
+    this.voteSubmitting = true;
+    this.auxArmed = false;
+    this.renderState();
+    try {
+      const result = await runModeratorExpeditionAction('expedition/reconcile', 'RECONCILE');
+      this.session = { ...this.session, journey: result.expedition };
+      this.expeditionDisplay.update(result.expedition);
+      this.roundError = 'Expedition checked. No duplicate chapter was created.';
+    } catch (error) {
+      console.error('Unable to reconcile MURMUR expedition:', error instanceof Error ? error.message : 'Unknown reconcile error');
+      this.roundError = 'Recovery is delayed; no state was discarded.';
     } finally {
       this.voteSubmitting = false;
       this.renderState();
@@ -560,6 +704,16 @@ export class MurmurScene extends Phaser.Scene {
       this.tweens.add({ targets: this.murmur, x, y, duration: 900, ease: 'Sine.InOut' });
     }
     this.renderState();
+    const combinedTruth = this.session.combinedTruth;
+    if (combinedTruth) {
+      const reveal = () => this.expeditionDisplay.showResolution(
+        combinedTruth,
+        this.session.round.counts,
+        replay
+      );
+      if (this.settings.reducedMotion || replay) reveal();
+      else this.time.delayedCall(920, reveal);
+    }
   }
 
   private showResolvedDecision(): void {
@@ -577,7 +731,25 @@ export class MurmurScene extends Phaser.Scene {
     this.replayButton.setEnabled(true);
     this.replayButton.container.setVisible(true).setAlpha(1);
     this.changeButton.container.setVisible(false);
-    this.resolveButton.container.setVisible(false);
+    const canManage = this.session.round.canManage && this.session.journey !== null;
+    this.resolveButton.container.setVisible(canManage).setAlpha(1);
+    this.modAuxButton.container.setVisible(canManage).setAlpha(1);
+    if (canManage) {
+      const pending = this.session.journey?.status === 'next-chapter-pending';
+      this.resolveButton.setLabel(
+        pending
+          ? this.resolutionArmed ? 'CONFIRM PUBLISH' : 'PUBLISH NEXT DAY'
+          : 'VIEW EXPEDITION'
+      );
+      const movedForward = Boolean(
+        this.session.journey && this.session.journey.currentDay > this.session.expedition.day
+      );
+      this.modAuxButton.setLabel(
+        movedForward
+          ? this.auxArmed ? 'CONFIRM RECONCILE' : 'RECONCILE'
+          : 'VIEW STATE'
+      );
+    }
     this.positionActionButtons();
   }
 
@@ -588,8 +760,8 @@ export class MurmurScene extends Phaser.Scene {
   }
 
   private positionActionButtons(): void {
-    if (!this.metrics || !this.replayButton || !this.changeButton || !this.resolveButton) return;
-    const singleAction = this.session.expedition.status === 'resolved';
+    if (!this.metrics || !this.replayButton || !this.changeButton || !this.resolveButton || !this.modAuxButton) return;
+    const singleAction = this.session.round.resolution !== null;
     this.replayButton.container.setPosition(
       singleAction ? this.metrics.centerX : this.metrics.centerX - this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
@@ -599,7 +771,11 @@ export class MurmurScene extends Phaser.Scene {
       this.metrics.actionButtonsY
     );
     this.resolveButton.container.setPosition(
-      this.metrics.moderatorButtonX,
+      this.metrics.isWide ? this.metrics.moderatorButtonX : this.metrics.centerX + 72,
+      this.metrics.moderatorButtonY
+    );
+    this.modAuxButton.container.setPosition(
+      this.metrics.isWide ? this.metrics.moderatorButtonX - 146 : this.metrics.centerX - 72,
       this.metrics.moderatorButtonY
     );
   }
@@ -634,9 +810,14 @@ export class MurmurScene extends Phaser.Scene {
       this.metrics.actionButtonsY
     );
     this.resolveButton.container.setPosition(
-      this.metrics.moderatorButtonX,
+      this.metrics.isWide ? this.metrics.moderatorButtonX : centerX + 72,
       this.metrics.moderatorButtonY
     );
+    this.modAuxButton.container.setPosition(
+      this.metrics.isWide ? this.metrics.moderatorButtonX - 146 : centerX - 72,
+      this.metrics.moderatorButtonY
+    );
+    this.expeditionDisplay.layout(this.metrics);
 
     if (this.outcomePlayed && this.session.round.resolution) {
       const target = pathNodes[this.session.round.resolution.winningDirection];

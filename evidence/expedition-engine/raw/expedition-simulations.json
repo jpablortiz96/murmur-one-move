@@ -1,0 +1,58 @@
+{
+  "sampleSize": 10000,
+  "totalDays": 7,
+  "endings": {
+    "the-chorus": 1577,
+    "the-survivor": 6020,
+    "the-fading-signal": 2403
+  },
+  "finalVitality": {
+    "0": 2403,
+    "1": 3203,
+    "2": 3050,
+    "3": 1344
+  },
+  "finalMemoryFragments": {
+    "0": 1280,
+    "1": 3081,
+    "2": 3132,
+    "3": 1778,
+    "4": 600,
+    "5": 119,
+    "6": 10
+  },
+  "finalScarCount": {
+    "1": 9,
+    "2": 205,
+    "3": 1621,
+    "4": 4412,
+    "5": 3301,
+    "6": 452
+  },
+  "consequences": {
+    "safe": 17734,
+    "costly": 34743,
+    "dangerous": 17523
+  },
+  "routes": {
+    "north": 17563,
+    "east": 17592,
+    "south": 17490,
+    "west": 17355
+  },
+  "averageVitalityByDay": [
+    2.7533,
+    2.4958,
+    2.2415,
+    2.0001,
+    1.7622,
+    1.5414,
+    1.3335
+  ],
+  "uniqueFinalBranchHashes": 10000,
+  "impossibleCases": 0,
+  "blockedExpeditions": 0,
+  "accidentalDay8": 0,
+  "invalidStates": 0,
+  "reproducibilityHash": "sha256:f880203db1da23b784fc1c04b6428d83231a8e57858d746b77f3ef86b31ce3e6"
+}

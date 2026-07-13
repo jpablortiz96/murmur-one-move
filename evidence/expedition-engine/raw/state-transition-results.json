@@ -1,0 +1,8 @@
+{
+  "combinations": 36,
+  "valid": 6,
+  "invalid": 30,
+  "staleRevisionRejected": true,
+  "idempotentRetry": true,
+  "passed": true
+}

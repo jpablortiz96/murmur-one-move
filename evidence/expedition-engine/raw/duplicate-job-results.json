@@ -1,0 +1,11 @@
+{
+  "resolveWorkers": 100,
+  "resultingResolutions": 1,
+  "publishWorkers": 100,
+  "resultingPosts": 1,
+  "lostCreateResponseRecovered": true,
+  "expiredLeaseRecovered": true,
+  "workerDeathRecovered": true,
+  "corruptedCounters": 0,
+  "passed": true
+}

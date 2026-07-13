@@ -1,0 +1,265 @@
+{
+  "capturedAt": "2026-07-13",
+  "cases": [
+    {
+      "state": "open",
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "screenshot": "360x800-expedition-map.png",
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "resolving",
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "screenshot": "360x800-resolving.png",
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "screenshot": "360x800-three-truths.png",
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "screenshot": "360x800-consequence.png",
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "screenshot": "360x800-next-chapter.png",
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "completed",
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "screenshot": "390x844-completed.png",
+      "dimensions": {
+        "inner": [
+          390,
+          844
+        ],
+        "document": [
+          390,
+          844
+        ],
+        "canvas": [
+          390,
+          844
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "screenshot": null,
+      "dimensions": {
+        "inner": [
+          412,
+          915
+        ],
+        "document": [
+          412,
+          915
+        ],
+        "canvas": [
+          412,
+          915
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "screenshot": null,
+      "dimensions": {
+        "inner": [
+          768,
+          1024
+        ],
+        "document": [
+          768,
+          1024
+        ],
+        "canvas": [
+          768,
+          1024
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "mouse"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "screenshot": "1280x720-three-truths.png",
+      "dimensions": {
+        "inner": [
+          1280,
+          720
+        ],
+        "document": [
+          1280,
+          720
+        ],
+        "canvas": [
+          1280,
+          720
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "mouse"
+    },
+    {
+      "state": "next-chapter-pending",
+      "viewport": "360x800",
+      "reducedMotion": true,
+      "screenshot": null,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true,
+      "touchTargets": "touch"
+    }
+  ]
+}

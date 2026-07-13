@@ -1,0 +1,9 @@
+{
+  "sampleSize": 10000,
+  "endings": {
+    "the-chorus": 1577,
+    "the-survivor": 6020,
+    "the-fading-signal": 2403
+  },
+  "passed": true
+}

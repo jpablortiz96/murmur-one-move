@@ -1,0 +1,10 @@
+{
+  "resolveCalls": 100,
+  "immutableResolutions": 1,
+  "roundAuditHashes": 1,
+  "publishCalls": 100,
+  "chapterPosts": 1,
+  "reopenedRounds": 0,
+  "simultaneousManualAndScheduler": "one-state-transition",
+  "passed": true
+}

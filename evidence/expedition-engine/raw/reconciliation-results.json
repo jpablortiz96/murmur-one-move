@@ -1,0 +1,10 @@
+{
+  "expiredOpenRound": "resolve",
+  "frozenRoundIncompleteState": "apply-consequence",
+  "missingNextChapter": "find-or-publish",
+  "publishedUnrecordedPost": "find-by-postData-and-register",
+  "duplicateJob": "idempotent-return",
+  "completedPendingJobs": "no-op",
+  "duplicatePosts": 0,
+  "passed": true
+}

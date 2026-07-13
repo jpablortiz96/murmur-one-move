@@ -1,0 +1,17 @@
+{
+  "postsAudited": 7,
+  "neutralTitles": [
+    "MURMUR — Day 1: The First Hollow",
+    "MURMUR — Day 2: The Breathing Wall",
+    "MURMUR — Day 3: The Sleeping Heat",
+    "MURMUR — Day 4: The Spore Choir",
+    "MURMUR — Day 5: The Broken Current",
+    "MURMUR — Day 6: The Chamber That Remembers",
+    "MURMUR — Day 7: The Last Resonance"
+  ],
+  "maximumPostDataBytes": 78,
+  "forbiddenHits": [],
+  "textFallbacksPresent": true,
+  "day8Created": false,
+  "passed": true
+}

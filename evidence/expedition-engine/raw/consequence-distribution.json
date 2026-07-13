@@ -1,0 +1,15 @@
+{
+  "total": 70000,
+  "consequences": {
+    "safe": 17734,
+    "costly": 34743,
+    "dangerous": 17523
+  },
+  "routes": {
+    "north": 17563,
+    "east": 17592,
+    "south": 17490,
+    "west": 17355
+  },
+  "passed": true
+}

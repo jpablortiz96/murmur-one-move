@@ -95,19 +95,19 @@ describe('branching consequences', () => {
     const truth = generateScenarioV2(identity);
     const safe = applyConsequence(state, truth, truth.optimalDirection);
     const costlyDirection = truth.paths.find((path) => path.outcome.consequenceId === 'spore-sleep')?.direction;
-    const dangerousDirection = truth.paths.find((path) => path.outcome.consequenceId === 'nest-awakens')?.direction;
+    const dangerousDirection = truth.paths.find((path) => path.outcome.consequenceId === 'immediate-collapse')?.direction;
     if (!costlyDirection || !dangerousDirection) throw new Error('Missing consequence paths');
     const costly = applyConsequence(state, truth, costlyDirection);
     const dangerous = applyConsequence(state, truth, dangerousDirection);
     expect(safe).toMatchObject({ severity: 'safe', vitality: 3, memoryFragments: 1 });
-    expect(costly).toMatchObject({ severity: 'costly', vitality: 2 });
+    expect(costly).toMatchObject({ severity: 'costly', vitality: 3 });
     expect(dangerous).toMatchObject({ severity: 'dangerous', vitality: 2 });
     expect([safe, costly, dangerous].every((result) => result.vitality >= 0 && result.vitality <= 3)).toBe(true);
   });
 
   test('keeps all three endings reachable', () => {
     const state = createState();
-    expect(endingForState({ murmur: { ...state.murmur, vitality: 3, memoryFragments: 6 } })).toBe('the-chorus');
+    expect(endingForState({ murmur: { ...state.murmur, vitality: 3, memoryFragments: 3 } })).toBe('the-chorus');
     expect(endingForState({ murmur: { ...state.murmur, vitality: 1, memoryFragments: 2 } })).toBe('the-survivor');
     expect(endingForState({ murmur: { ...state.murmur, vitality: 0, memoryFragments: 6 } })).toBe('the-fading-signal');
   });

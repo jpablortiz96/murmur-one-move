@@ -136,12 +136,38 @@ test('100 resolve and publish calls create one immutable history entry and one D
   expect(posts.fallbacks.get('t3_day_1')).toContain('https://reddit.com/comments/day_2');
 }, 30_000);
 
-test('reconcile on an open current day never creates an extra chapter', async () => {
-  const { coordinator, posts } = setup();
+test('reconcile on an open current day never creates an extra chapter or duplicate close job', async () => {
+  const { coordinator, posts, jobs } = setup();
   const state = await coordinator.start({
     subredditId: 't5_coordinator', subredditName: 'murmur_test', seasonId: 'season-coordinator-01',
     now: new Date('2026-07-13T18:00:00.000Z'), operationId: 'start-reconcile',
   });
+  const jobsBefore = jobs.jobs.length;
   await coordinator.reconcile(state.subredditId, 'reconcile-open');
   expect(posts.specs).toHaveLength(1);
+  expect(jobs.jobs).toHaveLength(jobsBefore);
+});
+
+test('completes exactly seven chapters and refuses to create Day 8', async () => {
+  const { coordinator, posts } = setup();
+  let state = await coordinator.start({
+    subredditId: 't5_coordinator', subredditName: 'murmur_test', seasonId: 'season-seven-days',
+    now: new Date('2026-07-13T18:00:00.000Z'), operationId: 'start-seven-days',
+  });
+  for (let day = 1; day <= 7; day += 1) {
+    state = await coordinator.closeRound(state.subredditId, state.seasonId, `close-${day}`);
+    state = await coordinator.resolve({
+      subredditId: state.subredditId, seasonId: state.seasonId, day,
+      operationId: `resolve-${day}`, force: true,
+    });
+    if (day < 7) state = await coordinator.publishNext(state.subredditId, state.seasonId, `publish-${day + 1}`);
+  }
+  expect(state.status).toBe('completed');
+  expect(state.currentDay).toBe(7);
+  expect(state.history).toHaveLength(7);
+  expect(state.ending).not.toBeNull();
+  expect(posts.specs.map((spec) => spec.postData.murmur.day)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+  const repeated = await coordinator.publishNext(state.subredditId, state.seasonId, 'attempt-day-8');
+  expect(repeated).toEqual(state);
+  expect(posts.specs).toHaveLength(7);
 });

@@ -32,7 +32,7 @@ describe('expedition client presentation', () => {
 
   test('uses approximate time without second-level countdown pressure', () => {
     expect(approximateWindowCopy(view, new Date('2026-07-13T18:30:00.000Z'))).toBe('About 2 hours remain.');
-    expect(approximateWindowCopy(view, new Date('2026-07-13T19:59:20.000Z'))).toBe('About 1 minutes remain.');
+    expect(approximateWindowCopy(view, new Date('2026-07-13T19:59:20.000Z'))).toBe('About 1 minute remain.');
     expect(approximateWindowCopy(view, new Date('2026-07-13T20:01:00.000Z'))).toContain('resolution');
   });
 

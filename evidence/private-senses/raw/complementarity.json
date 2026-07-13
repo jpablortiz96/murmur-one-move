@@ -1,0 +1,12 @@
+{
+  "scenariosAudited": 1000,
+  "averagePlausibleRoutes": {
+    "echo": 3,
+    "heat": 2,
+    "wind": 2
+  },
+  "individualSenseRevealedTooMuch": 0,
+  "withoutUniqueCombinedSolution": 0,
+  "uniqueCombinedSolution": 1000,
+  "passed": true
+}

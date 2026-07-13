@@ -1,0 +1,23 @@
+{
+  "firstVote": {
+    "sensor": "heat",
+    "revision": 1,
+    "total": 1
+  },
+  "changedVote": {
+    "sensor": "heat",
+    "revision": 2,
+    "total": 1
+  },
+  "idempotentRetry": {
+    "status": "idempotent",
+    "sensor": "heat",
+    "revision": 2,
+    "total": 1
+  },
+  "activeVoteCardinality": 1,
+  "aggregateSum": 1,
+  "clientSensorAccepted": false,
+  "voterIdentifiersIncluded": false,
+  "passed": true
+}

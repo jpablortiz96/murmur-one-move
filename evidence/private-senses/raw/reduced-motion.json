@@ -1,0 +1,90 @@
+{
+  "capturedAt": "2026-07-13",
+  "prefersReducedMotion": true,
+  "cases": [
+    {
+      "sensor": "echo",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    }
+  ]
+}

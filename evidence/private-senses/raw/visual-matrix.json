@@ -1,0 +1,425 @@
+{
+  "capturedAt": "2026-07-13",
+  "cases": [
+    {
+      "sensor": "echo",
+      "viewport": "1280x720",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          1280,
+          720
+        ],
+        "document": [
+          1280,
+          720
+        ],
+        "canvas": [
+          1280,
+          720
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "echo",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "echo",
+      "viewport": "390x844",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          390,
+          844
+        ],
+        "document": [
+          390,
+          844
+        ],
+        "canvas": [
+          390,
+          844
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "echo",
+      "viewport": "412x915",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          412,
+          915
+        ],
+        "document": [
+          412,
+          915
+        ],
+        "canvas": [
+          412,
+          915
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "echo",
+      "viewport": "768x1024",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          768,
+          1024
+        ],
+        "document": [
+          768,
+          1024
+        ],
+        "canvas": [
+          768,
+          1024
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "1280x720",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          1280,
+          720
+        ],
+        "document": [
+          1280,
+          720
+        ],
+        "canvas": [
+          1280,
+          720
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "390x844",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          390,
+          844
+        ],
+        "document": [
+          390,
+          844
+        ],
+        "canvas": [
+          390,
+          844
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "412x915",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          412,
+          915
+        ],
+        "document": [
+          412,
+          915
+        ],
+        "canvas": [
+          412,
+          915
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "heat",
+      "viewport": "768x1024",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          768,
+          1024
+        ],
+        "document": [
+          768,
+          1024
+        ],
+        "canvas": [
+          768,
+          1024
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "1280x720",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          1280,
+          720
+        ],
+        "document": [
+          1280,
+          720
+        ],
+        "canvas": [
+          1280,
+          720
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "360x800",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          360,
+          800
+        ],
+        "document": [
+          360,
+          800
+        ],
+        "canvas": [
+          360,
+          800
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "390x844",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          390,
+          844
+        ],
+        "document": [
+          390,
+          844
+        ],
+        "canvas": [
+          390,
+          844
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "412x915",
+      "input": "touch",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          412,
+          915
+        ],
+        "document": [
+          412,
+          915
+        ],
+        "canvas": [
+          412,
+          915
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    },
+    {
+      "sensor": "wind",
+      "viewport": "768x1024",
+      "input": "mouse",
+      "activations": 3,
+      "selectedDirection": "east",
+      "persistedVote": "east",
+      "aggregateTotal": 1,
+      "dimensions": {
+        "inner": [
+          768,
+          1024
+        ],
+        "document": [
+          768,
+          1024
+        ],
+        "canvas": [
+          768,
+          1024
+        ],
+        "scroll": [
+          0,
+          0
+        ]
+      },
+      "noInternalScroll": true
+    }
+  ]
+}

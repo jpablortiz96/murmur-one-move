@@ -1,0 +1,14 @@
+{
+  "generated": 1000,
+  "valid": 1000,
+  "discarded": 0,
+  "retries": 0,
+  "rejectionReasons": {},
+  "solutionDistribution": {
+    "north": 236,
+    "east": 254,
+    "south": 242,
+    "west": 268
+  },
+  "generatorVersion": 1
+}

@@ -1,0 +1,20 @@
+{
+  "sampleSize": 30000,
+  "assignmentVersion": 1,
+  "reproducible": true,
+  "counts": {
+    "echo": 10020,
+    "heat": 10122,
+    "wind": 9858
+  },
+  "percentages": {
+    "echo": 33.4,
+    "heat": 33.74,
+    "wind": 32.86
+  },
+  "acceptanceRangePercent": [
+    30,
+    36
+  ],
+  "passed": true
+}

@@ -1,0 +1,22 @@
+{
+  "forbiddenConcepts": [
+    "survivable",
+    "safeDirection",
+    "correctDirection",
+    "worldTruth",
+    "worldSeed",
+    "outcome",
+    "userId",
+    "username",
+    "voterHash"
+  ],
+  "projectedPayloadsAudited": 3,
+  "payloadForbiddenHits": [],
+  "crossDomainViolations": 0,
+  "clientServerWorldImports": [],
+  "generatedClientBundleFilesScanned": 7,
+  "bundleForbiddenHits": [],
+  "productionClientOverrideHits": 0,
+  "localHarnessOverrideDeclared": true,
+  "passed": true
+}

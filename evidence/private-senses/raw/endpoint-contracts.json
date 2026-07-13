@@ -1,0 +1,13 @@
+{
+  "sessionSchemaVersion": 1,
+  "authenticatedSensorsValidated": [
+    "echo",
+    "heat",
+    "wind"
+  ],
+  "allAuthenticatedContractsValid": true,
+  "guestContractValid": true,
+  "guestStableAssignment": false,
+  "guestCanVote": false,
+  "payloadForbiddenHits": []
+}

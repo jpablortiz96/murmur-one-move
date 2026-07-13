@@ -218,7 +218,10 @@ export class MurmurScene extends Phaser.Scene {
       if (this.settings.reducedMotion) this.senseIntroText.setVisible(false);
       else this.tweens.add({ targets: this.senseIntroText, alpha: 0, duration: 360, onComplete: () => this.senseIntroText.setVisible(false) });
     });
-    if (this.session.round.resolution) this.playOutcome();
+    if (this.session.round.resolution) {
+      this.senseIntroText.setVisible(false);
+      this.playOutcome();
+    }
   }
 
   private tryActivation(): void {

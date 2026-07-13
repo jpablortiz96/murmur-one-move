@@ -52,7 +52,9 @@ schedulerRoutes.post('/publish-next-chapter', async (c) => {
 
 schedulerRoutes.post('/reconcile-expedition', async (c) => {
   const request: unknown = await c.req.json<TaskRequest<undefined>>();
-  if (!('name' in (request as object)) || !context.subredditId) return c.json({ status: 'error', message: 'Invalid reconcile task' }, 400);
+  if (typeof request !== 'object' || request === null || !('name' in request) || !context.subredditId) {
+    return c.json({ status: 'error', message: 'Invalid reconcile task' }, 400);
+  }
   await getExpeditionCoordinator().reconcile(context.subredditId, `cron-reconcile:${new Date().toISOString().slice(0, 16)}`);
   return c.json<TaskResponse>({});
 });

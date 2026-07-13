@@ -23,7 +23,7 @@ export const conditionForVitality = (vitality: number, memoryFragments: number):
 
 export const endingForState = (state: Pick<ExpeditionState, 'murmur'>): ExpeditionEnding => {
   if (state.murmur.vitality === 0) return 'the-fading-signal';
-  if (state.murmur.memoryFragments >= 5 && state.murmur.vitality >= 2) return 'the-chorus';
+  if (state.murmur.memoryFragments >= 3 && state.murmur.vitality >= 2) return 'the-chorus';
   return 'the-survivor';
 };
 
@@ -31,8 +31,8 @@ export const severityForDirection = (truth: WorldTruth, direction: Direction): C
   const path = truth.paths.find((candidate) => candidate.direction === direction);
   if (!path) throw new Error('Resolved direction is absent from World Truth');
   if (path.outcome.survivable) return 'safe';
-  if (path.outcome.consequenceId === 'spore-sleep') return 'costly';
-  return 'dangerous';
+  if (path.outcome.consequenceId === 'immediate-collapse') return 'dangerous';
+  return 'costly';
 };
 
 export const applyConsequence = (
@@ -42,7 +42,7 @@ export const applyConsequence = (
 ): ConsequenceResult => {
   const severity = severityForDirection(truth, direction);
   const outcome = getChapter(state.currentDay).outcomes[severity];
-  const vitalityLoss = severity === 'safe' ? 0 : 1;
+  const vitalityLoss = severity === 'dangerous' ? 1 : 0;
   const vitality = Math.max(0, Math.min(3, state.murmur.vitality - vitalityLoss));
   const memoryFragments = Math.min(7, state.murmur.memoryFragments + (severity === 'safe' ? 1 : 0));
   const scars = state.murmur.scars.includes(outcome.scar)

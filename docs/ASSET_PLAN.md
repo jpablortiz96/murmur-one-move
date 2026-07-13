@@ -7,7 +7,7 @@ All current visuals are original Phaser Graphics and remain legally self-contain
 - Organic thermal signatures and motion trails.
 - Wind tracers, eddies, fog deformation, and contamination shapes.
 - Silent hazards with non-color-only readability.
-- Consequence vignettes after a daily move.
+- Consequence vignettes beyond the current procedural three-truth reveal, condition marks and scars.
 - Interactive Post cover/inline invitation.
 
-No final asset pack, external download, font, music, or sound library is introduced in this phase.
+The current seven-node organic map, memory fragments, vital-light core and scar marks are programmatic Phaser art and are testable without color. No final asset pack, external download, font, music, or sound library is introduced in this phase.

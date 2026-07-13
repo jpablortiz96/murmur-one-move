@@ -12,6 +12,8 @@ npm run build
 
 The unit suite additionally covers deterministic scenarios, invalid-scenario rejection, 1,000-scenario complementarity, 30,000 balanced assignments, domain-isolated projectors, session unions/guest constraints, trusted Redis sensors, and three-activation progress caps.
 
+It also covers the V2 transition graph, seven chapter definitions, deterministic branch hashes, consequence bounds, all endings, 100 concurrent repository updates, 100 concurrent resolutions and publications, successful scheduling deduplication, lost post-response recovery, a complete Day 1–7 coordinator run and the Day 8 prohibition.
+
 `tests/layout.test.ts` deterministically covers all five required viewports, zone adjacency, safe-area offsets, target bounds, South/instruction clearance, and wide-layout divergence.
 
 ## Manual gameplay script
@@ -65,3 +67,14 @@ node tools/capture-private-senses.mjs --reduced
 ```
 
 The first command regenerates audits and plots from real deterministic runs. The capture script starts the isolated Vite harness once per sense, uses touch below 768 px and mouse otherwise, attempts four activations to prove the cap remains three, confirms an EAST fixture vote, and records exact canvas/document dimensions. It never changes production assignment behavior.
+
+## Expedition evidence
+
+```powershell
+npm run evidence:expedition
+node tools/capture-expedition.mjs
+```
+
+The first command builds, runs 10,000 seeded seven-day expeditions and writes raw transition/scheduler/post/recovery/distribution JSON plus five plots. The second opens the isolated production Phaser client in headless Chrome at 360×800, 390×844, 412×915, 768×1024 and 1280×720, including reduced motion. It records viewport/document/canvas dimensions and scroll position. See [../evidence/expedition-engine/TEST_PROTOCOL.md](../evidence/expedition-engine/TEST_PROTOCOL.md).
+
+Final Reddit verification must still execute Day 1 sense -> vote -> moderator resolve -> combined reveal -> publish Day 2 -> reconcile and confirm exactly one Day 2 post.

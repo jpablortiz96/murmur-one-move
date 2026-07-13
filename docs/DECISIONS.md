@@ -125,3 +125,31 @@
 - **Rejected:** Accepting any pointerup over a node.
 - **Why:** Visual QA showed Wind drags could otherwise select a path accidentally when a tracer ended over a node.
 - **Consequence:** Observation gestures and deliberate decisions remain separate.
+
+## 2026-07-13 — Compose the expedition over immutable round snapshots
+
+- **Decision:** Keep the proven per-post vote service and let V2 consume its frozen resolution into a separate seven-day state machine.
+- **Rejected:** One monolithic Redis object containing mutable votes, World Truth and journey state.
+- **Why:** The vote boundary already guarantees identity, atomic changes and auditability; composition preserves old posts and narrows failure recovery.
+- **Consequence:** V1 posts remain compatible while V2 adds season/day/branch identity and persistent consequences.
+
+## 2026-07-13 — Design scheduler operations for at-least-once delivery
+
+- **Decision:** Use immutable history/post identities, bounded leases, scheduling markers, stale-day checks and reconciliation.
+- **Rejected:** Assuming exactly-once task delivery; process-local locks; deleting state to retry.
+- **Why:** Workers and network responses can fail between an external effect and its Redis acknowledgment.
+- **Consequence:** Duplicate tasks may execute but converge on one resolution and one chapter post; recovery is auditable, not silent.
+
+## 2026-07-13 — Branch only from public immutable history
+
+- **Decision:** Derive each scenario identity from season, day, generator version and the prior history hash.
+- **Rejected:** Client-carried branch tokens; random world state stored in `postData`; future map pre-generation.
+- **Why:** Server regeneration stays deterministic while posts reveal no solution and prior consequences genuinely affect later caverns.
+- **Consequence:** Developers can study the algorithm, so secrecy is architectural rather than cryptographic.
+
+## 2026-07-13 — Publish neutral posts with discoverable small references
+
+- **Decision:** Put only schema, season, day and generator version in `postData`, with neutral titles and text fallback.
+- **Rejected:** Embedding private projections, full expedition state or a sense in the title.
+- **Why:** Accessibility and crash recovery need a public marker, but the social mystery needs strict minimization.
+- **Consequence:** A lost create response can recover by scanning posts without leaking World Truth.

@@ -1,24 +1,18 @@
 # Current limitations
 
-- Echo, Heat, and Wind are functional procedural vertical slices; their visual assets remain provisional.
-- A moderator can resolve a round manually; there is no scheduler or automatic daily resolution yet.
-- Votes and immutable resolutions persist in installation-scoped Redis, but no automatic next-day/next-post lifecycle exists.
-- Private assignments and domain projections are real, but deterministic generation is not a cryptographic secret: a developer with source access could study the algorithm.
-- The original programmatic visuals are intentional but provisional.
-- There are no human retention, return-rate, or discussion-quality metrics yet.
-- Authenticated players submit one active vote and can change it only while the round is open; guests can explore but cannot vote.
-- Murmur performs a short consequence movement after resolution, not a definitive map transition.
-- A persistent secret scenario seed is not yet stored in Redis; generator and assignment versions are fixed in code.
-- There are no comments, flair, reputation, leaderboard, streaks, economy, inventory, combat, clans, notifications, cross-subreddit systems, or map editor.
-- There is no music or sound design in this slice; Echo uses a complete visual alternative and does not require audio.
-- The cave is a handcrafted procedural composition, not a definitive expedition map system.
-- Playtest availability and embedding behavior depend on Reddit and the authenticated Devvit development environment.
-- Moderator authorization depends on a live Reddit moderator lookup; the local harness cannot emulate it.
-- The write lease is intentionally short and bounded; Redis availability failures surface as retryable errors instead of accepting uncertain writes.
-- Phaser canvas controls currently lack individual screen-reader semantics and full keyboard navigation.
-- CSS safe-area insets are implemented but still need verification on physical notched iOS/Android devices inside Reddit.
-- Headless Chrome sustained 60 fps in the audit, but modest physical-phone GPU/thermal performance is not yet measured.
-- The opt-in debug overlay prioritizes diagnostic density and may overlap header art on a 360 px viewport; normal mode is unaffected.
-- `npm audit --omit=dev` reports five transitive findings in the Devvit CLI chain; the suggested fix installs a breaking Devvit 1.0.0. The full audit adds five development/test findings in `@devvit/test`/Vitest. No forced or major dependency update was applied in this phase.
-- Real multi-account sensor diversity has not been human-tested; automated tests/harnesses cover all three senses, while the Reddit playtest uses the available authenticated account.
-- Phase 4 playtest `v0.0.2.45` used fresh post `t3_1uvh1ff`; the authenticated human reported a stable Heat assignment plus a persistent vote changed to East with aggregate total 1. The direct post interaction emitted no route-level events in the attached watcher, so runtime revision details could not be independently correlated from server logs.
+- This is a seven-day technical expedition slice in one development community, not a measured public live season.
+- Field Notes, native comments, User Actions, flair, streaks, XP, leaderboards and notifications are not implemented.
+- No human seven-day retention, return-rate, decision-quality or discussion-quality metrics exist yet.
+- The real accelerated scheduler and Day 1 -> Day 2 transition require final human verification in Reddit; automated tests and local evidence cannot prove Reddit delivery.
+- Concurrency and duplicate delivery are simulated against Devvit's Redis test runtime; they are not a production traffic load test.
+- The deterministic generator is server-only but not a cryptographic secret. A developer with source access can study its behavior.
+- Procedural Phaser visuals are original and intentional but provisional; there are no external final assets, music or sound design.
+- Condition and scars have non-color visual marks, but Phaser canvas controls still lack full screen-reader semantics and keyboard navigation.
+- CSS safe-area behavior needs physical notched iOS/Android verification inside the Reddit app.
+- Moderator authorization depends on live Reddit moderator context and cannot be represented by the local visual harness.
+- Recovery is effectively-once, not exactly-once: duplicate task delivery may occur, while immutable transitions, post discovery and leases prevent duplicate state effects.
+- A post creation response lost after Reddit creates the post is recovered by scanning recent posts for the small season/day reference; an extended Reddit outage delays recovery.
+- Only the exact development subreddit receives two-minute windows; production uses the approximate 22-hour cadence.
+- Earlier Phase 3 and Phase 4 posts remain on schema V1 and are intentionally not migrated or rewritten.
+- There is no second complete expedition/chapter set or authoring tool.
+- `npm audit` transitive findings in the Devvit CLI/test chain are documented rather than force-fixed with an incompatible major update.

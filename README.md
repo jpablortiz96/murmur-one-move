@@ -2,107 +2,88 @@
 
 > Everyone sees a different truth. The subreddit gets one move.
 
-MURMUR is a mobile-first asynchronous social game for Reddit. A small bioluminescent creature crosses an unknown cavern while different players eventually receive different perceptual clues. The community must discuss those incomplete truths and commit to one shared move.
+MURMUR is a mobile-first asynchronous Reddit expedition. Each authenticated player receives a stable private Echo, Heat, or Wind projection, the subreddit commits one persistent move, and a seven-day Devvit state machine carries the resulting wounds and memories into later chapters.
 
 ## Current state
 
-This repository contains a **private-perception community round** for a Reddit Interactive Post. The server creates one hidden cavern truth, assigns each authenticated player a stable Echo, Heat, or Wind sense, returns only that sense's projection, and binds the trusted assignment to persistent Redis voting.
+The repository contains a real Phaser + Devvit Web Interactive Post with Redis voting, server-only World Truth, moderator and scheduled resolution, idempotent chapter publication, recovery, combined post-resolution truth, and three deterministic endings. It is a complete technical expedition slice, not yet a public live season. See [LIMITATIONS.md](LIMITATIONS.md).
 
-This is a real multiplayer round foundation, but not the automated daily expedition yet. See [LIMITATIONS.md](LIMITATIONS.md).
+## Requirements and installation
 
-## Requirements
-
-- Node.js 22.2 or newer (the project is currently validated with Node 24)
-- npm 10 or newer
-- Git
-- A Reddit account authorized for Devvit playtesting
-
-## Install
+- Node.js 22.2+ (validated with Node 24)
+- npm 10+, Git, and a Reddit account authorized for Devvit playtesting
 
 ```powershell
 npm install
-```
-
-## Authenticate Devvit
-
-```powershell
 npm run login
 ```
 
-The command opens Reddit authorization in a browser. Credentials are managed by the Devvit CLI and must never be committed.
+Devvit owns authentication credentials; never commit them.
 
-## Run a Reddit playtest
+## Run
 
 ```powershell
-npm run dev
+npm run dev -- murmur_one_move_dev
 ```
 
-Devvit uploads a development build, creates or reuses a private test subreddit, installs the app, streams logs, and prints the Reddit URL. The subreddit menu action **Create a MURMUR post** creates another Interactive Post when needed.
+The playtest installs a development version and streams client/server logs. Use the subreddit menu action **Open MURMUR test expedition** to create or recover the active Day 1 post. Production windows are about 22 hours; only the exact test subreddit `murmur_one_move_dev` receives the accelerated two-minute profile.
 
-For responsive client QA without a Reddit iframe, start the local client harness:
+For isolated responsive QA:
 
 ```powershell
 npm run dev:local:client
 ```
 
-Open `http://127.0.0.1:4173/game.html`. The harness uses isolated local session/vote fixtures for visual QA only. Select a local sense before startup with `$env:MURMUR_LOCAL_SENSOR='heat'`; production code has no sensor override.
+Open `http://127.0.0.1:4173/game.html`. Local expedition and sensor fixtures exist only in `vite.local.config.ts`; they do not alter production assignment or persistence.
 
-## Validate
+## Validate and reproduce evidence
 
 ```powershell
 npm run type-check
 npm run lint
 npm test
 npm run build
+npm run evidence:private
+npm run evidence:expedition
+node tools/capture-expedition.mjs
 ```
 
-`type-check` runs the strict TypeScript project references, `lint` runs ESLint, `test` runs the lightweight unit suite, and `build` produces the Devvit client/server bundles.
+The expedition evidence command executes 10,000 deterministic seven-day runs plus transition, duplicate-job, recovery, post and distribution audits. Results and protocol live in [evidence/expedition-engine](evidence/expedition-engine).
 
-## Project shape
+## Architecture
 
 ```text
-src/
-├── client/
-│   ├── game/          # Phaser scenes, entity, effects, UI, state
-│   ├── game.ts        # Expanded entrypoint
-│   ├── splash.ts      # Inline entrypoint
-│   └── *.html/*.css
-├── server/
-│   ├── core/          # Interactive Post creation
-│   ├── routes/        # Health/bootstrap, round API, Devvit handlers
-│   └── services/      # Round keys and transactional state service
-└── shared/
-    ├── constants/
-    ├── contracts/
-    └── types/
+Reddit Interactive Post
+        -> Phaser client
+        -> Devvit Web / Hono server
+        -> installation-scoped Redis
+        -> Reddit API + Devvit Scheduler
 ```
 
-Supporting product and engineering documents live in `docs/`; concrete verification artifacts and instructions live in `evidence/`.
-
-The inspected five-viewport matrix, before/after comparison, and performance notes are in [docs/VISUAL_AUDIT.md](docs/VISUAL_AUDIT.md).
+- `src/client/game`: scenes, sensor controllers, Murmur, organic map, reveal and moderator controls
+- `src/server/game`: hidden world, expedition chapters, branching and consequences
+- `src/server/services`: transactional rounds, expedition repository/coordinator, post and scheduler adapters
+- `src/server/routes`: player APIs, moderator commands and internal scheduler tasks
+- `src/shared`: safe client contracts and runtime validators only
+- `tests`: contracts, world secrecy, voting, concurrency, state machine and presentation
+- `docs` / `evidence`: protocols, decisions and reproducible results
 
 ## Implemented scope
 
-- Original programmatic cave, fog, particles, Murmur creature, Echo wave, wall trace, hollow-route clue, and abstract danger clue
-- Deterministic server-only World Truth with validated structural, thermal, airflow, and internal consequence domains
-- Stable, versioned, balanced sensor assignment derived only from Devvit user/post context
-- Fresh Echo/Heat/Wind projections that never cross domain boundaries
-- Echo touch pulses, Heat press-and-hold focus, and Wind drag tracers, each capped at three activations
-- Mouse/touch interaction, four directional choices, explicit confirmation, change/replay, and resolved consequence
-- Centralized Header/World/Action layout with safe-area, density, and wide-orientation rules
-- Cave-integrated resonant direction nodes and distinct visual responses for Echo pulses 1–3
-- Reduced-motion equivalents for camera, ambience, creature, node, and Echo motion
-- Opt-in debug overlay through `?debug=1`
-- Real `GET /api/health` and typed `GET /api/bootstrap`
-- Redis-backed `GET /api/round`, `POST /api/round/vote`, and moderator-only `POST /api/round/resolve`
-- Exactly one active vote per authenticated user/round, idempotency keys, atomic vote changes, aggregate counts, deterministic tie-breaking, and immutable audit hashes
-- Guest exploration without fake voting and server-derived user/post/subreddit identity
-- Loading, malformed-response, error, and retry states
-- Contract, decision-state, Redis transaction/concurrency, resolution, and layout tests
-- 30,000-assignment balance audit, 1,000-scenario complementarity audit, client-bundle leakage scan, five-viewport matrix, and reduced-motion captures
+- Stable server-authoritative Echo, Heat or Wind with distinct gesture and partial projection
+- One Redis-backed active vote per user/round, atomic changes, immutable counts snapshot and deterministic tie-break
+- Seven named biological chapters with branch identities derived from prior public history
+- Persistent vitality, visible scars, memory fragments, condition and Chorus/Survivor/Fading endings
+- `scheduled -> open -> resolving -> resolved -> next-chapter-pending -> open|completed` transitions
+- One-off resolution/publication jobs, recurring reconciliation and bounded Redis leases
+- Neutral chapter posts, small `postData`, accessible text fallback and previous-post links
+- Three-truth reveal only after resolution, movement consequence, seven-node map and moderator recovery controls
+- Mouse/touch, 44 px targets, reduced-motion equivalents and five-viewport visual matrix
 
-The round model is documented in [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md); the hidden model and safe boundary are in [docs/WORLD_MODEL.md](docs/WORLD_MODEL.md) and [docs/PRIVATE_PERCEPTION_CONTRACT.md](docs/PRIVATE_PERCEPTION_CONTRACT.md).
+## Excluded from this block
+
+Field Notes/comments, User Actions, flair, streaks, XP, leaderboards, automatic public-season creation, notifications, external production assets and a full second expedition remain unimplemented.
 
 ## Asset license
 
-All visible art is generated at runtime with Phaser Graphics and browser CSS. No third-party images, fonts, music, or sound files ship with this slice. Repository code is licensed under the BSD 3-Clause license in [LICENSE](LICENSE).
+All visible art is generated at runtime with Phaser Graphics and CSS. No third-party images, fonts, music or sound files ship with this build. Repository code uses the BSD 3-Clause license in [LICENSE](LICENSE).

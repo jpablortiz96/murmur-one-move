@@ -1,26 +1,35 @@
 # Judges: start here
 
-MURMUR turns Reddit's most native behavior—many people comparing partial interpretations in a thread—into the core game mechanic. The hook is not a chat wrapper: each player will eventually perceive a different truth, while the subreddit receives only one consequential move.
+MURMUR makes Reddit's native behavior—people comparing incomplete interpretations—its game system. Every player sees one private sense. The subreddit casts one consequential move. Seven posts remember the result.
 
-## What is playable now
+## Playable journey
 
-1. Open the Interactive Post and select **ENTER THE SIGNAL**.
-2. Receive one stable private sense: Echo, Heat, or Wind.
-3. Use its distinct gesture up to three times: tap for Echo, hold for Heat, or drag for Wind.
-4. Read only structural, thermal, or airflow evidence—the server never sends the other two domains.
-5. Choose North, East, South, or West and explicitly confirm the signal.
-6. See real Redis-backed aggregate counts and your active vote.
-7. Change the active vote while the round is open or replay the sensory signal.
-8. As a moderator, use the separate two-step resolve control to freeze the round.
-9. Watch Murmur follow the immutable winning direction and inspect the final community result.
+1. Enter a neutral chapter post and receive stable Echo, Heat or Wind.
+2. Complete up to three sense-specific interactions and choose a direction.
+3. Confirm one persistent vote; change it while the round is open without increasing the total.
+4. Watch aggregate intent without seeing voter identities or hidden World Truth.
+5. Let the scheduler—or a moderator recovery control—freeze the round.
+6. See all three perspectives only after the snapshot is immutable.
+7. Watch Murmur move, gain memory, carry a visible scar or lose vital light.
+8. Open the next Reddit chapter; the seven-node map and creature state preserve the journey.
+9. Complete Day 7 as Chorus, Survivor or Fading. Day 8 cannot be created.
 
-This slice proves private partial truth, distinct sensory play, the Devvit client/server/Redis boundary, concurrent voting, and manual outcome playback. Automatic daily cadence remains explicitly outside this phase.
+## Why the implementation matters
 
-## Technical map
+- Devvit is structural: identity, posts, Redis, moderator authorization and Scheduler are server responsibilities.
+- World Truth never enters shared/client code before the safe combined reveal.
+- Active votes are the aggregate source of truth; snapshots are immutable and auditable.
+- Scheduler delivery is treated as at-least-once. Repetition produces the existing transition/post/result.
+- The chapter post title and fallback never reveal a private sense or correct route.
+- The evidence pack contains 10,000 complete expeditions, 100-way duplicate calls, lost-response recovery, five viewport classes and reduced motion.
 
-- [docs/PRODUCT_BRIEF.md](docs/PRODUCT_BRIEF.md) — product thesis and exclusions
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) — current and target systems
-- [docs/DECISIONS.md](docs/DECISIONS.md) — consequential tradeoffs
-- [docs/TESTING.md](docs/TESTING.md) — reproducible validation
-- [docs/TRANSACTIONAL_VOTING.md](docs/TRANSACTIONAL_VOTING.md) — state model and invariants
-- [evidence/README.md](evidence/README.md) — captured evidence index
+## Review path
+
+- [Expedition model](docs/EXPEDITION_MODEL.md)
+- [Scheduler protocol](docs/SCHEDULER_PROTOCOL.md)
+- [Consequence system](docs/CONSEQUENCE_SYSTEM.md)
+- [Chapter posts](docs/CHAPTER_POSTS.md)
+- [Recovery protocol](docs/RECOVERY_PROTOCOL.md)
+- [Testing](docs/TESTING.md)
+- [Evidence results](evidence/expedition-engine/RESULTS.md)
+- [Limitations](LIMITATIONS.md)

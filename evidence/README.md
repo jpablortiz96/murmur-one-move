@@ -36,3 +36,12 @@ Screenshots may be added only when they contain no credentials, private account 
 - `private-senses/screenshots/` contains Echo, Heat, and Wind at 360×800, 390×844, and 1280×720, plus reduced-motion 360×800 captures.
 - `private-senses/TEST_PROTOCOL.md` is the reproduction procedure; `private-senses/RESULTS.md` records concrete verdicts and known scope.
 - `phase3/` and the previously resolved WEST post remain untouched.
+
+## 2026-07-13 seven-day expedition pass
+
+- `expedition-engine/raw/` contains 10,000 seeded complete journeys, state transitions, scheduler idempotency, 100-worker duplicate delivery, seven chapter-post audits and reconciliation outcomes.
+- `expedition-engine/plots/` contains ending, vitality, consequence, scheduler and completion plots generated from the raw JSON.
+- `expedition-engine/screenshots/` contains the seven-node map, resolving state, three-truth reveal, consequence, next-day controls and completed ending at required mobile/desktop sizes.
+- `expedition-engine/raw/visual-matrix.json` records exact viewport/document/canvas sizes, zero scroll and reduced-motion coverage.
+- Reproduction and concrete results are in `expedition-engine/TEST_PROTOCOL.md` and `expedition-engine/RESULTS.md`.
+- All earlier `phase3/` and `private-senses/` evidence remains preserved.

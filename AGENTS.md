@@ -11,7 +11,7 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 - Preserve the bioluminescent alien-cavern identity and Murmur's original, organic silhouette.
 - Do not introduce dashboard, card-grid, sidebar, table, generic neon-arcade, or SaaS UI.
 - Use Phaser for game-world visuals and interactions; do not recreate them with React.
-- Do not add out-of-scope features without explicit authorization. In particular: no scheduler, automatic daily resolution, automatic next-post creation, comments, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, or generative AI.
+- Do not add out-of-scope features without explicit authorization. The seven-day scheduler, automatic resolution and next-post recovery are now in scope and must remain idempotent. Still prohibited: comments/Field Notes, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or a second full expedition.
 - Community voting, private sensor assignment, server-only World Truth, Echo, Heat, Wind, and moderator-triggered resolution are real. Never move hidden scenario types or cross-sensor data into client/shared code.
 - Use only original programmatic visuals or assets with documented rights.
 
@@ -31,6 +31,9 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 12. Preserve round invariants: one active vote per voter, derived non-negative counts, immutable resolution, and idempotent request handling.
 13. Production sensor assignment comes only from Devvit context. Sensor overrides belong only in tests and `vite.local.config.ts`, never query parameters or Interactive Post code.
 14. Every projector constructs a fresh domain-specific payload. Run the leakage and complementarity evidence generators after perception changes.
+15. Treat scheduler delivery as at-least-once. Every task and moderator command must be safe under retries, stale delivery and concurrent execution.
+16. Preserve seven-day closure: Day 7 must end the expedition and no code path may create Day 8.
+17. Never place route solutions or complete private projections in chapter titles, `postData`, logs, public fallbacks or pre-resolution session payloads.
 
 ## Validation commands
 

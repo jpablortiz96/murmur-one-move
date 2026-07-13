@@ -71,7 +71,7 @@ No username or client-supplied identity enters the model. A one-way SHA-256 fiel
 
 World generation and assignment accept post/user identifiers from Devvit context, never HTTP input. `WorldTruth`, the optimal direction, survivability, and consequence IDs remain under `src/server`; only the assigned discriminated perception is serialized.
 
-## Future architecture (not implemented)
+## Expedition runtime (implemented)
 
 ```text
 Reddit Interactive Post
@@ -85,8 +85,12 @@ installation-scoped Redis
 Reddit API + Scheduler
 ```
 
-The next architecture block is a scheduler-backed window state machine that closes a day, resolves it idempotently, projects the public consequence, and creates the next post. None of that cadence automation is present now.
+The V2 expedition repository owns versioned state and transition history. `ExpeditionCoordinator` is the single orchestration boundary for starting, resolving, publishing and reconciliation. Devvit adapters perform custom-post discovery/creation, text-fallback updates and one-off scheduling. Internal task routes verify installation context before invoking the coordinator.
+
+Round V1 remains the per-post vote engine. V2 composes it rather than duplicating votes: the round freezes counts and the expedition applies the hidden consequence, appends history and opens the next post. Shared contracts contain only public journey state and the post-resolution combined projection.
+
+See [EXPEDITION_MODEL.md](EXPEDITION_MODEL.md), [SCHEDULER_PROTOCOL.md](SCHEDULER_PROTOCOL.md) and [RECOVERY_PROTOCOL.md](RECOVERY_PROTOCOL.md).
 
 ## Data boundary
 
-`GET /api/bootstrap` returns display metadata and feature flags. `GET /api/round` returns only the authenticated caller's own vote plus anonymous aggregates and public resolution. Vote and resolve routes reject invalid payloads at runtime. Internal voter keys and raw vote maps are never returned.
+`GET /api/bootstrap` returns display metadata and feature flags. `GET /api/session` adds only the current player's assignment/projection, their vote, aggregate state and safe expedition view. `/api/expedition` returns the public journey. Moderator commands live under `/api/mod/*`; scheduler tasks live under `/internal/scheduler/*`. Internal voter keys, raw vote maps, future scenarios and unresolved combined truth are never returned.

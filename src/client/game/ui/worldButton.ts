@@ -6,6 +6,7 @@ export type WorldButton = {
   label: Phaser.GameObjects.Text;
   setSelected: (selected: boolean) => void;
   setEnabled: (enabled: boolean) => void;
+  setLabel: (label: string) => void;
 };
 
 export const createWorldButton = (
@@ -32,6 +33,7 @@ export const createWorldButton = (
   let enabled = true;
   let hovered = false;
   let pressed = false;
+  let currentLabel = labelText;
 
   const draw = (): void => {
     const lineColor = selected ? 0xa8ffe8 : hovered ? 0x75d8c8 : 0x4b9e98;
@@ -52,7 +54,7 @@ export const createWorldButton = (
       .lineTo(width / 2 - 13, 13)
       .strokePath();
     label.setAlpha(enabled ? 1 : 0.42);
-    label.setText(`${selected ? '◆ ' : ''}${labelText}`);
+    label.setText(`${selected ? '◆ ' : ''}${currentLabel}`);
   };
 
   container.on('pointerdown', () => {
@@ -88,6 +90,10 @@ export const createWorldButton = (
     setEnabled: (value: boolean) => {
       enabled = value;
       container.input!.enabled = value;
+      draw();
+    },
+    setLabel: (value: string) => {
+      currentLabel = value;
       draw();
     },
   };

@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import type { BootstrapResponse } from '../../../shared/contracts/bootstrap';
+import type { RoundStateResponse } from '../../../shared/contracts/round';
 import { AVAILABLE_DIRECTIONS, DEBUG_DEFAULT } from '../../../shared/constants/game';
 import type { Direction } from '../../../shared/types/game';
 import {
@@ -20,6 +21,13 @@ import {
   selectDirection,
   type DecisionState,
 } from '../systems/decisionState';
+import {
+  CommunityApiError,
+  createVoteRequestId,
+  fetchRoundState,
+  resolveCommunityRound,
+  submitCommunityVote,
+} from '../systems/communityClient';
 import { createWorldButton, type WorldButton } from '../ui/worldButton';
 import { createSignalNode, type SignalNode } from '../ui/signalNode';
 
@@ -55,6 +63,14 @@ export class MurmurScene extends Phaser.Scene {
   private debugResetButton: WorldButton | null = null;
   private debugPulseButton: WorldButton | null = null;
   private decisionFeedbackTimer: Phaser.Time.TimerEvent | null = null;
+  private roundState: RoundStateResponse | null = null;
+  private roundLoading = true;
+  private roundError: string | null = null;
+  private voteSubmitting = false;
+  private voteRequestId: string | null = null;
+  private resolutionArmed = false;
+  private resolutionArmTimer: Phaser.Time.TimerEvent | null = null;
+  private outcomePlayed = false;
 
   constructor() {
     super('Murmur');
@@ -107,13 +123,16 @@ export class MurmurScene extends Phaser.Scene {
       .setOrigin(0.5);
 
     this.createDirectionNodes();
-    this.replayButton = createWorldButton(this, 'REPLAY SIGNAL', 136, () => this.replay());
+    this.replayButton = createWorldButton(this, 'CONFIRM SIGNAL', 136, () =>
+      this.handlePrimaryAction()
+    );
     this.changeButton = createWorldButton(this, 'CHANGE CHOICE', 136, () => this.change());
 
     if (this.settings.debug) this.createDebugLayer();
 
     this.layout();
     this.renderState();
+    void this.loadRoundState();
     this.scale.on('resize', () => this.layout());
     this.input.on(
       'pointerdown',
@@ -160,6 +179,7 @@ export class MurmurScene extends Phaser.Scene {
     this.directionNodes[direction].resonate();
     this.murmur.face(direction);
     this.murmur.calm();
+    this.voteRequestId = null;
     this.renderState();
     this.showDecisionFeedback(direction);
   }
@@ -169,6 +189,7 @@ export class MurmurScene extends Phaser.Scene {
     this.state = changeChoice(this.state);
     this.cave.setSelection(null);
     this.murmur.face(null);
+    this.voteRequestId = null;
     this.renderState();
   }
 
@@ -177,6 +198,7 @@ export class MurmurScene extends Phaser.Scene {
     this.state = replaySignal();
     this.cave.setSelection(null);
     this.murmur.face(null);
+    this.voteRequestId = null;
     this.renderState();
     if (this.settings.reducedMotion) this.tryPulse(false);
     else this.time.delayedCall(180, () => this.tryPulse(false));
@@ -187,6 +209,7 @@ export class MurmurScene extends Phaser.Scene {
     this.state = createDecisionState();
     this.cave.setSelection(null);
     this.murmur.face(null);
+    this.voteRequestId = null;
     this.renderState();
   }
 
@@ -204,8 +227,10 @@ export class MurmurScene extends Phaser.Scene {
             ? 'Echo again, or hold a path.'
             : 'Touch the dark to listen.'
     );
+    const communityLine = this.communityLine();
     this.pulseText.setText(
-      `ECHO ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  SPENT' : ''}`
+      `ECHO ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  SPENT' : ''}` +
+        `\n${communityLine}`
     );
     this.instructionText.setVisible(!decided);
     this.pulseText.setVisible(!decided);
@@ -216,7 +241,7 @@ export class MurmurScene extends Phaser.Scene {
       node.container.setVisible(hasPulse);
       node.setSelected(selected);
       node.setDimmed(decided && !selected);
-      node.setEnabled(!decided);
+      node.setEnabled(!decided && !this.voteSubmitting);
     }
 
     if (!decided) {
@@ -227,12 +252,13 @@ export class MurmurScene extends Phaser.Scene {
     } else if (this.decisionFeedbackTimer === null) {
       this.showPersistentDecision();
     }
+    this.positionActionButtons();
     this.updateDebugText();
   }
 
   private showDecisionFeedback(direction: Direction): void {
     this.clearDecisionFeedback();
-    this.resultText.setText('Signal recorded').setVisible(true).setAlpha(1);
+    this.resultText.setText('Signal ready').setVisible(true).setAlpha(1);
     this.pendingText.setVisible(false);
     this.replayButton.container.setVisible(false);
     this.changeButton.container.setVisible(false);
@@ -244,12 +270,50 @@ export class MurmurScene extends Phaser.Scene {
 
   private showPersistentDecision(): void {
     if (this.state.selection === null) return;
+    if (this.roundState?.status === 'resolved' && this.roundState.resolution) {
+      this.showResolvedDecision();
+      return;
+    }
+    const heldVote = this.roundState?.viewer.activeVote;
+    const isHeld = heldVote?.direction === this.state.selection;
     this.resultText
-      .setText(`${this.state.selection.toUpperCase()} SIGNAL HELD`)
+      .setText(
+        this.voteSubmitting
+          ? 'SENDING THROUGH THE CAVERN…'
+          : isHeld
+            ? `${this.state.selection.toUpperCase()} VOTE HELD`
+            : `${this.state.selection.toUpperCase()} SIGNAL READY`
+      )
       .setVisible(true);
-    this.pendingText.setVisible(true);
+    this.pendingText
+      .setText(
+        this.roundError
+          ? this.roundError
+          : this.roundLoading
+            ? 'Tuning the community signal…'
+            : isHeld
+              ? this.communityLine()
+              : this.roundState?.viewer.authenticated
+                ? `Confirm to join ${this.roundState.counts.total} active signals.`
+                : 'Sign in to Reddit to confirm this signal.'
+      )
+      .setVisible(true);
     this.replayButton.container.setVisible(true);
     this.changeButton.container.setVisible(true);
+    this.replayButton.setEnabled(!this.voteSubmitting);
+    this.changeButton.setEnabled(!this.voteSubmitting);
+    this.replayButton.setLabel(
+      this.roundError
+        ? 'RETRY COMMUNITY'
+        : this.roundState?.viewer.canResolve && isHeld
+          ? this.resolutionArmed
+            ? 'CONFIRM RESOLVE'
+            : 'RESOLVE DAY'
+          : isHeld
+            ? 'REPLAY SIGNAL'
+            : 'CONFIRM SIGNAL'
+    );
+    this.changeButton.setLabel(isHeld ? 'CHANGE VOTE' : 'CHANGE CHOICE');
 
     if (this.settings.reducedMotion) {
       this.resultText.setAlpha(1);
@@ -285,6 +349,205 @@ export class MurmurScene extends Phaser.Scene {
     ]);
   }
 
+  private async loadRoundState(): Promise<void> {
+    if (this.roundLoading && this.roundState !== null) return;
+    this.roundLoading = true;
+    this.roundError = null;
+    this.renderState();
+    try {
+      const state = await fetchRoundState();
+      this.roundState = state;
+      const direction = state.resolution?.winningDirection ?? state.viewer.activeVote?.direction;
+      if (direction) {
+        this.state = {
+          ...this.state,
+          phase: 'decided',
+          pulsesUsed: Math.max(1, this.state.pulsesUsed),
+          selection: direction,
+        };
+        this.cave.setSelection(direction);
+        this.murmur.face(direction);
+      }
+      if (state.status === 'resolved') this.playOutcome();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Community signal unavailable';
+      console.error('Unable to load community state:', message);
+      this.roundError = 'Community signal unavailable. Retry safely.';
+    } finally {
+      this.roundLoading = false;
+      this.renderState();
+    }
+  }
+
+  private async confirmVote(): Promise<void> {
+    const direction = this.state.selection;
+    if (!direction || this.voteSubmitting) return;
+    if (!this.roundState || this.roundError) {
+      await this.loadRoundState();
+      if (!this.roundState || this.roundError) return;
+    }
+    if (!this.roundState.viewer.authenticated) {
+      this.roundError = 'Sign in to Reddit, then retry this signal.';
+      this.renderState();
+      return;
+    }
+    if (this.roundState.status !== 'open') {
+      this.playOutcome();
+      return;
+    }
+    this.voteSubmitting = true;
+    this.roundError = null;
+    this.voteRequestId ??= createVoteRequestId();
+    this.renderState();
+    try {
+      const result = await submitCommunityVote(direction, this.voteRequestId);
+      this.roundState = {
+        ...this.roundState,
+        counts: result.counts,
+        viewer: { ...this.roundState.viewer, activeVote: result.activeVote },
+      };
+      this.voteRequestId = null;
+      this.murmur.calm();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Vote could not be recorded';
+      console.error('Unable to confirm MURMUR vote:', message);
+      this.roundError =
+        error instanceof CommunityApiError && error.status === 409
+          ? 'The round changed. Refreshing the frozen signal…'
+          : 'Signal not recorded. Retry is safe.';
+      if (error instanceof CommunityApiError && error.status === 409) {
+        this.roundState = null;
+        await this.loadRoundState();
+      }
+    } finally {
+      this.voteSubmitting = false;
+      this.renderState();
+    }
+  }
+
+  private handlePrimaryAction(): void {
+    if (this.roundError) {
+      void this.loadRoundState();
+      return;
+    }
+    if (this.roundState?.status === 'resolved') {
+      this.playOutcome(true);
+      return;
+    }
+    const held =
+      this.state.selection !== null &&
+      this.roundState?.viewer.activeVote?.direction === this.state.selection;
+    if (held && this.roundState?.viewer.canResolve) {
+      if (!this.resolutionArmed) {
+        this.resolutionArmed = true;
+        this.resolutionArmTimer?.remove(false);
+        this.resolutionArmTimer = this.time.delayedCall(3500, () => {
+          this.resolutionArmed = false;
+          this.renderState();
+        });
+        this.renderState();
+      } else {
+        void this.resolveRound();
+      }
+      return;
+    }
+    if (held) this.replay();
+    else void this.confirmVote();
+  }
+
+  private async resolveRound(): Promise<void> {
+    if (this.voteSubmitting) return;
+    this.voteSubmitting = true;
+    this.resolutionArmed = false;
+    this.resolutionArmTimer?.remove(false);
+    this.renderState();
+    try {
+      const result = await resolveCommunityRound();
+      if (!this.roundState) throw new Error('Round state disappeared during resolution');
+      this.roundState = {
+        ...this.roundState,
+        status: 'resolved',
+        counts: result.resolution.countsSnapshot,
+        resolution: result.resolution,
+        viewer: {
+          ...this.roundState.viewer,
+          canVote: false,
+          canResolve: false,
+        },
+      };
+      this.playOutcome();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Resolution failed';
+      console.error('Unable to resolve MURMUR round:', message);
+      this.roundError = 'Resolution failed without changing the round.';
+    } finally {
+      this.voteSubmitting = false;
+      this.renderState();
+    }
+  }
+
+  private playOutcome(replay = false): void {
+    const direction = this.roundState?.resolution?.winningDirection;
+    if (!direction || (this.outcomePlayed && !replay)) return;
+    this.outcomePlayed = true;
+    this.state = {
+      ...this.state,
+      phase: 'decided',
+      selection: direction,
+      pulsesUsed: Math.max(1, this.state.pulsesUsed),
+    };
+    this.cave.setSelection(direction);
+    this.murmur.face(direction);
+    const target = this.metrics.pathNodes[direction];
+    const x = this.metrics.centerX + (target.x - this.metrics.centerX) * 0.34;
+    const y = this.metrics.centerY + (target.y - this.metrics.centerY) * 0.34;
+    this.tweens.killTweensOf(this.murmur);
+    if (this.settings.reducedMotion) this.murmur.setPosition(x, y);
+    else {
+      this.murmur.setPosition(this.metrics.centerX, this.metrics.centerY);
+      this.tweens.add({ targets: this.murmur, x, y, duration: 900, ease: 'Sine.InOut' });
+    }
+    this.renderState();
+  }
+
+  private showResolvedDecision(): void {
+    const resolution = this.roundState?.resolution;
+    if (!resolution) return;
+    this.resultText
+      .setText(`MURMUR FOLLOWS ${resolution.winningDirection.toUpperCase()}`)
+      .setVisible(true)
+      .setAlpha(1);
+    this.pendingText
+      .setText(`${this.communityLine()} · Snapshot sealed.`)
+      .setVisible(true)
+      .setAlpha(1);
+    this.replayButton.setLabel('REPLAY OUTCOME');
+    this.replayButton.setEnabled(true);
+    this.replayButton.container.setVisible(true).setAlpha(1);
+    this.changeButton.container.setVisible(false);
+    this.positionActionButtons();
+  }
+
+  private communityLine(): string {
+    if (this.roundLoading && this.roundState === null) return 'COMMUNITY · TUNING';
+    if (!this.roundState) return 'COMMUNITY · UNAVAILABLE';
+    const { counts } = this.roundState;
+    return `N ${counts.north} · E ${counts.east} · S ${counts.south} · W ${counts.west} · ${counts.total} SIGNALS`;
+  }
+
+  private positionActionButtons(): void {
+    if (!this.metrics || !this.replayButton || !this.changeButton) return;
+    const singleAction = this.roundState?.status === 'resolved';
+    this.replayButton.container.setPosition(
+      singleAction ? this.metrics.centerX : this.metrics.centerX - this.metrics.actionButtonOffset,
+      this.metrics.actionButtonsY
+    );
+    this.changeButton.container.setPosition(
+      this.metrics.centerX + this.metrics.actionButtonOffset,
+      this.metrics.actionButtonsY
+    );
+  }
+
   private layout(): void {
     const { width, height } = this.scale;
     this.metrics = calculateLayout(width, height, this.settings.safeArea);
@@ -313,6 +576,15 @@ export class MurmurScene extends Phaser.Scene {
       centerX + this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
     );
+
+    if (this.outcomePlayed && this.roundState?.resolution) {
+      const target = pathNodes[this.roundState.resolution.winningDirection];
+      this.murmur.setPosition(
+        centerX + (target.x - centerX) * 0.34,
+        centerY + (target.y - centerY) * 0.34
+      );
+    }
+    this.positionActionButtons();
 
     this.debugText?.setPosition(6, 6);
     this.debugResetButton?.container.setPosition(width - 52, 31);
@@ -369,7 +641,8 @@ export class MurmurScene extends Phaser.Scene {
     this.debugText?.setText(
       `DEBUG · ${this.scale.width}×${this.scale.height}\n` +
         `${this.state.phase} · pulses ${this.state.pulsesUsed}/${this.state.maxPulses}\n` +
-        `choice ${this.state.selection ?? 'none'} · reduced ${this.settings.reducedMotion}`
+        `choice ${this.state.selection ?? 'none'} · round ${this.roundState?.status ?? 'loading'}\n` +
+        `total ${this.roundState?.counts.total ?? 0} · reduced ${this.settings.reducedMotion}`
     );
   }
 

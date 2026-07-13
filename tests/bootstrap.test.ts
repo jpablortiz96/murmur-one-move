@@ -14,7 +14,8 @@ const validBootstrap = {
     heatEnabled: false,
     windEnabled: false,
     dailyResolutionEnabled: false,
-    communityPersistenceEnabled: false,
+    manualResolutionEnabled: true,
+    communityPersistenceEnabled: true,
     privateSensorsEnabled: false,
   },
 };
@@ -47,4 +48,3 @@ describe('bootstrap validation', () => {
     expect(parseFeatureFlags({ echoEnabled: true })).toBeNull();
   });
 });
-

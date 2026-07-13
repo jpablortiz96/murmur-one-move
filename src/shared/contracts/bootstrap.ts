@@ -52,12 +52,14 @@ export const parseFeatureFlags = (value: unknown): FeatureFlags | null => {
     !('heatEnabled' in value) ||
     !('windEnabled' in value) ||
     !('dailyResolutionEnabled' in value) ||
+    !('manualResolutionEnabled' in value) ||
     !('communityPersistenceEnabled' in value) ||
     !('privateSensorsEnabled' in value) ||
     typeof value.echoEnabled !== 'boolean' ||
     typeof value.heatEnabled !== 'boolean' ||
     typeof value.windEnabled !== 'boolean' ||
     typeof value.dailyResolutionEnabled !== 'boolean' ||
+    typeof value.manualResolutionEnabled !== 'boolean' ||
     typeof value.communityPersistenceEnabled !== 'boolean' ||
     typeof value.privateSensorsEnabled !== 'boolean'
   ) {
@@ -69,6 +71,7 @@ export const parseFeatureFlags = (value: unknown): FeatureFlags | null => {
     heatEnabled: value.heatEnabled,
     windEnabled: value.windEnabled,
     dailyResolutionEnabled: value.dailyResolutionEnabled,
+    manualResolutionEnabled: value.manualResolutionEnabled,
     communityPersistenceEnabled: value.communityPersistenceEnabled,
     privateSensorsEnabled: value.privateSensorsEnabled,
   };

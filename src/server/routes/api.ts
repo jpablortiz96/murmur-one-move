@@ -11,8 +11,11 @@ import type {
   BootstrapResponse,
   HealthResponse,
 } from '../../shared/contracts/bootstrap';
+import { roundApi } from './round';
 
 export const api = new Hono();
+
+api.route('/round', roundApi);
 
 api.get('/health', (c) =>
   c.json<HealthResponse>({
@@ -36,7 +39,8 @@ api.get('/bootstrap', (c) => {
       heatEnabled: false,
       windEnabled: false,
       dailyResolutionEnabled: false,
-      communityPersistenceEnabled: false,
+      manualResolutionEnabled: true,
+      communityPersistenceEnabled: true,
       privateSensorsEnabled: false,
     },
   };

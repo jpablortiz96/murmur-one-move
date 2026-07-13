@@ -18,7 +18,12 @@ export const FEATURE_FLAG_KEYS = [
   'heatEnabled',
   'windEnabled',
   'dailyResolutionEnabled',
+  'manualResolutionEnabled',
   'communityPersistenceEnabled',
   'privateSensorsEnabled',
 ] as const;
 
+export const ROUND_SCHEMA_VERSION = 1;
+export const ROUND_RESOLUTION_VERSION = 1;
+export const CURRENT_CHAPTER_NUMBER = 1;
+export const CURRENT_DAY = 1;

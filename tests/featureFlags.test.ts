@@ -6,7 +6,8 @@ const flags: FeatureFlags = {
   heatEnabled: false,
   windEnabled: false,
   dailyResolutionEnabled: false,
-  communityPersistenceEnabled: false,
+  manualResolutionEnabled: true,
+  communityPersistenceEnabled: true,
   privateSensorsEnabled: false,
 };
 
@@ -17,10 +18,10 @@ describe('feature flags', () => {
     expect(isFeatureEnabled(flags, 'windEnabled')).toBe(false);
   });
 
-  it('keeps future community systems disabled', () => {
+  it('enables manual persistence without claiming automatic daily resolution', () => {
     expect(isFeatureEnabled(flags, 'dailyResolutionEnabled')).toBe(false);
-    expect(isFeatureEnabled(flags, 'communityPersistenceEnabled')).toBe(false);
+    expect(isFeatureEnabled(flags, 'manualResolutionEnabled')).toBe(true);
+    expect(isFeatureEnabled(flags, 'communityPersistenceEnabled')).toBe(true);
     expect(isFeatureEnabled(flags, 'privateSensorsEnabled')).toBe(false);
   });
 });
-

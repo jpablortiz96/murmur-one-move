@@ -9,6 +9,7 @@ import { generateScenario } from '../src/server/game/world/generateScenario';
 import { validateScenario } from '../src/server/game/world/validateScenario';
 import { createRoundIdentity, RoundService } from '../src/server/services/roundService';
 import { CURRENT_FEATURE_FLAGS } from '../src/server/game/gameConfig';
+import { SENSOR_ASSIGNMENT_VERSION, SESSION_SCHEMA_VERSION } from '../src/shared/constants/game';
 import { createEmptyCounts } from '../src/shared/contracts/round';
 import { parsePlayerSession, type PlayerSession } from '../src/shared/contracts/session';
 import type { Direction, Sensor } from '../src/shared/types/game';
@@ -41,24 +42,27 @@ const keysDeep = (value: unknown): string[] => {
 const sessionFixture = (sensor: Sensor, authentication: 'authenticated' | 'guest'): PlayerSession => {
   const truth = generateScenario({ postId: 'evidence-contract', chapter: 1, day: 1, generatorVersion: 1 });
   return {
-    schemaVersion: 1,
+    schemaVersion: SESSION_SCHEMA_VERSION,
     expedition: { chapter: 1, day: 1, title: 'The First Hollow', status: 'open' },
     player: {
       authentication,
       sensor,
       stableAssignment: authentication === 'authenticated',
-      assignmentVersion: 1,
+      assignmentVersion: SENSOR_ASSIGNMENT_VERSION,
     },
     perception: projectPerception(sensor, truth),
     round: {
       canVote: authentication === 'authenticated',
       canResolve: false,
+      canManage: false,
       currentVote: null,
       revision: 0,
       counts: createEmptyCounts(),
       aggregateVisible: true,
       resolution: null,
     },
+    journey: null,
+    combinedTruth: null,
     featureFlags: { ...CURRENT_FEATURE_FLAGS },
   };
 };
@@ -148,11 +152,13 @@ describe('private-sense evidence generation', () => {
 
     const sessions = (['echo', 'heat', 'wind'] as const).map((sensor) => sessionFixture(sensor, 'authenticated'));
     const guest = sessionFixture('echo', 'guest');
+    const authenticatedContractsValid = sessions.every((session) => parsePlayerSession(session) !== null);
+    const guestContractValid = parsePlayerSession(guest) !== null;
     writeEvidence('endpoint-contracts.json', {
-      sessionSchemaVersion: 1,
+      sessionSchemaVersion: SESSION_SCHEMA_VERSION,
       authenticatedSensorsValidated: sessions.map(({ player }) => player.sensor),
-      allAuthenticatedContractsValid: sessions.every((session) => parsePlayerSession(session) !== null),
-      guestContractValid: parsePlayerSession(guest) !== null,
+      allAuthenticatedContractsValid: authenticatedContractsValid,
+      guestContractValid,
       guestStableAssignment: guest.player.stableAssignment,
       guestCanVote: guest.round.canVote,
       payloadForbiddenHits: [...sessions, guest].flatMap((session) => keysDeep(session).filter((key) => forbidden.includes(key))),
@@ -161,6 +167,8 @@ describe('private-sense evidence generation', () => {
     expect(valid).toBe(1_000);
     expect(payloadForbiddenHits).toEqual([]);
     expect(bundleForbiddenHits).toEqual([]);
+    expect(authenticatedContractsValid).toBe(true);
+    expect(guestContractValid).toBe(true);
   });
 });
 

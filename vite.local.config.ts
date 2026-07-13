@@ -105,7 +105,7 @@ const localSession = (): PlayerSession => {
       resolution,
     },
     journey,
-    combinedTruth: resolved ? {
+    combinedTruth: resolved && process.env.MURMUR_LOCAL_HIDE_REVEAL !== '1' ? {
       echo: 'East was open, hollow, and stable.',
       heat: 'East held burning air with a moving signature.',
       wind: 'East carried clear air in an inward current.',

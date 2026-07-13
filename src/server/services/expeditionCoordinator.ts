@@ -170,6 +170,10 @@ export class ExpeditionCoordinator {
       }).state);
     }
     if (state.status === 'next-chapter-pending') {
+      if (this.now().getTime() < Date.parse(state.window.nextChapterAt)) {
+        await this.schedulePublish(state, `${operationId}:ensure-publish`);
+        return state;
+      }
       return await this.publishNext(subredditId, state.seasonId, `${operationId}:publish`);
     }
     return state;
@@ -297,19 +301,28 @@ export class ExpeditionCoordinator {
   }
 
   private async scheduleResolve(state: ExpeditionState, operationId: string): Promise<void> {
+    const keys = createExpeditionKeys(state.subredditId, state.seasonId);
+    const scheduledKey = keys.scheduledJob(state.currentDay, 'resolve-round');
+    if (await this.redis.get(scheduledKey)) return;
     const jobId = await this.jobs.schedule('resolve-round', {
       seasonId: state.seasonId, subredditId: state.subredditId, day: state.currentDay,
       operationId: `${operationId}:scheduled-resolve`,
     }, new Date(state.window.closesAt));
-    await this.redis.set(createExpeditionKeys(state.subredditId, state.seasonId).job(jobId), JSON.stringify({ name: 'resolve-round', day: state.currentDay }));
+    await this.redis.set(keys.job(jobId), JSON.stringify({ name: 'resolve-round', day: state.currentDay }));
+    await this.redis.set(scheduledKey, jobId);
   }
 
   private async schedulePublish(state: ExpeditionState, operationId: string): Promise<void> {
+    const keys = createExpeditionKeys(state.subredditId, state.seasonId);
+    const targetDay = state.currentDay + 1;
+    const scheduledKey = keys.scheduledJob(targetDay, 'publish-next-chapter');
+    if (await this.redis.get(scheduledKey)) return;
     const jobId = await this.jobs.schedule('publish-next-chapter', {
-      seasonId: state.seasonId, subredditId: state.subredditId, day: state.currentDay + 1,
+      seasonId: state.seasonId, subredditId: state.subredditId, day: targetDay,
       operationId: `${operationId}:scheduled-publish`,
     }, new Date(Math.max(this.now().getTime(), Date.parse(state.window.nextChapterAt))));
-    await this.redis.set(createExpeditionKeys(state.subredditId, state.seasonId).job(jobId), JSON.stringify({ name: 'publish-next-chapter', day: state.currentDay + 1 }));
+    await this.redis.set(keys.job(jobId), JSON.stringify({ name: 'publish-next-chapter', day: targetDay }));
+    await this.redis.set(scheduledKey, jobId);
   }
 
   private async requireState(subredditId: string, seasonId: string): Promise<ExpeditionState> {

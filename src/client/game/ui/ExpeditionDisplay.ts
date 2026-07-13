@@ -26,7 +26,7 @@ export class ExpeditionDisplay {
     this.mapLabel = scene.add.text(0, 0, '', {
       fontFamily: 'Trebuchet MS, Segoe UI, sans-serif', fontSize: '9px',
       color: '#8fc7bd', letterSpacing: 1.1, align: 'center',
-    }).setOrigin(0.5, 0);
+    }).setOrigin(1, 0.5);
     this.map.add([this.mapGraphics, this.mapLabel]);
 
     this.reveal = scene.add.container(0, 0).setDepth(80).setVisible(false);
@@ -54,7 +54,7 @@ export class ExpeditionDisplay {
   }
 
   layout(metrics: LayoutMetrics): void {
-    this.map.setPosition(metrics.centerX, metrics.chapterY + 32);
+    this.map.setPosition(metrics.centerX, metrics.chapterY + 20);
     this.reveal.setPosition(metrics.centerX, metrics.centerY);
     const width = Math.min(340, metrics.width - 20);
     const height = Math.min(360, metrics.worldBounds.height + 70);
@@ -142,6 +142,6 @@ export class ExpeditionDisplay {
       if (current) this.mapGraphics.lineStyle(1, 0xd8fff5, 0.8).strokeCircle(x, y, 8);
       if (completed) this.mapGraphics.lineStyle(1, 0x041314, 0.85).lineBetween(x - 3, y + 3, x + 3, y - 3);
     }
-    this.mapLabel.setText(`DAY ${this.view.currentDay}/7 · ${this.view.murmur.condition.toUpperCase()}`).setPosition(0, 11);
+    this.mapLabel.setText(`${this.view.currentDay}/7 · ${this.view.murmur.condition.toUpperCase()}`).setPosition(-95, 0);
   }
 }

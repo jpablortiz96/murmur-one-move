@@ -20,6 +20,8 @@ export const createExpeditionKeys = (subredditId: string, seasonId: string) => {
     publishIntent: (day: number) => `${prefix}:intent:publish:${day}`,
     resolveLease: (day: number) => `${prefix}:lease:resolve:${day}`,
     publishLease: (day: number) => `${prefix}:lease:publish:${day}`,
+    scheduledJob: (day: number, name: 'resolve-round' | 'publish-next-chapter') =>
+      `${prefix}:scheduled:${day}:${name}`,
     job: (jobId: string) => `${prefix}:job:${digest(jobId)}`,
   };
 };

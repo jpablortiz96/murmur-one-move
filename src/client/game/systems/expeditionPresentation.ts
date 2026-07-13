@@ -26,7 +26,7 @@ export const approximateWindowCopy = (view: ExpeditionPublicView, now: Date): st
   const hours = Math.ceil(remaining / 3_600_000);
   if (hours >= 2) return `About ${hours} hours remain.`;
   const minutes = Math.max(1, Math.ceil(remaining / 60_000));
-  return `About ${minutes} minutes remain.`;
+  return `About ${minutes} ${minutes === 1 ? 'minute' : 'minutes'} remain.`;
 };
 
 export const murmurVisualSignature = (state: PublicMurmurState): string[] => [

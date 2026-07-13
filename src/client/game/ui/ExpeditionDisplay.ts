@@ -54,7 +54,7 @@ export class ExpeditionDisplay {
   }
 
   layout(metrics: LayoutMetrics): void {
-    this.map.setPosition(metrics.centerX, metrics.chapterY + 20);
+    this.map.setPosition(metrics.centerX, metrics.worldBounds.y - 4);
     this.reveal.setPosition(metrics.centerX, metrics.centerY);
     const width = Math.min(340, metrics.width - 20);
     const height = Math.min(360, metrics.worldBounds.height + 70);

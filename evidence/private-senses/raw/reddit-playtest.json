@@ -1,0 +1,29 @@
+{
+  "capturedAt": "2026-07-13",
+  "status": "pass",
+  "app": "murmur-one-move",
+  "version": "0.0.2.45",
+  "subreddit": "r/murmur_one_move_dev",
+  "url": "https://www.reddit.com/r/murmur_one_move_dev/?playtest=murmur-one-move",
+  "newPostId": "t3_1uvh1ff",
+  "newPostUrl": "https://www.reddit.com/r/murmur_one_move_dev/comments/1uvh1ff/murmur_one_move_a_day_echo_signal/",
+  "humanReport": {
+    "stableSenseReported": true,
+    "senseNamed": true,
+    "sense": "heat",
+    "activationsCompleted": 3,
+    "persistentVoteReported": true,
+    "persistentChangeReported": true,
+    "finalDirection": "east",
+    "aggregateTotalReported": 1
+  },
+  "serverLogEvidence": {
+    "privateSessionEvents": 0,
+    "voteCommitEvents": 0,
+    "postIdObserved": false,
+    "runtimeErrorsObserved": 0
+  },
+  "humanVerified": true,
+  "serverLogCorroborated": false,
+  "reason": "The authenticated human tester reported a stable Heat assignment after reload, completed all three Heat readings, confirmed persistence, and changed the vote to East with aggregate total 1. The direct post interaction did not emit route-level events in the attached playtest watcher, so revision details are not claimed as log-corroborated."
+}

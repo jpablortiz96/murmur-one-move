@@ -30,4 +30,11 @@
 - Reduced motion: 3/3 senses at 360×800 with touch, vote total 1, and no scroll.
 - Visual inspection caught and corrected a Wind drag ending over a direction node; nodes now require their own pointerdown before selection.
 
-Real Reddit private-sense stability and persistent voting are recorded after the human playtest and must not be inferred from this local evidence alone.
+## Reddit playtest
+
+- Devvit installed `v0.0.2.45` and returned the expected playtest URL.
+- A fresh isolated post, `t3_1uvh1ff`, preserved the resolved Phase 3 post without alteration.
+- The authenticated human tester observed `HEAT`, reloaded, reported that the assignment remained stable, and completed all three Heat readings (`3/3`).
+- The tester confirmed a vote, reloaded, changed the vote to East, and reported that the aggregate total remained 1.
+- The direct post interaction did not emit route-level events in the attached watcher; revision values and trusted-sensor storage are therefore supported by the automated Redis integration tests, not claimed as runtime-log evidence.
+- Verdict: PASS for the required real private-sense stability and persistent-vote journey, with the single-account and log-correlation limits stated explicitly.

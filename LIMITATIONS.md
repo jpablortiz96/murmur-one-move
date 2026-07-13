@@ -21,3 +21,4 @@
 - The opt-in debug overlay prioritizes diagnostic density and may overlap header art on a 360 px viewport; normal mode is unaffected.
 - `npm audit --omit=dev` reports five transitive findings in the Devvit CLI chain; the suggested fix installs a breaking Devvit 1.0.0. The full audit adds five development/test findings in `@devvit/test`/Vitest. No forced or major dependency update was applied in this phase.
 - Real multi-account sensor diversity has not been human-tested; automated tests/harnesses cover all three senses, while the Reddit playtest uses the available authenticated account.
+- Phase 4 playtest `v0.0.2.45` used fresh post `t3_1uvh1ff`; the authenticated human reported a stable Heat assignment plus a persistent vote changed to East with aggregate total 1. The direct post interaction emitted no route-level events in the attached watcher, so runtime revision details could not be independently correlated from server logs.

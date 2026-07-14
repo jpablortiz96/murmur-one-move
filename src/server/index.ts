@@ -5,6 +5,7 @@ import { api } from './routes/api';
 import { menu } from './routes/menu';
 import { triggers } from './routes/triggers';
 import { expeditionApi } from './routes/expedition';
+import { fieldNotesApi } from './routes/fieldNotes';
 import { moderatorApi } from './routes/moderator';
 import { schedulerRoutes } from './routes/scheduler';
 
@@ -17,6 +18,7 @@ internal.route('/scheduler', schedulerRoutes);
 
 app.route('/api', api);
 app.route('/api/expedition', expeditionApi);
+app.route('/api/field-notes', fieldNotesApi);
 app.route('/api/mod', moderatorApi);
 app.route('/internal', internal);
 

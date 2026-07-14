@@ -1,6 +1,7 @@
 import * as Phaser from 'phaser';
 import { BootstrapScene } from './game/scenes/BootstrapScene';
 import { getSceneSettings, MurmurScene } from './game/scenes/MurmurScene';
+import { initFieldNotesOverlay } from './game/ui/fieldNotesOverlay';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -27,4 +28,5 @@ const config: Phaser.Types.Core.GameConfig = {
 
 document.addEventListener('DOMContentLoaded', () => {
   new Phaser.Game(config);
+  initFieldNotesOverlay();
 });

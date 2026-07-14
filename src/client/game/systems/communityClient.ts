@@ -66,6 +66,7 @@ export const submitCommunityVote = async (
   const value: unknown = await response.json();
   const result = parseSubmitVoteResponse(value);
   if (result === null) throw new CommunityApiError('Invalid vote response', 502);
+  notifyCommunityUpdated();
   return result;
 };
 
@@ -78,10 +79,18 @@ export const resolveCommunityRound = async (): Promise<ResolveRoundResponse> => 
   const value: unknown = await response.json();
   const result = parseResolveRoundResponse(value);
   if (result === null) throw new CommunityApiError('Invalid resolution response', 502);
+  notifyCommunityUpdated();
   return result;
 };
 
 export const createVoteRequestId = (): string => crypto.randomUUID();
+
+/** Signals the Field Notes overlay to re-read its capability/board state. */
+const notifyCommunityUpdated = (): void => {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('murmur:community-updated'));
+  }
+};
 
 export const runModeratorExpeditionAction = async (
   path: 'round/close' | 'round/resolve' | 'chapter/publish' | 'expedition/reconcile',

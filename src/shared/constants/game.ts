@@ -32,3 +32,14 @@ export const SESSION_SCHEMA_VERSION = 2;
 export const PERCEPTION_SCHEMA_VERSION = 1;
 export const SENSOR_ASSIGNMENT_VERSION = 1;
 export const WORLD_GENERATOR_VERSION = 1;
+
+export const NOTE_CONFIDENCES = ['low', 'medium', 'high'] as const;
+export const FIELD_NOTE_SCHEMA_VERSION = 1;
+export const FIELD_NOTE_MAX_COMMENTARY = 160;
+// Aggregate breakdowns and the correct-minority reveal only appear once at least
+// this many active notes exist, so no single contributor represents a sense.
+export const FIELD_NOTE_BOARD_MIN_NOTES = 3;
+export const MINORITY_MIN_NOTES = 3;
+// A preview token is a short-lived, server-verifiable authorization to publish
+// the exact previewed body; it is not persisted content.
+export const FIELD_NOTE_PREVIEW_TTL_MS = 10 * 60 * 1_000;

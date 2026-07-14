@@ -93,4 +93,22 @@ See [EXPEDITION_MODEL.md](EXPEDITION_MODEL.md), [SCHEDULER_PROTOCOL.md](SCHEDULE
 
 ## Data boundary
 
-`GET /api/bootstrap` returns display metadata and feature flags. `GET /api/session` adds only the current player's assignment/projection, their vote, aggregate state and safe expedition view. `/api/expedition` returns the public journey. Moderator commands live under `/api/mod/*`; scheduler tasks live under `/internal/scheduler/*`. Internal voter keys, raw vote maps, future scenarios and unresolved combined truth are never returned.
+`GET /api/bootstrap` returns display metadata and feature flags. `GET /api/session` adds only the current player's assignment/projection, their vote, aggregate state and safe expedition view. `/api/expedition` returns the public journey. `/api/field-notes` (GET view, POST `/preview`, POST `/publish`) hosts optional native Field Notes; `/internal/triggers/on-comment-delete` and `/on-post-delete` desindex deleted content. Moderator commands live under `/api/mod/*`; scheduler tasks live under `/internal/scheduler/*`. Internal voter keys, raw vote maps, future scenarios, unresolved combined truth, comment bodies and usernames are never returned.
+
+## Field Notes runtime
+
+```text
+vote (prerequisite)
+    ↓
+POST /api/field-notes/preview  → server-built exact body + signed token (no publish)
+    ↓ explicit separate consent
+POST /api/field-notes/publish  → verify token + author → native runAs:'USER' | honest fallback
+    ↓
+minimal Redis index (no text/usernames) ── onCommentDelete/onPostDelete → desindex
+    ↓ after resolution
+metadata-only correct-minority reveal
+```
+
+`FieldNoteService` orchestrates preview/publish/view over `FieldNoteRepository` (minimal metadata,
+leases, idempotency) and a `CommentGateway` (parent-thread reuse + user reply). World Truth stays
+server-side; the reveal reads only structured note metadata. See [FIELD_NOTES_CONTRACT.md](FIELD_NOTES_CONTRACT.md).

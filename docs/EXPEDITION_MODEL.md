@@ -30,3 +30,8 @@ Day 7 selects exactly one ending: `chorus` for strong memory and remaining light
 ## Public boundary
 
 The client receives chapter copy, approximate window, condition, scars, memory, compact history and ending. It never receives future scenarios, safe routes or unresolved combined projections. The combined Echo/Heat/Wind truth is projected only from an immutable resolved history entry for the current post.
+
+Each chapter also hosts optional native Field Notes and, after resolution, a correct-minority reveal
+computed from structured note metadata only. Field Notes compose over the round/expedition state but
+never alter votes, World Truth, consequences, or the seven-day closure. See
+[FIELD_NOTES_CONTRACT.md](FIELD_NOTES_CONTRACT.md).

@@ -10,9 +10,12 @@ MURMUR makes Reddit's native behavior—people comparing incomplete interpretati
 4. Watch aggregate intent without seeing voter identities or hidden World Truth.
 5. Let the scheduler—or a moderator recovery control—freeze the round.
 6. See all three perspectives only after the snapshot is immutable.
-7. Watch Murmur move, gain memory, carry a visible scar or lose vital light.
-8. Open the next Reddit chapter; the seven-node map and creature state preserve the journey.
-9. Complete Day 7 as Chorus, Survivor or Fading. Day 8 cannot be created.
+7. Optionally share a **Field Note**: pick what your sense revealed, see the exact comment, and post
+   it as yourself (or copy it) — separate from the vote, never automatic.
+8. Watch Murmur move, gain memory, carry a visible scar or lose vital light.
+9. See whether the community held the path — or whether a correct minority heard the danger.
+10. Open the next Reddit chapter; the seven-node map and creature state preserve the journey.
+11. Complete Day 7 as Chorus, Survivor or Fading. Day 8 cannot be created.
 
 ## Why the implementation matters
 
@@ -25,6 +28,9 @@ MURMUR makes Reddit's native behavior—people comparing incomplete interpretati
 
 ## Review path
 
+- [Field Notes contract](docs/FIELD_NOTES_CONTRACT.md)
+- [UGC moderation & privacy](docs/UGC_MODERATION.md)
+- [Comment lifecycle](docs/COMMENT_LIFECYCLE.md)
 - [Expedition model](docs/EXPEDITION_MODEL.md)
 - [Scheduler protocol](docs/SCHEDULER_PROTOCOL.md)
 - [Consequence system](docs/CONSEQUENCE_SYSTEM.md)

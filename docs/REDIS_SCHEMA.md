@@ -31,3 +31,25 @@ murmur:v2:{sha256(subredditId)[0..24]}:season:{sha256(seasonId)[0..24]}
 - `:lease:{state|resolve:day|publish:day}` — bounded cross-worker leases.
 
 The installation-level `murmur:v2:{installation}:active-season` points to the active season. Usernames, World Truth and raw voter IDs are never stored in expedition keys.
+
+## Field Notes V1
+
+```text
+murmur:v2:fn:{sha256(subredditId)[0..24]}:season:{sha256(seasonId)[0..24]}:d{day}
+```
+
+- `:notes` — hash from post-scoped voter hash to minimal `FieldNoteIndex` (`commentId`,
+  `parentCommentId`, `voterHash`, `sensor`, `direction`, `observationId`, `confidence`, `createdAt`,
+  `status`, `schemaVersion`). No comment text.
+- `:parent` — the app-authored chapter parent comment id.
+- `:lease:parent` and `:lease:publish:{voterHash}` — bounded creation/publish serialization.
+- `:req:{voterHash}:{hash(requestId)}` — minimal idempotency marker `{commentId, commentUrl}` (no username).
+
+Installation-scoped keys:
+
+- `murmur:v2:fn:{installation}:secret` — installation HMAC secret for stateless preview tokens (never exposed).
+- `murmur:v2:fn:{installation}:comment:{sha256(commentId)}` — reverse `comment → {season, day, voterHash}`
+  index used by deletion triggers.
+
+Comment bodies, commentary text, usernames and raw user IDs are never stored. The voter hash reuses
+the round vote identity (`createVoterKey`), so a note is one-way linked to a voter without an account id.

@@ -8,6 +8,8 @@ All current visuals are original Phaser Graphics and remain legally self-contain
 - Wind tracers, eddies, fog deformation, and contamination shapes.
 - Silent hazards with non-color-only readability.
 - Consequence vignettes beyond the current procedural three-truth reveal, condition marks and scars.
+- The Field Notes composer, signal board and correct-minority reveal (currently an accessible,
+  theme-consistent HTML/Phaser overlay) toward richer organic in-world treatment.
 - Interactive Post cover/inline invitation.
 
 The current seven-node organic map, memory fragments, vital-light core and scar marks are programmatic Phaser art and are testable without color. No final asset pack, external download, font, music, or sound library is introduced in this phase.

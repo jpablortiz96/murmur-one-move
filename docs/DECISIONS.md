@@ -147,6 +147,33 @@
 - **Why:** Server regeneration stays deterministic while posts reveal no solution and prior consequences genuinely affect later caverns.
 - **Consequence:** Developers can study the algorithm, so secrecy is architectural rather than cryptographic.
 
+## 2026-07-14 — Make Field Notes optional, previewed and consent-gated
+
+- **Decision:** After voting, offer an optional structured Field Note with an exact server-built
+  preview and a dedicated publish action; never auto-post and never combine consent with vote/resolve.
+- **Rejected:** Posting a comment on vote; a single button that both votes and comments; free-form text.
+- **Why:** UGC posted on a user's behalf must be deliberate, and the exact wording must be shown first.
+- **Consequence:** Two endpoints (preview, publish); a signed token binds the previewed body to publication.
+
+## 2026-07-14 — Default to an honest copy fallback over native User Actions
+
+- **Decision:** Implement native `runAs: 'USER'` behind a server-authoritative flag defaulting to a
+  copy-to-comments fallback; verify the returned author equals the caller before claiming a user posted.
+- **Rejected:** Posting as the app account and presenting it as the user; assuming User Actions works
+  before an authorized real-Reddit playtest.
+- **Why:** The app must never impersonate a user; native authorship needs real authorization to verify.
+- **Consequence:** Fallback works everywhere; native is enabled only after verified authorship, with
+  automatic honest degrade on scope/plugin failure or author mismatch.
+
+## 2026-07-14 — Store only minimal Field Note metadata; never text or usernames
+
+- **Decision:** Persist a small per-note index keyed by a one-way voter hash; keep the preview token
+  stateless; store no comment body, commentary, or username anywhere.
+- **Rejected:** Caching comment bodies in Redis; an internal moderation copy; storing the author name.
+- **Why:** Reddit is the source of truth and the moderation surface; minimization limits exposure.
+- **Consequence:** Excerpts (if shown) are fetched live; the correct-minority reveal uses metadata only,
+  so it survives when comment text cannot load.
+
 ## 2026-07-13 — Publish neutral posts with discoverable small references
 
 - **Decision:** Put only schema, season, day and generator version in `postData`, with neutral titles and text fallback.

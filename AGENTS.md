@@ -11,8 +11,8 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 - Preserve the bioluminescent alien-cavern identity and Murmur's original, organic silhouette.
 - Do not introduce dashboard, card-grid, sidebar, table, generic neon-arcade, or SaaS UI.
 - Use Phaser for game-world visuals and interactions; do not recreate them with React.
-- Do not add out-of-scope features without explicit authorization. The seven-day scheduler, automatic resolution and next-post recovery are now in scope and must remain idempotent. Still prohibited: comments/Field Notes, User Actions, flair, reputation, leaderboard, economy, combat, clans, inventory, generative AI, or a second full expedition.
-- Community voting, private sensor assignment, server-only World Truth, Echo, Heat, Wind, and moderator-triggered resolution are real. Never move hidden scenario types or cross-sensor data into client/shared code.
+- Do not add out-of-scope features without explicit authorization. The seven-day scheduler, automatic resolution and next-post recovery are now in scope and must remain idempotent. Optional, consent-based native Field Notes (structured sensor comments + correct-minority reveal, via User Actions with an honest copy fallback) are now in scope and must never post without explicit per-note consent. Still prohibited: unstructured chat, private messages, in-app up/downvotes, flair, streaks, reputation, leaderboard, economy, combat, clans, inventory, generative AI, LLM moderation, comment editing, multiple notes per user/day, rewards for commenting, or a second full expedition.
+- Community voting, private sensor assignment, server-only World Truth, Echo, Heat, Wind, moderator-triggered resolution, and Field Notes are real. Never move hidden scenario types or cross-sensor data into client/shared code. Never store comment text or usernames; never present an app-account comment as a user's.
 - Use only original programmatic visuals or assets with documented rights.
 
 ## Working rules
@@ -34,6 +34,7 @@ The product is mobile-first. Design and validate at 360 × 800 before treating d
 15. Treat scheduler delivery as at-least-once. Every task and moderator command must be safe under retries, stale delivery and concurrent execution.
 16. Preserve seven-day closure: Day 7 must end the expedition and no code path may create Day 8.
 17. Never place route solutions or complete private projections in chapter titles, `postData`, logs, public fallbacks or pre-resolution session payloads.
+18. Field Notes are optional and separate from voting. Never post automatically, never combine consent with vote/confirm/continue/resolve, always show the exact body before publishing, and require a dedicated publish action. Preview builds the body; publish verifies a signed token and the real comment author. Store only minimal metadata (never comment text or usernames), keep one active note per user/chapter, and keep publication idempotent. The correct-minority reveal uses structured metadata only and never shames, ranks or rewards anyone.
 
 ## Validation commands
 

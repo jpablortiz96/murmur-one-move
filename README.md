@@ -45,6 +45,7 @@ npm test
 npm run build
 npm run evidence:private
 npm run evidence:expedition
+npm run evidence:field-notes
 node tools/capture-expedition.mjs
 ```
 
@@ -78,11 +79,12 @@ Reddit Interactive Post
 - One-off resolution/publication jobs, recurring reconciliation and bounded Redis leases
 - Neutral chapter posts, small `postData`, accessible text fallback and previous-post links
 - Three-truth reveal only after resolution, movement consequence, seven-node map and moderator recovery controls
+- Optional native Field Notes: structured per-sensor comments with exact preview, explicit consent, native `runAs: 'USER'` publishing plus an honest copy-to-comments fallback, deletion handling, and a correct-minority reveal
 - Mouse/touch, 44 px targets, reduced-motion equivalents and five-viewport visual matrix
 
 ## Excluded from this block
 
-Field Notes/comments, User Actions, flair, streaks, XP, leaderboards, automatic public-season creation, notifications, external production assets and a full second expedition remain unimplemented.
+Unstructured chat, private messages, in-app up/downvotes, flair, streaks, XP, leaderboards, comment editing, LLM moderation, rewards for commenting, automatic public-season creation, notifications, external production assets and a full second expedition remain unimplemented. Native Field Note authorship (`runAs: 'USER'`) ships behind a server flag defaulting to the copy fallback until a real authorized Reddit playtest verifies authorship; see [LIMITATIONS.md](LIMITATIONS.md) and [docs/FIELD_NOTES_CONTRACT.md](docs/FIELD_NOTES_CONTRACT.md).
 
 ## Asset license
 

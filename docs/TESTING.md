@@ -14,6 +14,12 @@ The unit suite additionally covers deterministic scenarios, invalid-scenario rej
 
 It also covers the V2 transition graph, seven chapter definitions, deterministic branch hashes, consequence bounds, all endings, 100 concurrent repository updates, 100 concurrent resolutions and publications, successful scheduling deduplication, lost post-response recovery, a complete Day 1–7 coordinator run and the Day 8 prohibition.
 
+It also covers Field Notes: draft/commentary/token/board/minority contracts, exact comment body,
+per-sensor observations and cross-sensor rejection, preview integrity, native publication with one
+attributed comment, idempotent double-submit, concurrent single-comment, guest/vote/round guards,
+the honest fallback, unexpected-author fallback, the deletion lifecycle (delete, duplicate/out-of-order
+no-ops, purge, re-share), and the correct-minority reveal cases.
+
 `tests/layout.test.ts` deterministically covers all five required viewports, zone adjacency, safe-area offsets, target bounds, South/instruction clearance, and wide-layout divergence.
 
 ## Manual gameplay script
@@ -78,3 +84,16 @@ node tools/capture-expedition.mjs
 The first command builds, runs 10,000 seeded seven-day expeditions and writes raw transition/scheduler/post/recovery/distribution JSON plus five plots. The second opens the isolated production Phaser client in headless Chrome at 360×800, 390×844, 412×915, 768×1024 and 1280×720, including reduced motion. It records viewport/document/canvas dimensions and scroll position. See [../evidence/expedition-engine/TEST_PROTOCOL.md](../evidence/expedition-engine/TEST_PROTOCOL.md).
 
 The final Reddit verification executed Day 1 sense -> vote -> moderator resolve -> combined reveal -> publish Day 2 -> reconcile. The authenticated moderator confirmed exactly one Day 2 post with condition and history retained on `v0.0.2.49`.
+
+## Field Notes evidence
+
+```powershell
+npm run evidence:field-notes
+```
+
+Runs 10,000 previews, 5,000 native publications, 1,000 double-submits, 500 concurrent pairs, 2,000
+notes with 1,000 deletions + 1,000 duplicate delete events + 500 unindexed deletes, 10,000
+minority-reveal resolutions, and a privacy audit; then renders three plots. Results and the honest
+native User Actions boundary live in [../evidence/field-notes](../evidence/field-notes). The native
+`runAs: 'USER'` authorship and the Field Notes client visual matrix require a separate authorized
+real-Reddit playtest and are recorded as pending, not inferred.

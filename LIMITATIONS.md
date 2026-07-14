@@ -1,7 +1,10 @@
 # Current limitations
 
 - This is a seven-day technical expedition slice in one development community, not a measured public live season.
-- Field Notes, native comments, User Actions, flair, streaks, XP, leaderboards and notifications are not implemented.
+- Optional native Field Notes (structured sensor comments, exact preview, explicit consent, correct-minority reveal) are implemented. Native `runAs: 'USER'` authorship is implemented and permissioned (`asUser: ["SUBMIT_COMMENT"]`) but the server default is the honest copy-to-comments fallback; real user authorship and the Field Notes client visual matrix are not yet verified on real Reddit and are recorded as pending in `evidence/field-notes/raw/reddit-playtest.json`.
+- Field Note recovery is effectively-once, not exactly-once: a response lost after Reddit accepts a comment but before the index write can leave a comment that is visible on Reddit yet unindexed until the user retries.
+- Field Note deletion desindexing covers the active expedition; a chapter-post deletion in a completed/older season is not retroactively purged.
+- Flair, streaks, XP, leaderboards, unstructured chat, private messages, in-app voting, comment editing, LLM moderation and notifications are not implemented.
 - No human seven-day retention, return-rate, decision-quality or discussion-quality metrics exist yet.
 - The real moderator-driven Day 1 -> Day 2 transition and reconciliation were human-verified in Reddit; timed one-off Scheduler delivery without moderator controls has not yet been observed end-to-end.
 - Concurrency and duplicate delivery are simulated against Devvit's Redis test runtime; they are not a production traffic load test.

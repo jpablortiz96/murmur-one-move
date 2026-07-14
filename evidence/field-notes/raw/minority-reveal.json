@@ -1,0 +1,13 @@
+{
+  "sample": 10000,
+  "verdicts": {
+    "chorus-held": 2468,
+    "minority-heard": 2789,
+    "hollow-kept-secret": 4743
+  },
+  "communityCorrect": 2468,
+  "noEvidence": 1185,
+  "reproducibilityHash": "sha256:d482a37a3ab6ba40581ea3b459194c4ddabd0e116a55fa526b158f12f8f3f766",
+  "identityFieldsExposed": 0,
+  "passed": true
+}

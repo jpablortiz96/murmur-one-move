@@ -11,6 +11,7 @@
     "dev:local:client": "vite --config vite.local.config.ts",
     "evidence:private": "npm run build && vitest run tools/privateSenseEvidence.test.ts && powershell -ExecutionPolicy Bypass -File tools/render-private-sense-plots.ps1",
     "evidence:expedition": "npm run build && vitest run tools/expeditionEvidence.test.ts && powershell -ExecutionPolicy Bypass -File tools/render-expedition-plots.ps1",
+    "evidence:field-notes": "vitest run tools/fieldNotesEvidence.test.ts && powershell -ExecutionPolicy Bypass -File tools/render-field-notes-plots.ps1",
     "launch": "npm run deploy && devvit publish",
     "lint": "eslint src",
     "login": "devvit login",

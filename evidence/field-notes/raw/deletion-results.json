@@ -1,0 +1,9 @@
+{
+  "totalNotes": 2000,
+  "deleted": 1000,
+  "duplicateDeleteNoops": 1000,
+  "unindexedRejected": 500,
+  "activeAfter": 1000,
+  "orphanIndices": 0,
+  "passed": true
+}

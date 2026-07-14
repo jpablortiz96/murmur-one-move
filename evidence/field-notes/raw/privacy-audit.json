@@ -1,0 +1,18 @@
+{
+  "clientPayloadLeaks": [],
+  "storedCommentTextOrUsername": [],
+  "storedMetadataFields": [
+    "commentId",
+    "parentCommentId",
+    "voterHash",
+    "sensor",
+    "direction",
+    "observationId",
+    "confidence",
+    "createdAt",
+    "status",
+    "schemaVersion"
+  ],
+  "privacyViolations": 0,
+  "passed": true
+}

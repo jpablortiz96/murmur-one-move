@@ -1,0 +1,11 @@
+{
+  "publications": 5000,
+  "published": 5000,
+  "doubleSubmits": 1000,
+  "idempotentReplays": 1000,
+  "commentsCreated": 5500,
+  "duplicatesCreated": 0,
+  "concurrentExtraComments": 0,
+  "conflicts": 0,
+  "passed": true
+}

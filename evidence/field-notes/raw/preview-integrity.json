@@ -1,0 +1,8 @@
+{
+  "sample": 10000,
+  "tokensAccepted": 10000,
+  "tamperedRejected": 10000,
+  "crossSensorRejected": 10000,
+  "bodyHashMismatches": 0,
+  "passed": true
+}

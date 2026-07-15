@@ -89,6 +89,7 @@ export type RoundApiErrorCode =
   | 'round-resolved'
   | 'idempotency-conflict'
   | 'round-unavailable'
+  | 'no-signals'
   | 'storage-failure';
 
 export type RoundApiError = {

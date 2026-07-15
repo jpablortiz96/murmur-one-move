@@ -65,7 +65,9 @@ class FakeRounds implements ExpeditionRoundGateway {
     const value = this.calls.has(day) ? resolution(day) : null;
     return {
       schemaVersion: 1, chapter: day, day, status: value ? 'resolved' : 'open',
-      counts: value?.countsSnapshot ?? { north: 0, east: 0, south: 0, west: 0, total: 0 },
+      // An open round here already carries one signal: a zero-signal round is
+      // never resolvable, so modelling it as empty would not be a real round.
+      counts: (value ?? resolution(day)).countsSnapshot,
       resolution: value,
       viewer: { authenticated: false, canVote: false, canResolve: false, sensor: 'echo', activeVote: null },
     };

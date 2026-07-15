@@ -100,6 +100,7 @@ export class RoundServiceError extends Error {
     | 'round-resolved'
     | 'idempotency-conflict'
     | 'round-unavailable'
+    | 'no-signals'
     | 'storage-failure';
 
   constructor(
@@ -505,6 +506,16 @@ export class RoundService {
         );
         const activeVotes = parseVoteCollection(voteEntries);
         const storedCounts = countVotes(activeVotes);
+        // A round with no active votes has no community direction. Every
+        // direction would tie at zero and the deterministic tie-break would
+        // invent a winner nobody chose, so resolution fails closed instead.
+        if (storedCounts.total === 0) {
+          await transaction.unwatch();
+          throw new RoundServiceError(
+            'no-signals',
+            'No community signals were recorded; MURMUR cannot follow a direction nobody chose'
+          );
+        }
         const resolvedAt = this.now().toISOString();
         const winner = chooseWinner(
           storedCounts,

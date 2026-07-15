@@ -42,6 +42,23 @@ test('creates one active vote and makes exact retries idempotent', async () => {
   expect(state.viewer.activeVote?.direction).toBe('north');
 });
 
+test('refuses to resolve a round with no active votes instead of inventing a winner', async () => {
+  const service = createService();
+  await expect(service.resolve()).rejects.toMatchObject<Partial<RoundServiceError>>({ code: 'no-signals' });
+  const state = await service.getState(undefined, false);
+  expect(state.status).toBe('open');
+  expect(state.resolution).toBeNull();
+  expect(state.counts.total).toBe(0);
+});
+
+test('resolves normally as soon as a single signal exists', async () => {
+  const service = createService();
+  await service.submitVote('t2_alice', { direction: 'east', requestId: 'alice_req_solo' });
+  const resolved = await service.resolve();
+  expect(resolved.resolution.winningDirection).toBe('east');
+  expect(resolved.resolution.countsSnapshot.total).toBe(1);
+});
+
 test('rejects reusing an idempotency key for a different direction', async () => {
   const service = createService();
   await service.submitVote('t2_alice', {

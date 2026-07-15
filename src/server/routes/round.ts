@@ -16,7 +16,11 @@ export const roundApi = new Hono();
 const errorStatus = (
   error: RoundServiceError
 ): 409 | 500 | 503 => {
-  if (error.code === 'round-resolved' || error.code === 'idempotency-conflict') {
+  if (
+    error.code === 'round-resolved' ||
+    error.code === 'idempotency-conflict' ||
+    error.code === 'no-signals'
+  ) {
     return 409;
   }
   return error.code === 'round-unavailable' ? 503 : 500;

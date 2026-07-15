@@ -38,7 +38,7 @@ export type StartExpeditionInput = Omit<CreateExpeditionInput, 'windowProfile'> 
 };
 
 export class ExpeditionCoordinatorError extends Error {
-  readonly code: 'not-found' | 'window-open' | 'invalid-state' | 'busy';
+  readonly code: 'not-found' | 'window-open' | 'invalid-state' | 'busy' | 'no-signals';
   constructor(code: ExpeditionCoordinatorError['code'], message: string) {
     super(message);
     this.name = 'ExpeditionCoordinatorError';
@@ -104,6 +104,20 @@ export class ExpeditionCoordinator {
       }
       if (!state.currentPostId) throw new ExpeditionCoordinatorError('invalid-state', 'Current chapter has no post');
       const currentPostId = state.currentPostId;
+      // Zero-signal policy: a round nobody voted in has no community direction.
+      // Every direction would tie at zero and the tie-break would invent a
+      // winner, so a scheduled resolution keeps the hollow open and waiting for
+      // the first signal, and a manual resolution is refused outright.
+      const round = await this.rounds.get(state.subredditId, currentPostId, input.day);
+      if (round.counts.total === 0 && !round.resolution) {
+        if (input.force) {
+          throw new ExpeditionCoordinatorError(
+            'no-signals',
+            'This hollow has no community signals; resolving would invent a direction nobody chose'
+          );
+        }
+        return await this.extendForNoSignals(state, input.operationId);
+      }
       if (state.status === 'open') {
         state = await this.repository.update(input.subredditId, input.seasonId, (current) =>
           transitionExpedition(current, {
@@ -179,11 +193,21 @@ export class ExpeditionCoordinator {
     return state;
   }
 
-  toPublicView(state: ExpeditionState): ExpeditionPublicView {
-    const chapter = getChapter(state.currentDay);
+  /**
+   * Projects the journey as seen from one chapter post. `viewedDay` defaults to
+   * the expedition's current day, but a reader inside an older post must see
+   * that post's chapter — not wherever the expedition has since advanced to.
+   * A past chapter is always reported `resolved`; only the live chapter carries
+   * the open window and the expedition status.
+   */
+  toPublicView(state: ExpeditionState, viewedDay: number = state.currentDay): ExpeditionPublicView {
+    const day = state.postsByDay[String(viewedDay)] ? viewedDay : state.currentDay;
+    const isCurrentChapter = day === state.currentDay;
+    const chapter = getChapter(day);
     return {
-      schemaVersion: 2, seasonId: state.seasonId, status: state.status,
-      currentDay: state.currentDay, totalDays: 7,
+      schemaVersion: 2, seasonId: state.seasonId,
+      status: isCurrentChapter ? state.status : 'resolved',
+      currentDay: day, totalDays: 7,
       chapter: { day: chapter.day, name: chapter.name, phrase: chapter.phrase, cavernType: chapter.cavernType, cliffhanger: chapter.cliffhanger },
       window: state.window, murmur: { ...state.murmur, scars: [...state.murmur.scars] },
       history: state.history.map((summary) => ({
@@ -191,9 +215,36 @@ export class ExpeditionCoordinator {
         consequence: summary.consequenceCopy, resolvedAt: summary.resolvedAt,
       })),
       ending: state.ending,
-      schedulerDelayed: state.status === 'open' && this.now().getTime() > Date.parse(state.window.closesAt) + 60_000,
-      nextChapterPostId: state.postsByDay[String(state.currentDay + 1)] ?? null,
+      schedulerDelayed: isCurrentChapter && state.status === 'open' &&
+        this.now().getTime() > Date.parse(state.window.closesAt) + 60_000,
+      nextChapterPostId: state.postsByDay[String(day + 1)] ?? null,
     };
+  }
+
+  /**
+   * Keeps a zero-signal round open by pushing its window forward instead of
+   * resolving it. Applies to every community: MURMUR never follows a direction
+   * nobody chose. Repeated reconciliation is a no-op while the window is live.
+   */
+  private async extendForNoSignals(state: ExpeditionState, operationId: string): Promise<ExpeditionState> {
+    const now = this.now();
+    return await this.repository.update(state.subredditId, state.seasonId, (current) => {
+      if (current.status !== 'open') return current;
+      if (Date.parse(current.window.closesAt) > now.getTime()) return current;
+      const extended = createRoundWindow(now, this.windowProfile);
+      const at = now.toISOString();
+      return {
+        ...current,
+        window: { ...extended, opensAt: current.window.opensAt },
+        updatedAt: at,
+        revision: current.revision + 1,
+        transitions: [...current.transitions, {
+          from: 'open', to: 'open', previousRevision: current.revision, nextRevision: current.revision + 1,
+          at, cause: 'extend-no-signals', operationId: `${operationId}:extend-no-signals`,
+          auditHash: computeBranchHash(current.seasonId, current.history),
+        }],
+      };
+    });
   }
 
   private async publishDay(subredditId: string, seasonId: string, day: number, operationId: string): Promise<ExpeditionState> {

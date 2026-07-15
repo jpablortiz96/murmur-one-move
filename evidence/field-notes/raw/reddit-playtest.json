@@ -5,15 +5,40 @@
   "version": null,
   "defaultPublishMode": "fallback",
   "nativeUserActionAuthorized": "pending-human-verification",
-  "humanVerified": {
-    "composerAfterVote": false,
+  "fallbackHumanChecks": {
+    "applicableWithoutAuthorization": true,
+    "composerAppearsOnlyAfterVote": false,
+    "exactPreviewShown": false,
+    "noPostAsUserAffordance": false,
+    "copyCopiesExactBody": false,
+    "openCommentsOpensChapterComments": false,
+    "userPastedAndPublishedThemselves": false,
+    "visibleAuthorWasTheUser": false,
+    "appNeverClaimedPublishedOrIndexed": false,
+    "noAutomaticOrAppAccountComment": false
+  },
+  "fallbackGuaranteesByDesign": {
+    "appCreatesComment": false,
+    "parentThreadCreated": false,
+    "noteIndexed": false,
+    "shownAsPublished": false,
+    "persistsAcrossReload": false,
+    "countedInSignalBoard": false,
+    "includedInMinorityReveal": false,
+    "deletionDesindexes": false
+  },
+  "nativeHumanChecks": {
+    "requiresUserActionsAuthorizationAndNativeMode": true,
     "exactPreviewShown": false,
     "separateConsentButton": false,
     "postedAsUser": false,
     "realAuthorMatchedUser": false,
-    "oneCommentPerUser": false,
+    "oneCommentUnderParentThread": false,
     "indexPersistedAcrossReload": false,
+    "retryDidNotDuplicate": false,
+    "countedInSignalBoard": false,
+    "usableByMinorityReveal": false,
     "deletionDesindexed": false
   },
-  "evidenceBoundary": "Native runAs:USER authorship requires an authorized real-Reddit playtest. Until a moderator/user verifies real authorship on murmur_one_move_dev, the server default remains fallback and no comment is posted on a user's behalf. These fields are intentionally null/false, not inferred."
+  "evidenceBoundary": "Native runAs:USER authorship requires an authorized real-Reddit playtest. Until a user verifies real authorship on murmur_one_move_dev, the server default remains fallback and no comment is posted on a user's behalf. In fallback the app performs no Reddit write: a pasted comment is a real, reportable Reddit comment but is outside the app's structured index, so persistence, board counting, the minority reveal and delete-desindexing are native-only and must not be asserted for fallback. All human fields are intentionally false/null, not inferred."
 }

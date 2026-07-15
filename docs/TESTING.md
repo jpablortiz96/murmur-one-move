@@ -97,3 +97,30 @@ minority-reveal resolutions, and a privacy audit; then renders three plots. Resu
 native User Actions boundary live in [../evidence/field-notes](../evidence/field-notes). The native
 `runAs: 'USER'` authorship and the Field Notes client visual matrix require a separate authorized
 real-Reddit playtest and are recorded as pending, not inferred.
+
+### Manual Field Notes script — fallback (default mode)
+
+Fallback performs no Reddit write, so this script must **not** assert persistence, non-duplication,
+board counting, the reveal, or delete-desindexing. Verify only:
+
+1. After voting, **SHARE WHAT YOU SENSED** appears; it is absent before voting.
+2. The preview shows the exact body; the composer never offers "POST AS u/…" in fallback.
+3. **COPY FIELD NOTE** copies exactly the previewed text.
+4. **OPEN COMMENTS** opens the chapter post's comments (not a Field Notes thread).
+5. Paste and publish it yourself; the visible author is you and the body matches the preview.
+6. The app says "copied", never "published" or "shared", and never claims the note is tracked.
+7. No comment is created automatically and no app-account comment appears anywhere.
+
+### Manual Field Notes script — native (only when authorized)
+
+Only with User Actions authorized and `FIELD_NOTES_CONFIG.publishMode = 'native'`:
+
+1. Preview shows the exact body; **POST AS u/{username}** is a separate, deliberate action.
+2. Exactly one comment is created, replying to the chapter's Field Notes parent thread.
+3. Reddit reports **you** as the real author (a mismatch must fall back and not claim you posted).
+4. Reload: the note is still indexed and the composer no longer offers a second note.
+5. Retrying does not create a duplicate.
+6. The Signal Board counts it (breakdowns appear only at three or more notes).
+7. After resolution the correct-minority reveal can use its metadata.
+8. Deleting the comment on Reddit desindexes it: it stops counting on the board and in the reveal,
+   and you may share a new note.

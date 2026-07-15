@@ -3,10 +3,13 @@
 ## Parent thread
 
 Each chapter has at most one app-authored parent comment hosting its Field Notes. It is created
-lazily, under a per-day lease, when the first native note is about to be published — never seven
+lazily, under a per-day lease, when the first **native** note is about to be published — never seven
 pre-emptive low-value comments. Its id is stored at `…:parent`; concurrent first notes reuse it and
 never create duplicates. It is neutral (`FIELD NOTES — DAY N: …`) and is not deleted when the round
 resolves. User notes are replies to it.
+
+**In fallback no parent thread is created** (the app posts nothing at all). The composer therefore
+directs the player to the chapter's general comments, never to a thread that does not exist.
 
 ## Create (native)
 
@@ -42,5 +45,21 @@ not block resolution.
 
 ## Fallback
 
-In fallback mode nothing is created, indexed, or marked published: the exact body is shown for the
-player to copy into the comments themselves. No parent comment is created on their behalf.
+In fallback the app performs **no** Reddit write: no parent comment, no user comment, no comment id,
+no index entry, no idempotency record. The exact body is shown for the player to copy and publish
+themselves in the chapter comments.
+
+The result is a real, public, reportable Reddit comment that is **outside the app's structured
+index**. The app has no way to discover a manually pasted comment, so — by design, not by omission —
+a fallback note:
+
+- is never shown as "published" (only "copied");
+- does not persist in the app or survive a reload;
+- is not covered by the one-note-per-chapter rule;
+- is not counted in the Signal Board;
+- is not included in the correct-minority reveal (which is withheld entirely in fallback);
+- cannot be desindexed by `onCommentDelete` — the delete event finds no reverse index and is a no-op.
+
+Deleting such a comment on Reddit removes it from Reddit, which is the only place it ever existed
+from the app's perspective. Only native notes carry the persistence, idempotency, board and reveal
+guarantees above.

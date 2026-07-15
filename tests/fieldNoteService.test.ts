@@ -9,7 +9,7 @@ import {
   type FieldNoteEnv,
   type FieldNoteRoundContext,
 } from '../src/server/services/fieldNoteService';
-import type { FieldNoteDraft } from '../src/shared/contracts/fieldNotes';
+import type { FieldNoteDraft, MinorityInsight } from '../src/shared/contracts/fieldNotes';
 
 const test = createDevvitTest();
 
@@ -116,13 +116,39 @@ test('a second note by the same user in the same chapter is refused', async () =
   await expect(service.preview(ctx(), NATIVE, heatDraft({ direction: 'west' }))).rejects.toMatchObject({ code: 'already-active' });
 });
 
-test('fallback mode never posts and never indexes a contribution', async () => {
+test('fallback mode never posts, never creates a parent, and never indexes a contribution', async () => {
   const { service, comments, repository } = build();
   const preview = await service.preview(ctx(), FALLBACK, heatDraft());
+  expect(preview.authorName).toBeNull(); // no "POST AS u/..." affordance in fallback
+  expect(preview.destination.parentKnown).toBe(false);
   const result = await service.publish(ctx(), FALLBACK, { token: preview.token, requestId: 'req_alice_0001' });
   expect(result).toMatchObject({ status: 'copy-ready', mode: 'fallback' });
   expect(comments.userComments).toHaveLength(0);
+  expect(comments.parentCalls).toBe(0); // no Field Notes thread is created in fallback
   expect(await repository.getNote('t5_fn', 'season-fn-01', 2, 'voter-alice')).toBeNull();
+});
+
+test('a fallback copy is not counted by the signal board and leaves the user able to contribute', async () => {
+  const { service } = build();
+  const preview = await service.preview(ctx(), FALLBACK, heatDraft());
+  await service.publish(ctx(), FALLBACK, { token: preview.token, requestId: 'req_alice_0001' });
+  const view = await service.view(ctx(), FALLBACK, { minorityInsight: null });
+  expect(view.board?.totalNotes).toBe(0);
+  expect(view.alreadyContributed).toBe(false);
+  expect(view.parentThreadUrl).toBeNull();
+});
+
+test('fallback exposes no minority reveal because it indexes no contributions', async () => {
+  const { service } = build();
+  const insight: MinorityInsight = {
+    communityDirection: 'south', optimalDirection: 'north', communityWasCorrect: false,
+    correctNoteCount: 0, totalNoteCount: 0, correctNoteShare: 0, minorityWasCorrect: false,
+    participatingSensors: [], verdict: 'hollow-kept-secret',
+  };
+  const fallbackView = await service.view(ctx(), FALLBACK, { minorityInsight: insight });
+  expect(fallbackView.minorityInsight).toBeNull();
+  const nativeView = await service.view(ctx(), NATIVE, { minorityInsight: insight });
+  expect(nativeView.minorityInsight).toEqual(insight);
 });
 
 test('an unexpected author is not presented as the user and is not indexed', async () => {

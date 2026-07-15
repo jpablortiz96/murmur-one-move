@@ -250,7 +250,9 @@ export class FieldNotesOverlay {
     dialog.appendChild(actions);
 
     if (preview.publishMode !== 'native') {
-      const hint = el('p', 'fn-hint', "Paste this into the chapter's Field Notes thread.");
+      // Fallback creates no parent thread, so this must point at the chapter's
+      // general comments rather than a Field Notes thread that does not exist.
+      const hint = el('p', 'fn-hint', 'Paste this into the chapter comments. It stays your comment on Reddit and is not tracked in the app.');
       dialog.appendChild(hint);
       const link = el('a', 'fn-link', 'OPEN COMMENTS');
       link.href = preview.destination.commentsUrl;
@@ -272,7 +274,7 @@ export class FieldNotesOverlay {
         this.stage = 'done';
         window.setTimeout(() => void this.refresh(), 900);
       } else if (result.status === 'copy-ready') {
-        status.textContent = 'Native posting was unavailable — copy your note and paste it into the comments.';
+        status.textContent = 'Posting as you was unavailable — copy your note and paste it into the chapter comments yourself.';
         await this.copyBody(result.body, status);
       } else {
         status.textContent = 'You already shared a Field Note this chapter.';
@@ -288,10 +290,10 @@ export class FieldNotesOverlay {
   private async copyBody(body: string, status: HTMLElement): Promise<void> {
     try {
       await navigator.clipboard.writeText(body);
-      status.textContent = 'Copied. Paste it into the Field Notes thread.';
+      status.textContent = 'Copied. Paste it into the chapter comments to publish it yourself.';
       this.stage = 'done';
     } catch {
-      status.textContent = 'Select the text above to copy it into the Field Notes thread.';
+      status.textContent = 'Select the text above to copy it into the chapter comments.';
     }
   }
 

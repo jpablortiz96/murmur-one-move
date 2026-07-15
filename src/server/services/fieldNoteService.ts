@@ -270,6 +270,10 @@ export class FieldNoteService {
     const parentId = env.enabled ? await this.repository.getParent(ctx.subredditId, ctx.seasonId, ctx.day) : null;
     const canContribute =
       env.enabled && Boolean(ctx.userId) && ctx.roundOpen && ctx.hasVoted && !alreadyContributed;
+    // The reveal reasons only about structured notes the app actually indexes.
+    // In fallback nothing is indexed, so claiming "too few Field Notes survived"
+    // would be false: expose the reveal only where contributions are collectable.
+    const revealAvailable = env.publishMode === 'native' || notes.length > 0;
     return {
       schemaVersion: FIELD_NOTE_SCHEMA_VERSION,
       enabled: env.enabled,
@@ -284,7 +288,7 @@ export class FieldNoteService {
       commentsUrl: commentsUrlFor(ctx.postId),
       parentThreadUrl: parentId ? commentPermalink(ctx.postId, parentId) : null,
       board: env.enabled ? buildFieldNoteBoard(notes) : null,
-      minorityInsight: options.minorityInsight,
+      minorityInsight: revealAvailable ? options.minorityInsight : null,
     };
   }
 

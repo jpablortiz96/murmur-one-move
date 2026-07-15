@@ -64,12 +64,38 @@ optimal route, usernames in the body, hashtags, marketing, or auto-links.
 
 - **Native** (`runAs: 'USER'`, requires `permissions.reddit.asUser: ["SUBMIT_COMMENT"]`): posts as
   the user, verifies the real author, records the comment id, confirms publication.
-- **Fallback**: never posts from the app account. Shows the exact body, offers **COPY FIELD NOTE**
-  and **OPEN COMMENTS**, instructs the player to paste it, and does **not** mark it published or
-  index it as a structured contribution.
+- **Fallback**: never posts from the app account and never posts at all. It shows the exact body and
+  offers **COPY FIELD NOTE** and **OPEN COMMENTS**; the player publishes it themselves on Reddit.
 
 If native mode is configured but the plugin/scope is unavailable, or the returned author does not
 match the caller, publication degrades honestly to fallback and is not indexed as the user's.
+
+### The two modes do not offer the same guarantees
+
+A manually pasted comment is a real, public, reportable Reddit comment — but it is **outside the
+app's structured index**. The app cannot see it, so it must never imply otherwise.
+
+| Guarantee | Native | Fallback |
+|---|---|---|
+| App creates the comment | yes (as the user) | no — the player pastes it |
+| Parent Field Notes thread created/reused | yes | **no** |
+| Comment id recorded / note indexed | yes | **no** |
+| Shown as "published" in the app | yes | **no** — only "copied" |
+| Survives reload / one-note-per-chapter enforced | yes | **no** |
+| Counted in the Signal Board | yes | **no** |
+| Included in the correct-minority reveal | yes | **no** (reveal is withheld entirely) |
+| `onCommentDelete` desindexes it | yes | **no** — it was never indexed |
+
+Because fallback indexes nothing, the correct-minority reveal is exposed only when contributions are
+actually collectable (native mode, or when indexed notes already exist). Otherwise the app would
+claim "too few Field Notes survived the noise" in a mode where it never collects any.
+
+### Parent thread policy (decision: do not create in fallback)
+
+The parent thread is created **only** when the first native note is about to be published. Fallback
+creates no app comment of any kind, so it must not point at a thread that does not exist: its copy
+reads *"Paste this into the chapter comments."* and **OPEN COMMENTS** opens the chapter post's
+comments. This avoids app-account comments for notes that may never be pasted.
 
 ## One note per user per chapter
 

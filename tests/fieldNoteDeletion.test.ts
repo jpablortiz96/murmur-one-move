@@ -85,6 +85,14 @@ test('a user may share a new note after their previous one was deleted', async (
   expect(active[0]?.observationId).toBe('rising-heat');
 });
 
+test('a manually pasted fallback comment is unknown to the index and cannot be desindexed', async () => {
+  const { repository } = build();
+  // Fallback publishes nothing through the app, so no reverse index ever exists
+  // for a comment the player pasted themselves: deletion is a no-op by design.
+  expect(await repository.markCommentDeleted('t5_fn', 't1_manually_pasted')).toBe(false);
+  expect(await repository.listActiveNotes('t5_fn', 'season-fn-01', 2)).toHaveLength(0);
+});
+
 test('deleting a chapter post purges every active note for that day', async () => {
   const { service, comments, repository } = build();
   await publishOne(service, comments, { userId: 't2_a', username: 'a', voterHash: 'vh-a' }, 'moving-warmth');

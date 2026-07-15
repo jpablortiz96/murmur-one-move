@@ -47,7 +47,9 @@ sessionApi.get('/', async (c) => {
       const scenario = expedition.scenarioByDay[String(day)];
       if (!scenario) throw new Error('Expedition chapter is missing its scenario identity');
       truth = generateScenarioV2(scenario);
-      journey = getExpeditionCoordinator().toPublicView(expedition);
+      // The journey is projected from THIS post's day, so an older chapter never
+      // renders as the day the expedition has since advanced to.
+      journey = getExpeditionCoordinator().toPublicView(expedition, day);
       const isCurrentChapter = expedition.currentDay === day && expedition.currentPostId === context.postId;
       const windowOpen = Date.now() < Date.parse(expedition.window.closesAt);
       v2CanVote = isCurrentChapter && expedition.status === 'open' && windowOpen;

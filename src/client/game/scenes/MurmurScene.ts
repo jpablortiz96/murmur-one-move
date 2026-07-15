@@ -83,6 +83,9 @@ export class MurmurScene extends Phaser.Scene {
   private resolutionArmTimer: Phaser.Time.TimerEvent | null = null;
   private auxArmed = false;
   private outcomePlayed = false;
+  private pollTimer: Phaser.Time.TimerEvent | null = null;
+  private sceneDestroyed = false;
+  private sessionFetchSeq = 0;
 
   constructor() {
     super('Murmur');
@@ -193,7 +196,11 @@ export class MurmurScene extends Phaser.Scene {
     }
     this.renderState();
     this.scale.on('resize', () => this.layout());
+    this.startStatePolling();
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.sceneDestroyed = true;
+      this.pollTimer?.remove(false);
+      this.pollTimer = null;
       this.sensorExperience.destroy();
       this.expeditionDisplay.destroy();
     });
@@ -428,13 +435,36 @@ export class MurmurScene extends Phaser.Scene {
     this.resolutionArmTimer = null;
   }
 
-  private async refreshSession(): Promise<void> {
-    if (this.sessionLoading) return;
+  /**
+   * Soft polling for transitions the player cannot trigger: the scheduler
+   * resolving the round or publishing the next chapter. Without it the next
+   * action only appears after closing and reopening the post. It stops once the
+   * expedition is completed and is cleared on shutdown.
+   */
+  private startStatePolling(): void {
+    this.pollTimer?.remove(false);
+    this.pollTimer = this.time.addEvent({
+      delay: 8_000,
+      loop: true,
+      callback: () => {
+        if (this.sceneDestroyed || this.sessionLoading || this.voteSubmitting) return;
+        if (this.session.expedition.status === 'completed') return;
+        void this.refreshSession({ quiet: true });
+      },
+    });
+  }
+
+  private async refreshSession(options: { quiet?: boolean } = {}): Promise<void> {
+    if (this.sessionLoading || this.sceneDestroyed) return;
     this.sessionLoading = true;
     this.roundError = null;
-    this.renderState();
+    if (!options.quiet) this.renderState();
+    const sequence = ++this.sessionFetchSeq;
     try {
       const session = await fetchPlayerSession();
+      // Ignore stale or out-of-order responses and anything arriving after the
+      // scene is gone.
+      if (this.sceneDestroyed || sequence !== this.sessionFetchSeq) return;
       if (session.player.sensor !== this.session.player.sensor) {
         throw new Error('Stable sense changed during the same round');
       }
@@ -454,12 +484,13 @@ export class MurmurScene extends Phaser.Scene {
       }
       if (session.round.resolution) this.playOutcome();
     } catch (error) {
+      if (this.sceneDestroyed || sequence !== this.sessionFetchSeq) return;
       const message = error instanceof Error ? error.message : 'Private session unavailable';
       console.error('Unable to refresh private session:', message);
       this.roundError = 'Community signal unavailable. Retry safely.';
     } finally {
       this.sessionLoading = false;
-      this.renderState();
+      if (!this.sceneDestroyed) this.renderState();
     }
   }
 
@@ -496,6 +527,10 @@ export class MurmurScene extends Phaser.Scene {
       };
       this.voteRequestId = null;
       this.murmur.calm();
+      this.voteSubmitting = false;
+      // Re-read the server-authoritative session so the confirmation, the
+      // Field Note affordance and any status change appear without reopening.
+      await this.refreshSession({ quiet: true });
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Vote could not be recorded';
       console.error('Unable to confirm MURMUR vote:', message);
@@ -600,9 +635,9 @@ export class MurmurScene extends Phaser.Scene {
   private handleAuxAction(): void {
     if (!this.session.round.canManage || this.voteSubmitting) return;
     if (this.session.round.resolution) {
-      const movedForward = Boolean(
-        this.session.journey && this.session.journey.currentDay > this.session.expedition.day
-      );
+      // The journey is projected from this post's day, so "the expedition moved
+      // on" is signalled by the next chapter existing, not by a day delta.
+      const movedForward = Boolean(this.session.journey?.nextChapterPostId);
       if (!movedForward) {
         this.expeditionDisplay.showMapState();
         return;
@@ -744,9 +779,9 @@ export class MurmurScene extends Phaser.Scene {
           ? this.resolutionArmed ? 'CONFIRM PUBLISH' : 'PUBLISH NEXT DAY'
           : 'VIEW EXPEDITION'
       );
-      const movedForward = Boolean(
-        this.session.journey && this.session.journey.currentDay > this.session.expedition.day
-      );
+      // The journey is projected from this post's day, so "the expedition moved
+      // on" is signalled by the next chapter existing, not by a day delta.
+      const movedForward = Boolean(this.session.journey?.nextChapterPostId);
       this.modAuxButton.setLabel(
         movedForward
           ? this.auxArmed ? 'CONFIRM RECONCILE' : 'RECONCILE'
@@ -759,6 +794,8 @@ export class MurmurScene extends Phaser.Scene {
   private communityLine(): string {
     if (this.sessionLoading) return 'COMMUNITY · TUNING';
     const { counts } = this.session.round;
+    // A hollow nobody has answered has no community direction to report.
+    if (counts.total === 0) return 'WAITING FOR THE FIRST SIGNAL';
     return `N ${counts.north} · E ${counts.east} · S ${counts.south} · W ${counts.west} · ${counts.total} SIGNALS`;
   }
 

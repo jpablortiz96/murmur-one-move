@@ -2,12 +2,11 @@ import { context, reddit, redis, scheduler } from '@devvit/web/server';
 import { SENSOR_ASSIGNMENT_VERSION } from '../../shared/constants/game';
 import { parsePostReferenceV2 } from '../../shared/contracts/expedition';
 import { assignSensor } from '../game/sensors/assignSensor';
-import { PRODUCTION_WINDOW, TEST_WINDOW } from '../game/expedition/windows';
+import { windowProfileForSubreddit } from '../game/expedition/windows';
 import { ExpeditionCoordinator, type ChapterPostGateway, type ExpeditionRoundGateway, type ExpeditionScheduler } from './expeditionCoordinator';
 import { ExpeditionRepository } from './expeditionRepository';
 import { createRoundIdentity, RoundService } from './roundService';
 
-const TEST_SUBREDDIT = 'murmur_one_move_dev';
 const isRedditPostId = (value: string): value is `t3_${string}` => value.startsWith('t3_');
 
 const postGateway: ChapterPostGateway = {
@@ -63,5 +62,5 @@ export const getExpeditionCoordinator = (): ExpeditionCoordinator => new Expedit
   postGateway,
   expeditionScheduler,
   roundGateway,
-  context.subredditName === TEST_SUBREDDIT ? TEST_WINDOW : PRODUCTION_WINDOW
+  windowProfileForSubreddit(context.subredditName)
 );

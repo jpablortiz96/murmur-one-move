@@ -14,6 +14,7 @@ export class ExpeditionDisplay {
   private readonly revealBody: Phaser.GameObjects.Text;
   private readonly revealFooter: Phaser.GameObjects.Text;
   private view: ExpeditionPublicView | null;
+  private mapLineVisible = true;
 
   constructor(
     private readonly scene: Phaser.Scene,
@@ -66,29 +67,72 @@ export class ExpeditionDisplay {
     this.revealFooter.setWordWrapWidth(Math.min(292, width - 36));
   }
 
-  showResolution(truth: CombinedTruth, counts: CommunityCounts, replay = false): void {
+  /**
+   * Every stage writes to the same reveal container, so two stages can never
+   * occupy the main zone at once. The small map line is hidden while the reveal
+   * is up, because the reveal ellipse would otherwise sit on top of it.
+   */
+  private showStage(title: string, body: string, footer: string, animate: boolean): void {
     this.reveal.setVisible(true).setAlpha(1);
-    this.revealTitle.setText('THREE TRUTHS · ONE CONSEQUENCE');
-    this.revealBody.setText([
-      'WHAT ECHO HEARD', truth.echo,
-      '', 'WHAT HEAT FELT', truth.heat,
-      '', 'WHAT WIND CARRIED', truth.wind,
-    ].join('\n'));
-    this.revealFooter.setText(
-      `${truth.severity.toUpperCase()} · ${truth.consequence}\n` +
-      `N${counts.north}  E${counts.east}  S${counts.south}  W${counts.west}`
-    );
-    if (this.reducedMotion || replay) return;
+    this.revealTitle.setText(title);
+    this.revealBody.setText(body);
+    this.revealFooter.setText(footer);
+    if (!animate || this.reducedMotion) {
+      this.revealTitle.setAlpha(1);
+      this.revealBody.setAlpha(1);
+      this.revealFooter.setAlpha(1);
+      return;
+    }
     this.revealTitle.setAlpha(0);
     this.revealBody.setAlpha(0);
     this.revealFooter.setAlpha(0);
-    this.scene.tweens.add({ targets: this.revealTitle, alpha: 1, duration: 240 });
-    this.scene.tweens.add({ targets: this.revealBody, alpha: 1, duration: 420, delay: 260 });
-    this.scene.tweens.add({ targets: this.revealFooter, alpha: 1, duration: 360, delay: 740 });
+    this.scene.tweens.add({ targets: this.revealTitle, alpha: 1, duration: 200 });
+    this.scene.tweens.add({ targets: this.revealBody, alpha: 1, duration: 320, delay: 160 });
+    this.scene.tweens.add({ targets: this.revealFooter, alpha: 1, duration: 280, delay: 320 });
+  }
+
+  /** Stage 1: what the community chose, without revealing the three senses yet. */
+  showSummary(direction: string, counts: CommunityCounts, severity: string, animate = true): void {
+    this.showStage(
+      'THE COMMUNITY MOVED',
+      [
+        `MURMUR FOLLOWS ${direction.toUpperCase()}`,
+        '',
+        `N${counts.north}  E${counts.east}  S${counts.south}  W${counts.west}`,
+        `${counts.total} ${counts.total === 1 ? 'SIGNAL' : 'SIGNALS'} · SNAPSHOT SEALED`,
+      ].join('\n'),
+      severity.toUpperCase(),
+      animate
+    );
+  }
+
+  /** Stage 2: the three partial truths only. */
+  showThreeTruths(truth: CombinedTruth, animate = true): void {
+    this.showStage(
+      'THREE TRUTHS · ONE PATH',
+      [
+        'WHAT ECHO HEARD', truth.echo,
+        '', 'WHAT HEAT FELT', truth.heat,
+        '', 'WHAT WIND CARRIED', truth.wind,
+      ].join('\n'),
+      '',
+      animate
+    );
+  }
+
+  /** Stage 3: the consequence only. */
+  showConsequence(truth: CombinedTruth, animate = true): void {
+    this.showStage('ONE CONSEQUENCE', truth.consequence, truth.severity.toUpperCase(), animate);
   }
 
   hideResolution(): void {
     this.reveal.setVisible(false);
+  }
+
+  /** The seven-node line is owned by the caller so it never coexists with a stage that would cover it. */
+  setMapLineVisible(visible: boolean): void {
+    this.mapLineVisible = visible;
+    this.map.setVisible(visible && this.view !== null);
   }
 
   showMapState(): void {
@@ -119,7 +163,8 @@ export class ExpeditionDisplay {
       this.map.setVisible(false);
       return;
     }
-    this.map.setVisible(true);
+    // Never override the caller's exclusivity decision on a redraw/update.
+    this.map.setVisible(this.mapLineVisible);
     const spacing = 27;
     const start = -spacing * 3;
     this.mapGraphics.lineStyle(2, 0x2c7770, 0.46).beginPath();

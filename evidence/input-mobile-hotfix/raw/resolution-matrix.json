@@ -1,0 +1,1856 @@
+{
+  "capturedAt": "2026-07-15",
+  "method": "chrome headless + CDP real mouse events (no jsdom)",
+  "failures": 0,
+  "passed": true,
+  "cases": [
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-three-truths.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-consequence.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-expedition-map.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-next-action.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-next-action.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "360x800-mod-tray-open.png"
+    },
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "screenshot": "360x800-summary.png",
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-three-truths.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-consequence.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-expedition-map.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-next-action.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-next-action.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "390x844-mod-tray-open.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "screenshot": "390x844-summary.png",
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "412x915-three-truths.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "412x915-consequence.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "412x915-expedition-map.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "412x915-next-action.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "412x915-next-action.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "412x915-mod-tray-open.png"
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 206,
+          "y": 868
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 206,
+          "y": 868
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 282,
+          "y": 868
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 206,
+          "y": 821
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 278,
+          "y": 767
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 134,
+          "y": 767
+        }
+      },
+      "screenshot": "412x915-summary.png",
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "768x1024-three-truths.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "768x1024-consequence.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "768x1024-expedition-map.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "768x1024-next-action.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "768x1024-next-action.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "768x1024-mod-tray-open.png"
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 384,
+          "y": 977
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 384,
+          "y": 977
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 460,
+          "y": 977
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 384,
+          "y": 930
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 456,
+          "y": 876
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 312,
+          "y": 876
+        }
+      },
+      "screenshot": "768x1024-summary.png",
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "1280x720-three-truths.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "1280x720-consequence.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "1280x720-expedition-map.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "1280x720-next-action.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "1280x720-next-action.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "1280x720-mod-tray-open.png"
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 640,
+          "y": 673
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 640,
+          "y": 673
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 712,
+          "y": 673
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 1188,
+          "y": 673
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 1188,
+          "y": 619
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 1042,
+          "y": 619
+        }
+      },
+      "screenshot": "1280x720-summary.png",
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "three-truths",
+      "activeLayers": [
+        "threeTruths"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "SEE THE CONSEQUENCE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-reduced-three-truths.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "consequence",
+      "activeLayers": [
+        "consequence"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "VIEW THE EXPEDITION",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-reduced-consequence.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "expedition-map",
+      "activeLayers": [
+        "expeditionMap"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-reduced-expedition-map.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-reduced-next-action.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "next-action",
+      "activeLayers": [
+        "nextAction"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": false,
+          "label": "CONTINUE",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": true,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": true,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "360x800-reduced-next-action.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "next-action",
+      "trayClosedByDefault": true,
+      "trayOpensOnDemand": true,
+      "screenshot": "360x800-reduced-mod-tray-open.png"
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "replayRestartedSequence": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 180,
+          "y": 753
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 180,
+          "y": 753
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 252,
+          "y": 753
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 180,
+          "y": 706
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "PUBLISH NEXT DAY",
+          "x": 252,
+          "y": 652
+        },
+        "modAux": {
+          "visible": false,
+          "label": "VIEW STATE",
+          "x": 108,
+          "y": 652
+        }
+      },
+      "screenshot": "360x800-reduced-summary.png",
+      "noInternalScroll": true
+    }
+  ]
+}

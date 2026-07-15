@@ -34,6 +34,7 @@ import {
   moderatorTrayFor,
   type ResolutionPresentationState,
 } from '../presentation/resolutionFlow';
+import { guidanceFor, helpFor, shouldShowIntro } from '../presentation/sensorGuidance';
 import { createWorldButton, type WorldButton } from '../ui/worldButton';
 import { createSignalNode, type SignalNode } from '../ui/signalNode';
 import { createSensorExperience } from '../sensors/createSensorExperience';
@@ -99,6 +100,8 @@ export class MurmurScene extends Phaser.Scene {
   private modToolsButton: WorldButton;
   private modTrayOpen = false;
   private stageAdvanceTimer: Phaser.Time.TimerEvent | null = null;
+  private helpOpen = false;
+  private howToSenseButton: WorldButton;
 
   constructor() {
     super('Murmur');
@@ -195,6 +198,12 @@ export class MurmurScene extends Phaser.Scene {
     this.modAuxButton = createWorldButton(this, 'MOD · CLOSE', 136, () =>
       this.handleAuxAction()
     );
+    // Recallable guidance. Discreet, always available before a decision.
+    this.howToSenseButton = createWorldButton(this, 'HOW TO SENSE', 132, () => {
+      this.helpOpen = !this.helpOpen;
+      this.renderState();
+    });
+    this.howToSenseButton.container.setDepth(62);
     // The single primary action of the resolution sequence. It sits above the
     // reveal so it can never be buried by it.
     this.stageButton = createWorldButton(this, 'REVEAL THE THREE TRUTHS', 220, () => this.advanceStage());
@@ -243,11 +252,8 @@ export class MurmurScene extends Phaser.Scene {
         delay: 260,
       });
     }
-    const introDuration = this.settings.reducedMotion ? 1100 : 1800;
-    this.time.delayedCall(introDuration, () => {
-      if (this.settings.reducedMotion) this.senseIntroText.setVisible(false);
-      else this.tweens.add({ targets: this.senseIntroText, alpha: 0, duration: 360, onComplete: () => this.senseIntroText.setVisible(false) });
-    });
+    // Guidance is dismissed by the first activation, never by a timer, so a
+    // player who has not touched the cavern never loses the explanation.
     if (this.session.round.resolution) {
       this.senseIntroText.setVisible(false);
       this.playOutcome();
@@ -309,10 +315,19 @@ export class MurmurScene extends Phaser.Scene {
     const atLimit = this.state.pulsesUsed >= this.state.maxPulses;
 
     const accessibleSignal = this.sensorExperience.getAccessibleSignal();
-    const gestureInstruction = this.sensorExperience.getInstruction();
+    const guidance = guidanceFor(this.session.player.sensor, this.state.pulsesUsed, this.state.maxPulses);
     this.instructionText.setText(
-      decided ? '' : accessibleSignal ? `${accessibleSignal}\n${gestureInstruction}` : gestureInstruction
+      decided ? '' : accessibleSignal ? `${accessibleSignal}\n${guidance}` : guidance
     );
+    // The full introduction persists until the first activation; HOW TO SENSE
+    // can always bring it back.
+    const showIntro = !decided && (this.helpOpen || shouldShowIntro(this.state.pulsesUsed));
+    this.senseIntroText
+      .setText(this.helpOpen ? helpFor(this.session.player.sensor, this.state.pulsesUsed, this.state.maxPulses) : this.senseIntroduction())
+      .setVisible(showIntro)
+      .setAlpha(showIntro ? 1 : 0);
+    this.howToSenseButton?.container.setVisible(!decided);
+    this.howToSenseButton?.setLabel(this.helpOpen ? 'CLOSE HELP' : 'HOW TO SENSE');
     const communityLine = this.communityLine();
     this.pulseText.setText(
       `${this.session.player.sensor.toUpperCase()} ${this.state.pulsesUsed} OF ${this.state.maxPulses}${atLimit ? '  ·  COMPLETE' : ''}` +
@@ -377,6 +392,15 @@ export class MurmurScene extends Phaser.Scene {
         modAux: describe(this.modAuxButton),
       },
       modTrayOpen: this.modTrayOpen,
+    };
+    (window as unknown as { __murmurGuidance?: unknown }).__murmurGuidance = {
+      sensor: this.session.player.sensor,
+      activationsUsed: this.state.pulsesUsed,
+      maximum: this.state.maxPulses,
+      guidance: this.instructionText.text,
+      introVisible: this.senseIntroText.visible,
+      helpOpen: this.helpOpen,
+      howToSense: describe(this.howToSenseButton),
     };
   }
 
@@ -973,6 +997,9 @@ export class MurmurScene extends Phaser.Scene {
     // The stage CTA owns the primary action slot; MOD TOOLS sits in the
     // moderator row so the tray never lands on the player's stage.
     this.stageButton?.container.setPosition(this.metrics.centerX, this.metrics.actionButtonsY);
+    // Before a decision the action row is empty, so recallable help sits there
+    // without competing with any other control.
+    this.howToSenseButton?.container.setPosition(this.metrics.centerX, this.metrics.actionButtonsY);
     this.modToolsButton?.container.setPosition(
       this.metrics.isWide ? this.metrics.moderatorButtonX : this.metrics.centerX,
       this.metrics.moderatorButtonY

@@ -5,13 +5,20 @@ import { createPost } from '../core/post';
 
 export const menu = new Hono();
 
+/**
+ * Reddit comment URLs address a post by its base36 id, not by the stored `t3_`
+ * thing prefix, so the id is normalized the same way moderator navigation does.
+ */
+export const createPostNavigateUrl = (subredditName: string, postId: string): string =>
+  `https://reddit.com/r/${subredditName}/comments/${postId.replace(/^t3_/, '')}`;
+
 menu.post('/post-create', async (c) => {
   try {
     const post = await createPost();
 
     return c.json<UiResponse>(
       {
-        navigateTo: `https://reddit.com/r/${context.subredditName}/comments/${post.id}`,
+        navigateTo: createPostNavigateUrl(String(context.subredditName), post.id),
       },
       200
     );

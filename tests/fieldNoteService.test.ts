@@ -73,6 +73,16 @@ test('preview recalculates the body and issues a verifiable token', async () => 
   expect(preview.token.split('.')).toHaveLength(2);
 });
 
+test('the preview destination is the post being read, not the expedition current day', async () => {
+  const { service } = build();
+  // This context is an older chapter (day 2, its own post) while the expedition
+  // may have moved on; navigation must target THIS post's comments.
+  const preview = await service.preview(ctx({ postId: 't3_older_chapter', day: 2 }), FALLBACK, heatDraft());
+  expect(preview.destination.postId).toBe('t3_older_chapter');
+  expect(preview.destination.commentsUrl).toBe('https://www.reddit.com/comments/older_chapter');
+  expect(preview.destination.commentsUrl).not.toContain('t3_');
+});
+
 test('preview rejects an observation from another sensor', async () => {
   const { service } = build();
   await expect(service.preview(ctx({ sensor: 'heat' }), NATIVE, heatDraft({ observationId: 'deep-hollow' }))).rejects.toMatchObject<

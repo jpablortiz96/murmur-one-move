@@ -14,6 +14,7 @@ import {
   previewFieldNote,
   publishFieldNote,
 } from '../systems/fieldNotesClient';
+import { requestCommentsNavigation } from '../systems/navigation';
 
 type OverlayStage = 'idle' | 'composer' | 'preview' | 'done';
 
@@ -62,6 +63,8 @@ export class FieldNotesOverlay {
   private draft: Partial<FieldNoteDraft> = {};
   private preview: FieldNotePreview | null = null;
   private busy = false;
+  private navigating = false;
+  private navigationFailed = false;
   private refreshTimer: number | null = null;
 
   constructor(private readonly host: HTMLElement) {
@@ -276,13 +279,53 @@ export class FieldNotesOverlay {
       // general comments rather than a Field Notes thread that does not exist.
       const hint = el('p', 'fn-hint', 'Paste this into the chapter comments. It stays your comment on Reddit and is not tracked in the app.');
       dialog.appendChild(hint);
-      const link = el('a', 'fn-link', 'OPEN COMMENTS');
-      link.href = preview.destination.commentsUrl;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
-      dialog.appendChild(link);
+      dialog.appendChild(this.renderOpenComments(preview.destination.commentsUrl, status));
     }
     return dialog;
+  }
+
+  /**
+   * Copying and navigating stay separate actions. A `_blank` anchor is blocked
+   * inside the webview, so navigation goes through Devvit's client capability and
+   * a failure always leaves the player a way forward instead of a dead click.
+   */
+  private renderOpenComments(commentsUrl: string, status: HTMLElement): HTMLElement {
+    const wrap = el('div', 'fn-nav');
+    const open = el('button', 'fn-btn fn-ghost', 'OPEN COMMENTS');
+    open.type = 'button';
+    open.addEventListener('click', () => {
+      if (this.navigating) return; // a double tap must not navigate twice
+      this.navigating = true;
+      open.disabled = true;
+      status.textContent = 'Opening comments…';
+      const outcome = requestCommentsNavigation(commentsUrl);
+      this.navigating = false;
+      open.disabled = false;
+      if (outcome === 'failed') {
+        this.navigationFailed = true;
+        this.render();
+      } else {
+        status.textContent = 'Opening the chapter comments…';
+      }
+    });
+    wrap.appendChild(open);
+
+    if (this.navigationFailed) {
+      const failure = el('p', 'fn-error', "COULDN'T OPEN COMMENTS");
+      wrap.appendChild(failure);
+      const copyLink = el('button', 'fn-btn fn-ghost', 'COPY COMMENTS LINK');
+      copyLink.type = 'button';
+      copyLink.addEventListener('click', () => void this.copyText(commentsUrl, status, 'Comments link copied.'));
+      wrap.appendChild(copyLink);
+      const retry = el('button', 'fn-btn fn-ghost', 'TRY AGAIN');
+      retry.type = 'button';
+      retry.addEventListener('click', () => {
+        this.navigationFailed = false;
+        this.render();
+      });
+      wrap.appendChild(retry);
+    }
+    return wrap;
   }
 
   private async publish(status: HTMLElement): Promise<void> {
@@ -306,6 +349,16 @@ export class FieldNotesOverlay {
       status.textContent = error instanceof FieldNotesApiError ? error.message : 'Could not post that Field Note.';
     } finally {
       this.busy = false;
+    }
+  }
+
+  /** Copying is always its own action; it never navigates. */
+  private async copyText(text: string, status: HTMLElement, message: string): Promise<void> {
+    try {
+      await navigator.clipboard.writeText(text);
+      status.textContent = message;
+    } catch {
+      status.textContent = 'Copy is unavailable here; select the text to copy it manually.';
     }
   }
 
@@ -407,6 +460,8 @@ export class FieldNotesOverlay {
     this.stage = 'idle';
     this.preview = null;
     this.draft = {};
+    this.navigationFailed = false;
+    this.navigating = false;
     this.render();
   }
 }

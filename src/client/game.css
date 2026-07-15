@@ -301,6 +301,33 @@ noscript {
   text-decoration: underline;
 }
 
+/* Navigation row: OPEN COMMENTS, plus the recovery controls only on failure. */
+.fn-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  pointer-events: none;
+}
+
+.fn-nav > * {
+  pointer-events: auto;
+}
+
+.fn-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.fn-error {
+  margin: 0;
+  width: 100%;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #ffb4a2;
+}
+
 .fn-board,
 .fn-reveal {
   padding: 10px 14px;

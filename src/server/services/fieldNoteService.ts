@@ -64,7 +64,12 @@ export type CommentGateway = {
   submitUserComment(parentId: string, body: string): Promise<{ commentId: string; authorName: string; url: string | null }>;
 };
 
-const commentsUrlFor = (postId: string): string =>
+/**
+ * Canonical comments URL for the chapter post being read. Reddit addresses a post
+ * by its base36 id, so the stored `t3_` thing prefix is stripped. The caller's
+ * post always comes from server context, never from client input.
+ */
+export const commentsUrlFor = (postId: string): string =>
   `https://www.reddit.com/comments/${postId.replace(/^t3_/, '')}`;
 
 const commentPermalink = (postId: string, commentId: string): string =>

@@ -26,6 +26,14 @@ import {
   resolveCommunityRound,
   submitCommunityVote,
 } from '../systems/communityClient';
+import {
+  advance,
+  autoAdvanceDelayMs,
+  ctaFor,
+  layersFor,
+  moderatorTrayFor,
+  type ResolutionPresentationState,
+} from '../presentation/resolutionFlow';
 import { createWorldButton, type WorldButton } from '../ui/worldButton';
 import { createSignalNode, type SignalNode } from '../ui/signalNode';
 import { createSensorExperience } from '../sensors/createSensorExperience';
@@ -86,6 +94,11 @@ export class MurmurScene extends Phaser.Scene {
   private pollTimer: Phaser.Time.TimerEvent | null = null;
   private sceneDestroyed = false;
   private sessionFetchSeq = 0;
+  private resolutionStage: ResolutionPresentationState = 'summary';
+  private stageButton: WorldButton;
+  private modToolsButton: WorldButton;
+  private modTrayOpen = false;
+  private stageAdvanceTimer: Phaser.Time.TimerEvent | null = null;
 
   constructor() {
     super('Murmur');
@@ -182,6 +195,15 @@ export class MurmurScene extends Phaser.Scene {
     this.modAuxButton = createWorldButton(this, 'MOD · CLOSE', 136, () =>
       this.handleAuxAction()
     );
+    // The single primary action of the resolution sequence. It sits above the
+    // reveal so it can never be buried by it.
+    this.stageButton = createWorldButton(this, 'REVEAL THE THREE TRUTHS', 220, () => this.advanceStage());
+    this.stageButton.container.setDepth(90).setVisible(false);
+    // Moderator controls are a separate tray, closed by default.
+    this.modToolsButton = createWorldButton(this, 'MOD TOOLS', 120, () => this.toggleModTray());
+    this.modToolsButton.container.setDepth(90).setVisible(false);
+    this.resolveButton.container.setDepth(91);
+    this.modAuxButton.container.setDepth(91);
     this.resolveButton.container.setVisible(false);
     this.modAuxButton.container.setVisible(false);
 
@@ -201,6 +223,7 @@ export class MurmurScene extends Phaser.Scene {
       this.sceneDestroyed = true;
       this.pollTimer?.remove(false);
       this.pollTimer = null;
+      this.clearStageTimer();
       this.sensorExperience.destroy();
       this.expeditionDisplay.destroy();
     });
@@ -318,7 +341,43 @@ export class MurmurScene extends Phaser.Scene {
       this.showPersistentDecision();
     }
     this.positionActionButtons();
+    this.publishPresentationDiagnostic();
     this.updateDebugText();
+  }
+
+  /**
+   * Read-only presentation snapshot for the browser evidence harness. It carries
+   * only stage names and layer visibility — never World Truth, identity or the
+   * route — so exclusivity and hit targets can be asserted for real instead of
+   * inferred from pixels.
+   */
+  private publishPresentationDiagnostic(): void {
+    if (typeof window === 'undefined') return;
+    const resolved = this.session.round.resolution !== null;
+    const layers = resolved ? layersFor(this.resolutionStage) : null;
+    const describe = (button: WorldButton | undefined) =>
+      button
+        ? {
+            visible: button.container.visible,
+            label: button.label.text,
+            x: Math.round(button.container.x),
+            y: Math.round(button.container.y),
+          }
+        : { visible: false, label: '', x: 0, y: 0 };
+    (window as unknown as { __murmurPresentation?: unknown }).__murmurPresentation = {
+      resolved,
+      stage: resolved ? this.resolutionStage : null,
+      layers,
+      buttons: {
+        stageCta: describe(this.stageButton),
+        replay: describe(this.replayButton),
+        change: describe(this.changeButton),
+        modTools: describe(this.modToolsButton),
+        modResolve: describe(this.resolveButton),
+        modAux: describe(this.modAuxButton),
+      },
+      modTrayOpen: this.modTrayOpen,
+    };
   }
 
   private showDecisionFeedback(direction: Direction): void {
@@ -572,7 +631,7 @@ export class MurmurScene extends Phaser.Scene {
         }
         void this.publishNextDay();
       } else {
-        this.expeditionDisplay.showMapState();
+        this.jumpToStage('expedition-map');
       }
       return;
     }
@@ -639,7 +698,7 @@ export class MurmurScene extends Phaser.Scene {
       // on" is signalled by the next chapter existing, not by a day delta.
       const movedForward = Boolean(this.session.journey?.nextChapterPostId);
       if (!movedForward) {
-        this.expeditionDisplay.showMapState();
+        this.jumpToStage('expedition-map');
         return;
       }
       if (!this.auxArmed) {
@@ -741,38 +800,80 @@ export class MurmurScene extends Phaser.Scene {
       this.murmur.setPosition(this.metrics.centerX, this.metrics.centerY);
       this.tweens.add({ targets: this.murmur, x, y, duration: 900, ease: 'Sine.InOut' });
     }
+    // The outcome always starts at the summary and walks one stage at a time.
+    this.resolutionStage = 'summary';
+    this.modTrayOpen = false;
     this.renderState();
-    const combinedTruth = this.session.combinedTruth;
-    if (combinedTruth) {
-      const reveal = () => this.expeditionDisplay.showResolution(
-        combinedTruth,
-        this.session.round.counts,
-        replay
-      );
-      if (this.settings.reducedMotion || replay) reveal();
-      else this.time.delayedCall(920, reveal);
-    }
+    this.scheduleAutoAdvance();
   }
 
+  /**
+   * Renders exactly one resolution stage. Three Truths, the consequence, the map
+   * and the next actions can no longer share the screen, and moderator controls
+   * only exist inside their tray in the terminal stage.
+   */
   private showResolvedDecision(): void {
     const resolution = this.session.round.resolution;
     if (!resolution) return;
+    const layers = layersFor(this.resolutionStage);
+    const truth = this.session.combinedTruth;
+    const animate = !this.settings.reducedMotion;
+
+    // Main zone: one owner at a time.
+    this.expeditionDisplay.setMapLineVisible(layers.nextAction);
+    if (layers.summary) {
+      this.expeditionDisplay.showSummary(
+        resolution.winningDirection,
+        resolution.countsSnapshot,
+        truth?.severity ?? 'sealed',
+        animate
+      );
+    } else if (layers.threeTruths && truth) {
+      this.expeditionDisplay.showThreeTruths(truth, animate);
+    } else if (layers.consequence && truth) {
+      this.expeditionDisplay.showConsequence(truth, animate);
+    } else if (layers.expeditionMap) {
+      this.expeditionDisplay.showMapState();
+    } else {
+      this.expeditionDisplay.hideResolution();
+    }
+
+    // The result line belongs to the terminal stage only, so it is never drawn
+    // twice or underneath the reveal.
     this.resultText
       .setText(`MURMUR FOLLOWS ${resolution.winningDirection.toUpperCase()}`)
-      .setVisible(true)
+      .setVisible(layers.nextAction)
       .setAlpha(1);
     this.pendingText
       .setText(`${this.communityLine()} · Snapshot sealed.`)
-      .setVisible(true)
+      .setVisible(layers.nextAction)
       .setAlpha(1);
+
+    // One primary action advances the sequence; it lives above the reveal.
+    const cta = ctaFor(this.resolutionStage);
+    if (cta && (truth || !layers.summary)) {
+      this.stageButton.setLabel(cta);
+      this.stageButton.setEnabled(true);
+      this.stageButton.container.setVisible(true).setAlpha(1);
+    } else {
+      this.stageButton.container.setVisible(false);
+    }
+
     this.replayButton.setLabel('REPLAY OUTCOME');
     this.replayButton.setEnabled(true);
-    this.replayButton.container.setVisible(true).setAlpha(1);
+    this.replayButton.container.setVisible(layers.nextAction).setAlpha(1);
     this.changeButton.container.setVisible(false);
-    const canManage = this.session.round.canManage && this.session.journey !== null;
-    this.resolveButton.container.setVisible(canManage).setAlpha(1);
-    this.modAuxButton.container.setVisible(canManage).setAlpha(1);
-    if (canManage) {
+
+    const tray = moderatorTrayFor(
+      this.session.round.canManage && this.session.journey !== null,
+      this.modTrayOpen
+    );
+    this.modToolsButton.container.setVisible(tray.exists && layers.nextAction);
+    this.modToolsButton.setLabel(tray.open ? 'CLOSE MOD TOOLS' : 'MOD TOOLS');
+    const trayVisible = tray.open && layers.nextAction;
+    this.resolveButton.container.setVisible(trayVisible).setAlpha(1);
+    this.modAuxButton.container.setVisible(trayVisible).setAlpha(1);
+    if (trayVisible) {
       const pending = this.session.journey?.status === 'next-chapter-pending';
       this.resolveButton.setLabel(
         pending
@@ -789,6 +890,41 @@ export class MurmurScene extends Phaser.Scene {
       );
     }
     this.positionActionButtons();
+  }
+
+  private advanceStage(): void {
+    this.clearStageTimer();
+    this.resolutionStage = advance(this.resolutionStage);
+    this.renderState();
+    this.scheduleAutoAdvance();
+  }
+
+  private jumpToStage(stage: ResolutionPresentationState): void {
+    this.clearStageTimer();
+    this.resolutionStage = stage;
+    this.renderState();
+  }
+
+  private scheduleAutoAdvance(): void {
+    this.clearStageTimer();
+    const delay = autoAdvanceDelayMs(this.resolutionStage, this.settings.reducedMotion);
+    if (delay === null || !this.session.combinedTruth) return;
+    this.stageAdvanceTimer = this.time.delayedCall(delay, () => {
+      this.stageAdvanceTimer = null;
+      this.advanceStage();
+    });
+  }
+
+  private clearStageTimer(): void {
+    this.stageAdvanceTimer?.remove(false);
+    this.stageAdvanceTimer = null;
+  }
+
+  private toggleModTray(): void {
+    this.modTrayOpen = !this.modTrayOpen;
+    this.disarmResolution();
+    this.auxArmed = false;
+    this.renderState();
   }
 
   private communityLine(): string {
@@ -823,12 +959,22 @@ export class MurmurScene extends Phaser.Scene {
       this.metrics.centerX + this.metrics.actionButtonOffset,
       this.metrics.actionButtonsY
     );
+    // After resolution the tray opens in its own row above MOD TOOLS, so the
+    // toggle and the tray controls never share a hit area.
+    const trayRow = this.session.round.resolution ? this.metrics.moderatorButtonY - 54 : this.metrics.moderatorButtonY;
     this.resolveButton.container.setPosition(
       this.metrics.isWide ? this.metrics.moderatorButtonX : this.metrics.centerX + 72,
-      this.metrics.moderatorButtonY
+      trayRow
     );
     this.modAuxButton.container.setPosition(
       this.metrics.isWide ? this.metrics.moderatorButtonX - 146 : this.metrics.centerX - 72,
+      trayRow
+    );
+    // The stage CTA owns the primary action slot; MOD TOOLS sits in the
+    // moderator row so the tray never lands on the player's stage.
+    this.stageButton?.container.setPosition(this.metrics.centerX, this.metrics.actionButtonsY);
+    this.modToolsButton?.container.setPosition(
+      this.metrics.isWide ? this.metrics.moderatorButtonX : this.metrics.centerX,
       this.metrics.moderatorButtonY
     );
   }

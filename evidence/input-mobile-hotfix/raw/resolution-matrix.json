@@ -315,6 +315,56 @@
     {
       "viewport": "390x844",
       "reducedMotion": false,
+      "stage": "summary",
+      "activeLayers": [
+        "summary"
+      ],
+      "exclusive": true,
+      "noInternalScroll": true,
+      "buttons": {
+        "stageCta": {
+          "visible": true,
+          "label": "REVEAL THE THREE TRUTHS",
+          "x": 195,
+          "y": 797
+        },
+        "replay": {
+          "visible": false,
+          "label": "REPLAY OUTCOME",
+          "x": 195,
+          "y": 797
+        },
+        "change": {
+          "visible": false,
+          "label": "CHANGE CHOICE",
+          "x": 267,
+          "y": 797
+        },
+        "modTools": {
+          "visible": false,
+          "label": "MOD TOOLS",
+          "x": 195,
+          "y": 750
+        },
+        "modResolve": {
+          "visible": false,
+          "label": "MOD · RESOLVE",
+          "x": 267,
+          "y": 696
+        },
+        "modAux": {
+          "visible": false,
+          "label": "MOD · CLOSE",
+          "x": 123,
+          "y": 696
+        }
+      },
+      "modTrayOpen": false,
+      "screenshot": "390x844-summary.png"
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
       "stage": "three-truths",
       "activeLayers": [
         "threeTruths"
@@ -516,56 +566,6 @@
       "viewport": "390x844",
       "reducedMotion": false,
       "stage": "next-action",
-      "activeLayers": [
-        "nextAction"
-      ],
-      "exclusive": true,
-      "noInternalScroll": true,
-      "buttons": {
-        "stageCta": {
-          "visible": false,
-          "label": "CONTINUE",
-          "x": 195,
-          "y": 797
-        },
-        "replay": {
-          "visible": true,
-          "label": "REPLAY OUTCOME",
-          "x": 195,
-          "y": 797
-        },
-        "change": {
-          "visible": false,
-          "label": "CHANGE CHOICE",
-          "x": 267,
-          "y": 797
-        },
-        "modTools": {
-          "visible": true,
-          "label": "MOD TOOLS",
-          "x": 195,
-          "y": 750
-        },
-        "modResolve": {
-          "visible": false,
-          "label": "MOD · RESOLVE",
-          "x": 267,
-          "y": 696
-        },
-        "modAux": {
-          "visible": false,
-          "label": "MOD · CLOSE",
-          "x": 123,
-          "y": 696
-        }
-      },
-      "modTrayOpen": false,
-      "screenshot": "390x844-next-action.png"
-    },
-    {
-      "viewport": "390x844",
-      "reducedMotion": false,
-      "stage": "next-action",
       "trayClosedByDefault": true,
       "trayOpensOnDemand": true,
       "screenshot": "390x844-mod-tray-open.png"
@@ -623,16 +623,16 @@
     {
       "viewport": "412x915",
       "reducedMotion": false,
-      "stage": "three-truths",
+      "stage": "summary",
       "activeLayers": [
-        "threeTruths"
+        "summary"
       ],
       "exclusive": true,
       "noInternalScroll": true,
       "buttons": {
         "stageCta": {
           "visible": true,
-          "label": "SEE THE CONSEQUENCE",
+          "label": "REVEAL THE THREE TRUTHS",
           "x": 206,
           "y": 868
         },
@@ -668,7 +668,7 @@
         }
       },
       "modTrayOpen": false,
-      "screenshot": "412x915-three-truths.png"
+      "screenshot": "412x915-summary.png"
     },
     {
       "viewport": "412x915",

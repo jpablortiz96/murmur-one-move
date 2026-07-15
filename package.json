@@ -13,6 +13,7 @@
     "evidence:expedition": "npm run build && vitest run tools/expeditionEvidence.test.ts && powershell -ExecutionPolicy Bypass -File tools/render-expedition-plots.ps1",
     "evidence:field-notes": "vitest run tools/fieldNotesEvidence.test.ts && powershell -ExecutionPolicy Bypass -File tools/render-field-notes-plots.ps1",
     "evidence:resolution": "npm run build && node tools/capture-resolution.mjs",
+    "evidence:guidance": "npm run build && node tools/capture-guidance.mjs",
     "launch": "npm run deploy && devvit publish",
     "lint": "eslint src",
     "login": "devvit login",

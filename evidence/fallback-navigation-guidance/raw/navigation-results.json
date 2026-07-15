@@ -1,0 +1,172 @@
+{
+  "method": "chrome headless + CDP real clicks",
+  "failures": 0,
+  "passed": true,
+  "cases": [
+    {
+      "viewport": "360x800",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "360x800-broken",
+      "brokenDestination": true,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "murmur-local-broken-destination",
+      "outcome": "failed",
+      "errorStateShown": true,
+      "copyStatus": "Comments link copied.",
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "390x844",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "390x844-broken",
+      "brokenDestination": true,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "murmur-local-broken-destination",
+      "outcome": "failed",
+      "errorStateShown": true,
+      "copyStatus": "Comments link copied.",
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "412x915",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "412x915-broken",
+      "brokenDestination": true,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "murmur-local-broken-destination",
+      "outcome": "failed",
+      "errorStateShown": true,
+      "copyStatus": "Comments link copied.",
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "768x1024",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "768x1024-broken",
+      "brokenDestination": true,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "murmur-local-broken-destination",
+      "outcome": "failed",
+      "errorStateShown": true,
+      "copyStatus": "Comments link copied.",
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "1280x720",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "1280x720-broken",
+      "brokenDestination": true,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "murmur-local-broken-destination",
+      "outcome": "failed",
+      "errorStateShown": true,
+      "copyStatus": "Comments link copied.",
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    },
+    {
+      "viewport": "360x800-reduced",
+      "brokenDestination": false,
+      "previewShown": true,
+      "navigationInvokedOnce": true,
+      "lastUrl": "https://www.reddit.com/comments/local_chapter",
+      "outcome": "requested",
+      "errorStateShown": false,
+      "copyStatus": null,
+      "claimedPublication": false,
+      "targetSize": [
+        167,
+        44
+      ]
+    }
+  ]
+}

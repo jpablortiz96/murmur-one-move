@@ -1,0 +1,175 @@
+{
+  "method": "chrome headless + CDP real clicks",
+  "failures": 0,
+  "passed": true,
+  "cases": [
+    {
+      "viewport": "360x800",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "360x800",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "360x800",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 180,
+        "y": 753
+      }
+    },
+    {
+      "viewport": "390x844",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "390x844",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "390x844",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 195,
+        "y": 797
+      }
+    },
+    {
+      "viewport": "412x915",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "412x915",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "412x915",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 206,
+        "y": 868
+      }
+    },
+    {
+      "viewport": "768x1024",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "768x1024",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "768x1024",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 384,
+        "y": 977
+      }
+    },
+    {
+      "viewport": "1280x720",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "1280x720",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "1280x720",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 640,
+        "y": 673
+      }
+    },
+    {
+      "viewport": "360x800-reduced",
+      "phase": "before-interaction",
+      "introVisible": true,
+      "guidance": "Press and hold to focus the heat.",
+      "activationsUsed": 0,
+      "heldAfterTimer": true
+    },
+    {
+      "viewport": "360x800-reduced",
+      "phase": "after-first-activation",
+      "introVisible": false,
+      "guidance": "A localized warm gradient gathers near the south.\nHold to focus · 1 of 3",
+      "activationsUsed": 1,
+      "compacted": true
+    },
+    {
+      "viewport": "360x800-reduced",
+      "phase": "how-to-sense",
+      "helpOpen": true,
+      "restored": true,
+      "target": {
+        "visible": true,
+        "label": "HOW TO SENSE",
+        "x": 180,
+        "y": 753
+      }
+    }
+  ]
+}

@@ -1,0 +1,73 @@
+{
+  "capturedAt": "2026-07-15",
+  "failures": 0,
+  "passed": true,
+  "cases": [
+    {
+      "viewport": "360x800",
+      "reducedMotion": false,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "360x800-broken",
+      "reducedMotion": false,
+      "brokenDestination": true,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "390x844",
+      "reducedMotion": false,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "390x844-broken",
+      "reducedMotion": false,
+      "brokenDestination": true,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "412x915",
+      "reducedMotion": false,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "412x915-broken",
+      "reducedMotion": false,
+      "brokenDestination": true,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "768x1024",
+      "reducedMotion": false,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "768x1024-broken",
+      "reducedMotion": false,
+      "brokenDestination": true,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "1280x720",
+      "reducedMotion": false,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "1280x720-broken",
+      "reducedMotion": false,
+      "brokenDestination": true,
+      "noInternalScroll": true
+    },
+    {
+      "viewport": "360x800-reduced",
+      "reducedMotion": true,
+      "brokenDestination": false,
+      "noInternalScroll": true
+    }
+  ]
+}

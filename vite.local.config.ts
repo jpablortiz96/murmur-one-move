@@ -1,6 +1,12 @@
 import { defineConfig, type Plugin } from 'vite';
 import { api } from './src/server/routes/api';
 import { CURRENT_FEATURE_FLAGS } from './src/server/game/gameConfig';
+import { buildFieldNoteBody } from './src/server/game/fieldNotes/noteBody';
+import {
+  findObservationForSensor,
+  getObservationsForSensor,
+} from './src/server/game/fieldNotes/observations';
+import { commentsUrlFor } from './src/server/services/fieldNoteService';
 import { projectPerception } from './src/server/game/sensors/projectPerception';
 import { generateScenario } from './src/server/game/world/generateScenario';
 import { createEmptyCounts } from './src/shared/contracts/round';
@@ -116,6 +122,35 @@ const localSession = (): PlayerSession => {
   };
 };
 
+const LOCAL_POST_ID = 't3_local_chapter';
+
+/**
+ * Harness-only Field Notes fixtures. They never change production behaviour;
+ * MURMUR_LOCAL_BAD_COMMENTS_URL forces an unparseable destination so the
+ * navigation error path can be captured deterministically.
+ */
+const localCommentsUrl = (): string =>
+  process.env.MURMUR_LOCAL_BAD_COMMENTS_URL === '1'
+    ? 'murmur-local-broken-destination'
+    : commentsUrlFor(LOCAL_POST_ID);
+
+const localFieldNotesView = () => ({
+  schemaVersion: 1,
+  enabled: true,
+  publishMode: 'fallback' as const,
+  authenticated: true,
+  hasVoted: localVote !== null,
+  canContribute: localVote !== null,
+  alreadyContributed: false,
+  sensor: localSensor(),
+  observations: getObservationsForSensor(localSensor()),
+  authorName: null,
+  commentsUrl: localCommentsUrl(),
+  parentThreadUrl: null,
+  board: { totalNotes: 0, thresholdMet: false, bySensor: null, byDirection: null },
+  minorityInsight: null,
+});
+
 const localApiPlugin: Plugin = {
   name: 'murmur-local-api',
   configureServer(server) {
@@ -140,6 +175,44 @@ const localApiPlugin: Plugin = {
           localVote = null;
           response.statusCode = 204;
           response.end();
+          return;
+        }
+        if (routeUrl === '/field-notes' && (request.method ?? 'GET') === 'GET') {
+          response.statusCode = 200;
+          response.setHeader('Content-Type', 'application/json');
+          response.end(JSON.stringify(localFieldNotesView()));
+          return;
+        }
+        if (routeUrl === '/field-notes/preview' && request.method === 'POST') {
+          const chunks: Buffer[] = [];
+          for await (const chunk of request) chunks.push(Buffer.from(chunk));
+          const draft: unknown = JSON.parse(Buffer.concat(chunks).toString('utf8'));
+          const sensor = localSensor();
+          const record = draft as { direction?: string; confidence?: string; observationId?: string; commentary?: string };
+          const observation = findObservationForSensor(sensor, record.observationId ?? '');
+          if (!observation || !record.direction || !record.confidence) {
+            response.statusCode = 400;
+            response.end(JSON.stringify({ status: 'error', code: 'invalid-request', message: 'Invalid local Field Note fixture' }));
+            return;
+          }
+          const body = buildFieldNoteBody({
+            sensor,
+            direction: record.direction as 'north' | 'east' | 'south' | 'west',
+            confidence: record.confidence as 'low' | 'medium' | 'high',
+            clause: observation.clause,
+            ...(record.commentary ? { commentary: record.commentary } : {}),
+          });
+          response.statusCode = 200;
+          response.setHeader('Content-Type', 'application/json');
+          response.end(JSON.stringify({
+            schemaVersion: 1,
+            body,
+            destination: { postId: LOCAL_POST_ID, commentsUrl: localCommentsUrl(), parentKnown: false },
+            publishMode: 'fallback',
+            authorName: null,
+            token: 'local-harness-preview-token',
+            expiresAt: new Date(Date.now() + 600_000).toISOString(),
+          }));
           return;
         }
         if (routeUrl.startsWith('/session')) {

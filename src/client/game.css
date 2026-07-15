@@ -54,10 +54,15 @@ noscript {
 }
 
 /* ---- Field Notes overlay ---- */
+/*
+ * The layer sits ABOVE the game's action band. --murmur-action-height is
+ * published by the scene from the same layout contract the Phaser buttons use,
+ * so this HTML never covers CONFIRM SIGNAL / CHANGE CHOICE / moderator controls.
+ */
 .fn-layer {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--safe-area-bottom) + 10px);
+  bottom: calc(var(--murmur-action-height, 0px) + var(--safe-area-bottom) + 8px);
   transform: translateX(-50%);
   width: min(100%, 420px);
   padding: 0 12px;
@@ -70,8 +75,37 @@ noscript {
   color: #dffff7;
 }
 
+/*
+ * Transparent wrappers must never capture pointer input: only real controls and
+ * opaque panels do. A full-width flex strip with pointer-events:auto silently
+ * swallowed clicks meant for the canvas beneath it.
+ */
 .fn-layer > * {
+  pointer-events: none;
+}
+
+.fn-btn,
+.fn-link,
+.fn-chip,
+.fn-radio,
+.fn-choice,
+.fn-textarea,
+.fn-dialog,
+.fn-board,
+.fn-reveal {
   pointer-events: auto;
+}
+
+/* Modal backdrop: blocks the world behind the composer, never its own controls. */
+.fn-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  pointer-events: auto;
+  background: rgba(2, 8, 10, 0.55);
+  border: 0;
+  padding: 0;
+  margin: 0;
 }
 
 .fn-cta-wrap {

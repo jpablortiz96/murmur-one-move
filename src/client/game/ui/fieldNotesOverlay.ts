@@ -56,6 +56,7 @@ const el = <K extends keyof HTMLElementTagNameMap>(
  */
 export class FieldNotesOverlay {
   private readonly root: HTMLDivElement;
+  private backdrop: HTMLDivElement | null = null;
   private view: FieldNotesView | null = null;
   private stage: OverlayStage = 'idle';
   private draft: Partial<FieldNoteDraft> = {};
@@ -79,7 +80,10 @@ export class FieldNotesOverlay {
 
   destroy(): void {
     if (this.refreshTimer !== null) window.clearInterval(this.refreshTimer);
+    this.refreshTimer = null;
     window.removeEventListener('murmur:community-updated', this.handleExternalUpdate);
+    this.backdrop?.remove();
+    this.backdrop = null;
     this.root.remove();
   }
 
@@ -96,8 +100,26 @@ export class FieldNotesOverlay {
     this.render();
   }
 
+  /**
+   * The composer is modal: while it is open a backdrop blocks the world beneath
+   * it, and closing or destroying the overlay removes the backdrop so the world
+   * becomes interactive again. The backdrop never covers the composer itself.
+   */
+  private syncBackdrop(): void {
+    const modal = this.stage === 'composer' || this.stage === 'preview';
+    if (modal && !this.backdrop) {
+      this.backdrop = el('div', 'fn-backdrop');
+      this.backdrop.setAttribute('aria-hidden', 'true');
+      this.host.appendChild(this.backdrop);
+    } else if (!modal && this.backdrop) {
+      this.backdrop.remove();
+      this.backdrop = null;
+    }
+  }
+
   private render(): void {
     this.root.replaceChildren();
+    this.syncBackdrop();
     const view = this.view;
     if (!view || !view.enabled) return;
 

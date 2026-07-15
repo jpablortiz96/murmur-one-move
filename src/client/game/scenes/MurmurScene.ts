@@ -799,6 +799,19 @@ export class MurmurScene extends Phaser.Scene {
     return `N ${counts.north} · E ${counts.east} · S ${counts.south} · W ${counts.west} · ${counts.total} SIGNALS`;
   }
 
+  /**
+   * Publishes the action band height so HTML overlays can sit above the game's
+   * own controls instead of covering them. Both sides then derive their
+   * placement from one layout contract.
+   */
+  private publishActionBandHeight(): void {
+    if (typeof document === 'undefined') return;
+    document.documentElement.style.setProperty(
+      '--murmur-action-height',
+      `${Math.round(this.metrics.actionBounds.height)}px`
+    );
+  }
+
   private positionActionButtons(): void {
     if (!this.metrics || !this.replayButton || !this.changeButton || !this.resolveButton || !this.modAuxButton) return;
     const singleAction = this.session.round.resolution !== null;
@@ -824,6 +837,7 @@ export class MurmurScene extends Phaser.Scene {
     const { width, height } = this.scale;
     this.metrics = calculateLayout(width, height, this.settings.safeArea);
     const { centerX, centerY, pathNodes } = this.metrics;
+    this.publishActionBandHeight();
 
     this.cameras.resize(width, height);
     this.cave.layout(this.metrics);

@@ -17,6 +17,14 @@ MURMUR makes Reddit's native behavior—people comparing incomplete interpretati
 10. Open the next Reddit chapter; the seven-node map and creature state preserve the journey.
 11. Complete Day 7 as Chorus, Survivor or Fading. Day 8 cannot be created.
 
+## What is honestly not claimed
+
+- Native Field Note authorship (`runAs: 'USER'`) is implemented and permissioned but **disabled by
+  default**; Field Notes ship as an honest copy-to-comments fallback that never posts as a user.
+- There are **no human retention or discussion-quality metrics**. Every large number here is a
+  deterministic simulation of our own engine.
+- A round with **zero signals is never resolved**: MURMUR will not follow a direction nobody chose.
+
 ## Why the implementation matters
 
 - Devvit is structural: identity, posts, Redis, moderator authorization and Scheduler are server responsibilities.
@@ -28,6 +36,7 @@ MURMUR makes Reddit's native behavior—people comparing incomplete interpretati
 
 ## Review path
 
+- [Evidence index](evidence/README.md)
 - [Field Notes contract](docs/FIELD_NOTES_CONTRACT.md)
 - [UGC moderation & privacy](docs/UGC_MODERATION.md)
 - [Comment lifecycle](docs/COMMENT_LIFECYCLE.md)

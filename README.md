@@ -6,7 +6,16 @@ MURMUR is a mobile-first asynchronous Reddit expedition. Each authenticated play
 
 ## Current state
 
-The repository contains a real Phaser + Devvit Web Interactive Post with Redis voting, server-only World Truth, moderator and scheduled resolution, idempotent chapter publication, recovery, combined post-resolution truth, and three deterministic endings. It is a complete technical expedition slice, not yet a public live season. See [LIMITATIONS.md](LIMITATIONS.md).
+The repository contains a real Phaser + Devvit Web Interactive Post with **one hidden world truth**,
+**three private senses**, **one transactional community move**, a **seven-day persistent expedition**,
+**combined-truth resolution** after the snapshot is sealed, and **optional Field Notes** that turn a
+private clue into native Reddit discussion.
+
+A round with zero signals is never resolved into a direction nobody chose. Field Notes ship in an
+**honest fallback**: the app shows the exact comment and the player posts it themselves — native
+`runAs: 'USER'` authorship is implemented but **not claimed**, and nothing is ever posted on a user's
+behalf. It is a complete technical expedition slice, not a measured public live season, and there are
+**no human retention metrics**. See [LIMITATIONS.md](LIMITATIONS.md).
 
 ## Requirements and installation
 

@@ -1,5 +1,14 @@
 # Current limitations
 
+- **Native Field Note authorship is not claimed.** `runAs: 'USER'` is implemented and permissioned
+  (`asUser: ["SUBMIT_COMMENT"]`) but the server default is the honest copy-to-comments fallback, and
+  real authorship has never been verified on Reddit. Nothing is ever posted on a user's behalf.
+- **OPEN COMMENTS is verified only up to the handler.** It now calls Devvit's client `navigateTo`
+  with the canonical comments URL (proven in a real browser), but `navigateTo` is fire-and-forget, so
+  whether Reddit opens the comments inside the Interactive Post is not yet human-verified.
+- **No human retention, return-rate or discussion-quality metrics exist.** The 10,000-run figures are
+  deterministic simulations of our own engine, not people.
+
 - This is a seven-day technical expedition slice in one development community, not a measured public live season.
 - Optional native Field Notes (structured sensor comments, exact preview, explicit consent, correct-minority reveal) are implemented. Native `runAs: 'USER'` authorship is implemented and permissioned (`asUser: ["SUBMIT_COMMENT"]`) but the server default is the honest copy-to-comments fallback; real user authorship and the Field Notes client visual matrix are not yet verified on real Reddit and are recorded as pending in `evidence/field-notes/raw/reddit-playtest.json`.
 - In the default fallback mode the app performs no Reddit write at all: it shows the exact body and the player pastes it into the chapter comments themselves. Such a comment is real, public and reportable but is **outside the app's structured index** — it creates no parent thread, is never marked published, does not persist in the app, is not counted in the Signal Board, is not included in the correct-minority reveal (which is withheld in fallback), and cannot be desindexed by `onCommentDelete`. Persistence, idempotency, board counting, the reveal and delete-desindexing are **native-only** guarantees.
